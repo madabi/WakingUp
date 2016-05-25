@@ -1,0 +1,60 @@
+/* MONOROM's RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* render html5 elements as block  */
+header, footer, section, aside, nav, article { display: block; }
+
+/* no font-resize for IOS  */
+html{ -webkit-text-size-adjust: none; }
+
+/*-----------------------
+/* end of MONORM's RESET */
+
+
+body {
+    background: lightgrey;
+    font-family: "Helvetica Neue";
+}
+
+html, body {
+    height: 100%;
+}
+
+
+.activeButton{
+    background-color: lightskyblue;
+}
+
+nav {
+    position: fixed;
+    bottom: 0px;
+    width:100%;
+    background-color: deepskyblue;
+    text-align:center;
+}
+
+
+nav button {
+    border:none;
+    background-color: transparent;
+}
+
+nav .btn {
+    padding-left: 12%;
+    padding-right:12%;
+}
+
+nav button:first-child{
+    float:left;
+}
+nav button:last-child{
+    float:right;
+
+
+}
+
