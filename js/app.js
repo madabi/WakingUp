@@ -5,6 +5,8 @@
 
 jQuery(document).ready(function(){
 
+
+
     var nav = $('nav').children();
     var weatherButton = nav.first();
     var adButton = nav.first().next();

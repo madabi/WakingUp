@@ -1,4 +1,4 @@
-/* MONOROM's RESET */
+/*--------- MONOROM's RESET */
 
 * {
     margin: 0;
@@ -12,8 +12,15 @@ header, footer, section, aside, nav, article { display: block; }
 /* no font-resize for IOS  */
 html{ -webkit-text-size-adjust: none; }
 
-/*-----------------------
-/* end of MONORM's RESET */
+/*--------- end of MONORM's RESET */
+
+
+
+/*   apple: This style prevents fonts from getting bigger when rotating to landscape. */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 
 
 body {
@@ -26,9 +33,7 @@ html, body {
 }
 
 
-.activeButton{
-    background-color: lightskyblue;
-}
+
 
 nav {
     position: fixed;
@@ -54,5 +59,10 @@ nav button:first-child{
 }
 nav button:last-child{
     float:right;
+}
+
+/* added when navButton is touched */
+.activeButton{
+    background-color: lightskyblue;
 }
 
