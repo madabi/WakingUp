@@ -17,12 +17,18 @@
         <meta name="mobile-web-app-capable" content="yes">
         <link rel="icon" sizes="152x152" href="img/icons/wakeWeather_icon_152.png">
         <link rel="icon" sizes="120x120" href="img/icons/wakeWeather_icon_120.png">
+
+        <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+        <script src="js/liquidFillGauge.js" language="JavaScript"></script>
     </head>
     
     <body>
 
-        <section id="weather">
-            <h3>Wetter</h3>
+        <section id="weather" class="text-center">
+            <p></p>
+            <svg id="fillgauge1" width="97%" height="250"></svg>
+            <h3>Für agfrässeni</h3>
+
         </section>
         
         <section id="ad">
@@ -41,7 +47,7 @@
 
 
 
-        
+
         <script src="lib/jquery-2.2.4.min.js"></script>
         <script src="js/app.js"></script>
         <!-- Latest compiled and minified CSS -->
