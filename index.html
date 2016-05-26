@@ -20,15 +20,57 @@
 
         <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
         <script src="js/liquidFillGauge.js" language="JavaScript"></script>
+
+
+
     </head>
     
     <body>
 
-        <section id="weather" class="text-center">
-            <p></p>
-            <svg id="fillgauge1" width="97%" height="250"></svg>
-            <h3>Für agfrässeni</h3>
-
+        <section id="weather" >
+          <div class="nowForecast text-center">
+              <h3>Wakeboard-Score</h3>
+            <svg id="fillgauge1" width="100%" height="250"></svg>
+           <h4>Aktuelle Bedingungen</h4>
+            <table id="nowForecast">
+                <tr>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-sunrise"></i></td><td><span>06.44</span> </td>
+                    <td><i class="wi wi-fs wi-sunset"></i></td><td><span>19.34</span></td>
+                </tr>
+            </table>
+          </div>
+            <div class="todayForecast">
+                <h4 class="text-center">Tagesverlauf</h4>
+                <table class="center-table">
+                    <tr>
+                        <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                        <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                        <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+                    </tr>
+                    <tr>
+                        <td><i class="wi wi-fs wi-sunrise"></i></td><td><span>06.44</span> </td>
+                        <td><i class="wi wi-fs wi-sunset"></i></td><td><span>19.34</span></td>
+                    </tr>
+                </table>
+                <p> Lorem ipsum bla </p>
+                <p> Lorem ipsum bla </p>
+                <p> Lorem ipsum bla </p>
+                <p> Lorem ipsum bla </p>
+                <p> Lorem ipsum bla </p>
+                <p> Lorem ipsum bla </p>
+                <p> Lorem ipsum bla </p>
+            </div>
         </section>
         
         <section id="ad">
@@ -53,5 +95,6 @@
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <link type="text/css" href="css/style.css" rel="stylesheet">
+        <link type="text/css" href="css/weather-icons.min.css" rel="stylesheet">
     </body>
 </html>

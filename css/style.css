@@ -22,17 +22,13 @@ html {
 }
 
 
-
 body {
-    background: lightgrey;
-    font-family: "Helvetica Neue";
+    background: white;
 }
 
 html, body {
     height: 100%;
 }
-
-
 
 
 nav {
@@ -44,26 +40,49 @@ nav {
 }
 
 
+/* tab menu at the bottom */
 nav button {
     border:none;
     background-color: transparent;
 }
-
+nav .glyphicon{
+    font-size: 1.5em;
+}
 nav .btn {
     padding-left: 12%;
     padding-right:12%;
 }
-
 nav button:first-child{
     float:left;
 }
 nav button:last-child{
     float:right;
 }
-
 /* added when navButton is touched */
 .activeButton{
     background-color: lightskyblue;
 }
 
+/* forecast table */
+table {
+    margin-left: 5%;
+    width: 100%;
+    font-size: 2.5em;
+    text-align: center;
+}
+td:nth-child(even) {
+    text-align: left;
+    font-size:0.6em;
+}
 
+/*Forecasts */
+.nowForecast{
+     background-color: #FFCF95;
+ }
+.todayForecast{
+    background-color: #FFC262;
+}
+.todayForecast h4,h3{
+    margin-top:0px;
+    padding-top: 10px;
+}
