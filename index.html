@@ -31,27 +31,51 @@
 
 <section id="profile">
 
+
     <form id="login">
         <h3>Anmelden</h3>
-        <label for="email">Email-Adresse</label>
-        <input type="email" class="form-control" id="email">
-        <label for="pwd">Passwort:</label>
-        <input type="password" class="form-control" id="pwd">
+        <span class="hidden badLoginDetails"><p>Ungültige Anmeldedaten</p></span>
+        <label for="email-logIn">Email-Adresse</label>
+        <input type="email" class="form-control" id="email-logIn">
+        <label for="pwd-logIn">Passwort:</label>
+        <input type="password" class="form-control" id="pwd-logIn">
         <button type="submit" class="btn btn-default">Anmelden</button>
+        <button id="noAccountYet">Du hast noch keinen Account?</button>
+        <button id="forgottenPassword">Passwort vergessen?</button>
     </form>
 
     <table id="myAds">
+
+           <tr>
+               <td> <h3>Inserate</h3> </td>
+           </tr>
+
+        <!-- Die Tabelle weiter dynamisch erzeugen -->
         <tr>
-            <h3>Inserate</h3>
-        </tr>
-        <tr>
-            <!-- Diesen Code dynamisch erzeugen -->
             <td><p>Lorem Ipsum bla bla</p></td>
             <td><span class="glyphicon glyphicon-trash"></span></td>
         </tr>
+        <tr>
+            <td><p>Lorem Ipsum bla bla</p></td>
+            <td><span class="glyphicon glyphicon-trash"></span></td>
+        </tr>
+    </table>
+
+    <form id="signUp">
+        <h3>Account erstellen</h3>
+        <label for="email-signUp">Email-Adresse</label>
+        <input type="email" class="form-control" id="email-signUp">
+        <label for="pwd-signUp">Passwort:</label>
+        <input type="password" class="form-control" id="pwd-signUp">
+        <button type="submit" class="btn btn-default">Account erstellen</button>
+    </form>
 
 
+    <h3 id="newAccountConfirmation">Ihr Account wurde erstellt</h3>
 
+    <table id="lostPasswordInformation">
+        <tr><td><h3>Passwort vergessen?</h3></td></tr>
+        <tr><td><p>Schreiben Sie eine Mail an support@wakingUp.ch</p></td></tr>
     </table>
 
 </section>

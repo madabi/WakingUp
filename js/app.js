@@ -26,9 +26,8 @@ jQuery(document).ready(function(){
     var loginView = $('#login');
     var myAds = $('#myAds');
     var loginButton = loginView.find('button');
-
-
-
+    var signUpView = profile.find('#signUp');
+    //var path;
 
     weatherButton.on('click', function(){
         showSection(weather);
@@ -40,22 +39,37 @@ jQuery(document).ready(function(){
         setActive(this);
     });
 
-    profileButton.on('click', function(){
+    profileButton.on('click', function(event){
+        event.preventDefault();
         showSection(profile);
         showView(profile, loginView);
         setActive(this);
+        /*path = '/webec/wakingUp/profil';
+        history.pushState(null, '', path);*/
     });
 
 
     //profile
-    loginButton.on('click', function(){
+    loginButton.on('click', function(event){
+        event.preventDefault();
         tryLogin();
     })
 
 
+    $('#login').find('#noAccountYet').on('click', function(event){
+        event.preventDefault();
+        showView(profile, signUpView);
+    })
 
+    $('#login').find('#forgottenPassword').on('click', function(event){
+        event.preventDefault();
+        showView(profile, profile.find('#lostPasswordInformation'));
+    })
 
-
+    $('#signUp').find('button').on('click', function(event){
+        event.preventDefault();
+        trySignUp();
+    })
 
 
 
@@ -87,10 +101,12 @@ function tryLogin(){
     //wenn nicht:
     //todo
     //sonst:
-
     showView($('section').last(), $('#myAds'));
 }
 
-
+function trySignUp(){
+    //neuen Account in die Datenbank schreiben
+    showView($('section').last(), $('section').last().find('#newAccountConfirmation'));
+}
 
 
