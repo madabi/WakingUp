@@ -17,8 +17,16 @@ jQuery(document).ready(function(){
     var ad = sections.first().next();
     var profile = sections.last();
 
+
     showSection(weather);
     setActive(weatherButton);
+
+
+//profile
+    var loginView = $('#login');
+    var myAds = $('#myAds');
+    var loginButton = loginView.find('button');
+
 
 
 
@@ -34,8 +42,23 @@ jQuery(document).ready(function(){
 
     profileButton.on('click', function(){
         showSection(profile);
+        showView(profile, loginView);
         setActive(this);
     });
+
+
+    //profile
+    loginButton.on('click', function(){
+        tryLogin();
+    })
+
+
+
+
+
+
+
+
 
 
 });
@@ -51,7 +74,22 @@ function showSection(section){
     section.show();
 }
 
+function showView(section, view){
+    showSection(section);
+    var allViews = section.children();
+    allViews.hide();
+    view.show();
+}
 
+function tryLogin(){
+    //checken ob gültige Anmeldedaten
+    //todo
+    //wenn nicht:
+    //todo
+    //sonst:
+
+    showView($('section').last(), $('#myAds'));
+}
 
 
 
