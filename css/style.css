@@ -65,7 +65,8 @@ nav button:last-child{
 
 /* forecast table */
 table {
-    margin-left: 5%;
+    table-layout: fixed;
+    margin-left: 0;
     width: 100%;
     font-size: 2.5em;
     text-align: center;
@@ -77,12 +78,27 @@ td:nth-child(even) {
 
 /*Forecasts */
 .nowForecast{
-     background-color: #FFCF95;
+     background-color: #FFC262;
  }
 .todayForecast{
-    background-color: #FFC262;
+    background-color: #FFCF95;
 }
-.todayForecast h4,h3{
+h4,h3{
     margin-top:0px;
-    padding-top: 10px;
+    padding-top: 20px;
 }
+.todayForecast svg {
+    margin-top:8px;
+}
+
+.hourlyForecastOverview{
+    background-image: linear-gradient(0deg, #F8A82F,#FFCF95);
+}
+.hourlyForecastOverview + tr{
+    background-color: #F8A82F;
+}
+
+.hourlyForecastOverview + tr + tr{
+    background-color: #F8A82F;
+}
+
