@@ -27,6 +27,7 @@ jQuery(document).ready(function(){
     var myAds = $('#myAds');
     var loginButton = loginView.find('button');
     var signUpView = profile.find('#signUp');
+   // var lostPasswordMessage = $('<p>Schreiben Sie eine Mail an support@wakingUp.ch</p>');
     //var path;
 
     weatherButton.on('click', function(){
@@ -67,11 +68,33 @@ jQuery(document).ready(function(){
     })
 
     $('#signUp').find('button').on('click', function(event){
+      //  event.preventDefault();
+      //  processForm($('#signUp'));
+
+
+
+
+
+
+
+
         event.preventDefault();
-        trySignUp();
+        var newEmail = $('#signUp').find('#email-signUp').val();
+        var newPassword = $('#signUp').find('#pwd-signUp').val();
+        console.log('going to try send new user details');
+        console.log(newEmail);
+        console.log(newPassword);
+        trySignUp(newEmail, newPassword);
     })
 
+    $('#myAds').find('#abmeldeButton').on('click', function(event){
+        event.preventDefault();
 
+        //todo: logout
+
+        showSection(weather);
+        setActive(weatherButton);
+    })
 
 
 
@@ -104,9 +127,27 @@ function tryLogin(){
     showView($('section').last(), $('#myAds'));
 }
 
-function trySignUp(){
-    //neuen Account in die Datenbank schreiben
-    showView($('section').last(), $('section').last().find('#newAccountConfirmation'));
+function trySignUp(newEmail, newPassword){
+    console.log('inside trySignUp()');
+
+
+   var url = 'http://localhost:8080/webec/wakingUp/api/users';
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({email: newEmail, pwd: newPassword}),
+
+    error: function(jqXHR, textStatus, errorThrown){
+        console.log(textStatus, errorThrown);
+    },
+        success: function(data){
+            console.log(data);
+            showView($('section').last(), $('section').last().find('#newAccountConfirmation'));
+
+        }
+    });
+
 }
 
 
