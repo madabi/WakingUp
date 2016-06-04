@@ -3,8 +3,7 @@
  */
 
 
-jQuery(document).ready(function(){
-
+jQuery(document).ready(function () {
 
 
     var nav = $('nav').children();
@@ -12,142 +11,176 @@ jQuery(document).ready(function(){
     var adButton = nav.first().next();
     var profileButton = nav.last();
 
-    var sections = $('section');
-    var weather = sections.first();
-    var ad = sections.first().next();
-    var profile = sections.last();
+
+    var weather = $('#weather');
+    var ad = $('#ad');
+    var profile = $('#profile');
 
 
     showSection(weather);
     setActive(weatherButton);
 
 
-//profile
-    var loginView = $('#login');
-    var myAds = $('#myAds');
-    var loginButton = loginView.find('button');
-    var signUpView = profile.find('#signUp');
-   // var lostPasswordMessage = $('<p>Schreiben Sie eine Mail an support@wakingUp.ch</p>');
-    //var path;
 
-    weatherButton.on('click', function(){
+// Eventhandler
+
+    weatherButton.on('click', function () {
         showSection(weather);
         setActive(this);
     });
 
-    adButton.on('click', function(){
+    adButton.on('click', function () {
         showSection(ad);
         setActive(this);
     });
 
-    profileButton.on('click', function(event){
+    profileButton.on('click', function (event) {
         event.preventDefault();
         showSection(profile);
-        showView(profile, loginView);
+        showView(profile, $('#login'));
         setActive(this);
         /*path = '/webec/wakingUp/profil';
-        history.pushState(null, '', path);*/
+         history.pushState(null, '', path);*/
     });
 
 
     //profile
-    loginButton.on('click', function(event){
+    profile.find('#login').find('#loginButton').on('click', function (event) {
         event.preventDefault();
+        console.log('loginButton clicked');
         tryLogin();
-    })
 
+        //todo: werte im formular zurücksetzen
+    });
 
-    $('#login').find('#noAccountYet').on('click', function(event){
+    profile.find('#login').find('#noAccountYetButton').on('click', function (event) {
         event.preventDefault();
-        showView(profile, signUpView);
-    })
+        showView($('#profile'), $('#signUp'));
+    });
 
-    $('#login').find('#forgottenPassword').on('click', function(event){
+    profile.find('#login').find('#lostPasswordButton').on('click', function (event) {
         event.preventDefault();
         showView(profile, profile.find('#lostPasswordInformation'));
-    })
+    });
 
-    $('#signUp').find('button').on('click', function(event){
-      //  event.preventDefault();
-      //  processForm($('#signUp'));
-
-
-
-
-
-
-
-
+    profile.find('#signUp').find('button').on('click', function (event) {
         event.preventDefault();
         var newEmail = $('#signUp').find('#email-signUp').val();
         var newPassword = $('#signUp').find('#pwd-signUp').val();
-        console.log('going to try send new user details');
-        console.log(newEmail);
-        console.log(newPassword);
-        trySignUp(newEmail, newPassword);
-    })
 
-    $('#myAds').find('#abmeldeButton').on('click', function(event){
+        //todo: input validation
+
+        trySignUp();
+
+        //todo: werte im formular zurücksetzen
+
+    });
+
+    profile.find('#newAccountConfirmation').find('button').on('click', function (event) {
+        event.preventDefault();
+        showSection(profile);
+        setActive(profileButton);
+
+    });
+
+    profile.find('#myAds').find('#abmeldeButton').on('click', function (event) {
         event.preventDefault();
 
         //todo: logout
 
         showSection(weather);
         setActive(weatherButton);
-    })
-
-
+    });
 
 });
 
-function setActive(button){
+
+
+
+// Hilfsmethoden
+
+function setActive(button) {
     $('nav').find('button').removeClass("activeButton");
     $(button).addClass("activeButton");
 
 }
 
-function showSection(section){
+function showSection(section) {
     $('section').hide();
     section.show();
 }
 
-function showView(section, view){
+function showView(section, view) {
     showSection(section);
     var allViews = section.children();
     allViews.hide();
     view.show();
 }
 
-function tryLogin(){
+
+
+// Methoden
+
+function tryLogin() {
+
+    var loginEmail = $('#login').find('#email-logIn').val();
+    var loginPassword = $('#login').find('#pwd-logIn').val();
+    console.log('inside tryLogin with ' + loginEmail + " and " + loginPassword);
+
     //checken ob gültige Anmeldedaten
     //todo
+
     //wenn nicht:
     //todo
-    //sonst:
-    showView($('section').last(), $('#myAds'));
+
+    //wenn ja:
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/login';
+    $.ajax({
+        url: url + '/' + loginEmail + '/' + loginPassword,
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+
+        success: function (data) {
+            console.log(data);
+            showView($('#profile'), $('#myAds'));
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
+    });
 }
 
-function trySignUp(newEmail, newPassword){
-    console.log('inside trySignUp()');
 
 
-   var url = 'http://localhost:8080/webec/wakingUp/api/users';
+function trySignUp() {
+
+    //checken ob gültige Eingaben
+    //todo
+
+    //wenn nicht:
+    //todo
+
+
+    //wenn ja:
+    var url = 'http://localhost:8080/webec/wakingUp/api/users';
     $.ajax({
         url: url,
         type: 'POST',
+        dataType: 'json',
         contentType: 'application/json',
-        data: JSON.stringify({email: newEmail, pwd: newPassword}),
+        data: JSON.stringify({
+            "email": $('#signUp').find('#email-signUp').val(),
+            "password": $('#signUp').find('#pwd-signUp').val()
+        }),
 
-    error: function(jqXHR, textStatus, errorThrown){
-        console.log(textStatus, errorThrown);
-    },
-        success: function(data){
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        },
+        success: function (data) {
             console.log(data);
-            showView($('section').last(), $('section').last().find('#newAccountConfirmation'));
-
+            alert('Ihr Account wurde erstellt');
+            showView($('#profile'), $('#login'));
         }
     });
-
 }
-
-

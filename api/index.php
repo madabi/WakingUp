@@ -8,32 +8,40 @@
 
 require 'phpMethods.php';
 
-
-$db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-
-//createNewUser($db, 'martin', 'martinPassword');
-//$all = getAllUsers($db);
-//var_dump($all);
-//$db = null;
-
-
 require 'Slim-2.6.0/Slim/Slim.php';
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
 
+/*
+ * Neuen Account erstellen
+ */
 $app->post('/users', function () use ($app){
-    $user = json_decode($app->request->getBody());
-
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $insertion = $db->prepare('INSERT INTO users (email, password) VALUES (:email, :password)');
-    $insertion->bindParam(':email', $user->email);
-    $insertion->bindParam(':password', $user->pwd);
-    $insertion->execute();
+    signUp($app);
 });
 
 
+/*
+ * User einloggen
+ */
+$app->get('/users/login/:email/:password', function ($email, $password) use ($app){
+   login($app, $email, $password);
+});
+
+
+/*
+ * User ausloggen
+ */
+$app->put('/users/logout', function () use ($app){
+    //todo: logout implementieren
+});
+
+
+/*
+ * Inserate eines Users
+ */
+$app->get('/ads/:id', function($id) use ($app){
+    //todo
+});
+
 $app->run();
-
-
-
