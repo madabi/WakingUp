@@ -38,8 +38,6 @@ jQuery(document).ready(function(){
     var searchAddButton = $('#btn_add_search_search');
     
     $(".date").datepicker();
-    //Datenbankabfrage wegen den Seen
-    getAllLakes();
 
     hideArticles();
     showSection(weather);
@@ -47,8 +45,7 @@ jQuery(document).ready(function(){
     initScoreConfig();
     initWeather(chosenLake, NUM_OF_HOURLY_FORECASTS);
 
-
-
+    
     weatherButton.on('click', function(){
         showSection(weather);
         setActive(this);
@@ -60,6 +57,7 @@ jQuery(document).ready(function(){
         showSection(ad);
         setActive(this);
         $('article').first().show();
+        prepareLakeList()
     });
 
     profileButton.on('click', function(){
@@ -125,6 +123,16 @@ jQuery(document).ready(function(){
 
     function hideArticles(){
         $('article').hide();
+    }
+    
+    function prepareLakeList(){
+        //Datenbankabfrage wegen den Seen
+        var lakeData = getAllLakes();
+        var length = lakeData.lakes.length;
+        for(i=0; i< length;i++){
+            $('#select_search').append('<option>'+lakeData.lakes[i].name +'</option>')
+            $('#select_insert').append('<option>'+lakeData.lakes[i].name +'</option>')
+        }
     }
 
     function setActive(button){
@@ -297,7 +305,18 @@ function getOpenWeatherData(searchQueryAPI){
     
     //This function gets all the lakes from the database
     function getAllLakes(){
-        //TODO
+        //TODO Dies ist nur ein DummyJSON
+        var lake = '{"lakes" : [' + 
+            '{ "name": "Brienzersee"},' +
+            '{ "name": "Bielersee"},' +
+            '{ "name": "Genfersee"},' +
+            '{ "name": "Langensee"},' +
+            '{ "name": "Murtensee"},' +
+            '{ "name": "Vierwaldstättersee"},' +
+            '{ "name": "Walensee"},' +
+            '{ "name": "Zürichsee" }]}';
+        var dummy = JSON.parse(lake);
+        return dummy;
     }
     
     //This function inserts a new add
