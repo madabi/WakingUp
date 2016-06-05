@@ -29,7 +29,9 @@ jQuery(document).ready(function(){
     var weather = sections.first();
     var ad = sections.first().next();
     var profile = sections.last();
-
+    
+    $( ".date" ).datepicker();
+    //$( "#datepicker_until" ).datepicker();
 
     showSection(weather);
     setActive(weatherButton);

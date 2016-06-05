@@ -27,6 +27,12 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <link type="text/css" href="css/style.css" rel="stylesheet">
         <link type="text/css" href="css/weather-icons.min.css" rel="stylesheet">
+        
+        <!-- Import js and css for datepicker-->
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        
     </head>
     
     <body>
@@ -126,8 +132,55 @@
         </section>
         
         <section id="ad">
-            <h3>Inserate</h3>
+            <div id="choice"> 
+                <h3>Inserate</h3>
+                <button id="btn_add_add" class="btn">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Inserat erstellen</span>
+                </button>
+                <button id="btn_add_search" class="btn">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"> Inserate suchen</span>
+                </button>
+            </div>
+            <div id="ad_insert">
+                <h3>Inserat erstellen</h3>
+                <select>
+                    <option value="See01">See 1</option>
+                    <option value="See02">See 2</option>
+                    <option value="See03">See 3</option>
+                    <option value="See04">See 4</option>
+                </select>
+                <form>
+                    <input id="datepicker_insert" class="date"/>
+                </form>
+                <h4>Textinhalt</h4>
+                <div id="add_insert_content">
+                </div>
+                <div id="contact_infos">
+                </div>
+                <button id="btn_add_publish" class="btn"> 
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"> Aufgeben</span>
+                </button>
+            </div>
+            <div id="ad_search">
+                <h3>Inserate filtern</h3>
+                <select>
+                    <option value="See01">See 1</option>
+                    <option value="See02">See 2</option>
+                    <option value="See03">See 3</option>
+                    <option value="See04">See 4</option>
+                </select>
+                <p> von </p>
+                <form>
+                    <input id="datepicker_from" class="date"/>
+                </form>
+                <p> bis </p>
+                <form>
+                    <input id="datepicker_until" class="date"/>
+                </form>
+                <button id="btn_add_search_search" class="btn"> <span class="glyphicon glyphicon-search" aria-hidden="true"> Suchen</span></button>
+            </div>
         </section>
+
         
         <section id="profile">
             <h3>Profil</h3>
