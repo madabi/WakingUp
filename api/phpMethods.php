@@ -32,7 +32,7 @@ function SignUp($app)
     $user = getJSONFromBody($app);
     var_dump($user);
 
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'eva', 'eva');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
 
     //todo: Schutz vor SQL-Injections?
 
@@ -42,7 +42,7 @@ function SignUp($app)
     $selection->execute();
     $result = $selection->fetchAll();
     var_dump($result);
-    $db = null;
+
     if ($selection->rowCount() > 0) {
         echo('user already exists');
 
@@ -81,7 +81,7 @@ function login($app, $email, $password)
     //sind email und passwort gültig?
     //todo: Schutz vor SQL-Injections?
     $userQuery = "SELECT * FROM wakingUp.users WHERE email = {$email} AND pwd = {$password}";
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'eva', 'eva');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $selectUser = $db->prepare($userQuery);
     if ($selectUser->execute()) {
         $user = $selectUser->fetchAll(PDO::FETCH_ASSOC);
@@ -132,7 +132,7 @@ function getJSONFromBody($app)
  */
 function getAllUsers()
 {
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'eva', 'eva');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $selection = $db->prepare('SELECT * FROM wakingUp.users');
     $selection->execute();
     $result = $selection->fetchAll();
