@@ -38,8 +38,9 @@ jQuery(document).ready(function(){
     var searchAddButton = $('#btn_add_search_search');
     
     $(".date").datepicker();
-
+    
     hideArticles();
+    prepareLakeList()
     showSection(weather);
     setActive(weatherButton);
     initScoreConfig();
@@ -57,7 +58,6 @@ jQuery(document).ready(function(){
         showSection(ad);
         setActive(this);
         $('article').first().show();
-        prepareLakeList()
     });
 
     profileButton.on('click', function(){
