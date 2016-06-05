@@ -30,9 +30,16 @@ jQuery(document).ready(function(){
     var ad = sections.first().next();
     var profile = sections.last();
     
-    $( ".date" ).datepicker();
-    //$( "#datepicker_until" ).datepicker();
+    var insertAddMenuButton = $('#btn_add_insert');
+    var searchAddMenuButton = $('#btn_add_search');
+    var backAddButton01 = $('#btn_add_back01');
+    var backAddButton02 = $('#btn_add_back02');
+    var insertAddButton = $('#btn_add_insert_insert');
+    var searchAddButton = $('#btn_add_search_search');
+    
+    $(".date").datepicker();
 
+    hideArticles();
     showSection(weather);
     setActive(weatherButton);
     initScoreConfig();
@@ -48,6 +55,7 @@ jQuery(document).ready(function(){
     adButton.on('click', function(){
         showSection(ad);
         setActive(this);
+        $('article').first().show();
     });
 
     profileButton.on('click', function(){
@@ -57,6 +65,34 @@ jQuery(document).ready(function(){
 
     scoreNow.on('click', function(){
         scoreNowGauge.update(NewValue())
+    });
+    
+    insertAddMenuButton.on('click', function(){ 
+        $('article').first().hide();
+        $('article').first().next().show();
+    });
+    
+    searchAddMenuButton.on('click', function(){  
+        $('article').first().hide();
+        $('article').last().show();
+    });
+    
+    backAddButton01.on('click', function(){
+        $('article').first().next().hide();
+        $('article').first().show();
+    });
+    
+    backAddButton02.on('click', function(){
+        $('article').last().hide();
+        $('article').first().show();
+    });
+    
+    insertAddButton.on('click', function(){
+        console.log('inser_insert');
+    });
+    
+    searchAddButton.on('click', function(){
+        console.log('search_search');
     });
 
     $("#hourlyForecastTitle").on('click', function(e) {
@@ -76,13 +112,16 @@ jQuery(document).ready(function(){
     });
 
 
+    function hideArticles(){
+        $('article').hide();
+    }
 
     function setActive(button){
         $('nav').find('button').removeClass("activeButton");
         $(button).addClass("activeButton");
 
     }
-
+    
     function showSection(section){
         $('section').hide();
         section.show();
