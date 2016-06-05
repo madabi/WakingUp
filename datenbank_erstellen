@@ -1,10 +1,56 @@
+CREATE DATABASE wakingup;
 
+USE wakingup;
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`)
-  )
+CREATE TABLE IF NOT EXISTS users (
+  id INT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(45) NOT NULL,
+  password VARCHAR(45) NOT NULL,
+  PRIMARY KEY (id)
+);
 
+CREATE TABLE sea (
+    id INT NOT NULL AUTO_INCREMENT,
+    seaname VARCHAR(45) NOT NULL,
+    PRIMARY KEY (id)
+);
 
+CREATE TABLE adds (
+    id INT NOT NULL AUTO_INCREMENT,
+    message VARCHAR(200),
+    date VARCHAR(20),
+    sea_id INT,
+    user_id INT,
+    FOREIGN KEY (sea_id) REFERENCES sea(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    PRIMARY KEY (id)
+);
+
+INSERT INTO users
+(email, password)
+VALUES 
+("damian","1234"),
+("peter","1234"),
+("sandy","1234"),
+("roxane","1234");
+
+INSERT INTO sea
+(seaname)
+VALUES
+("Vierwaldstättersee"),
+("Murtensee"),
+("Genfersee"),
+("Bodensee"),
+("Bielersee");
+
+INSERT INTO adds 
+(message, date, sea_id, user_id)
+VALUES
+("Nachricht Bielersee 1","06/06/2016",5,1),
+("Nachricht Bielersee 2","12/04/2016",5,2),
+("Nachricht Bodensee 1","09/04/2016",4,1),
+("WakingUp","10/05/2016",1,4),
+("WakingUp on Genfersee","29/05/2016",3,3),
+("Wer hat ein Boot?","01/03/2016",2,4),
+("Dritte Person gesucht","18/06/2016",5,1),
+("Wer kann es?","04/04/2016",2,3);
