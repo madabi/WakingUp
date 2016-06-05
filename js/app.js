@@ -38,6 +38,8 @@ jQuery(document).ready(function(){
     var searchAddButton = $('#btn_add_search_search');
     
     $(".date").datepicker();
+    //Datenbankabfrage wegen den Seen
+    getAllLakes();
 
     hideArticles();
     showSection(weather);
@@ -50,9 +52,11 @@ jQuery(document).ready(function(){
     weatherButton.on('click', function(){
         showSection(weather);
         setActive(this);
+        hideArticles();
     });
 
     adButton.on('click', function(){
+        hideArticles();
         showSection(ad);
         setActive(this);
         $('article').first().show();
@@ -61,6 +65,7 @@ jQuery(document).ready(function(){
     profileButton.on('click', function(){
         showSection(profile);
         setActive(this);
+        hideArticles();
     });
 
     scoreNow.on('click', function(){
@@ -88,11 +93,17 @@ jQuery(document).ready(function(){
     });
     
     insertAddButton.on('click', function(){
-        console.log('inser_insert');
+        console.log('Lake: '+ $('#select_insert :selected').text());
+        console.log('Date: ' + $('#datepicker_insert').val());
+        console.log('Message: ' + $('#addContent').val());
+        insertAdd();
     });
     
     searchAddButton.on('click', function(){
-        console.log('search_search');
+        console.log('Lake: ' + $('#select_search :selected').text());
+        console.log('From: ' + $('#datepicker_from').val());
+        console.log('Until: ' + $('#datepicker_until').val());
+        searchAdd();
     });
 
     $("#hourlyForecastTitle").on('click', function(e) {
@@ -283,5 +294,58 @@ function getOpenWeatherData(searchQueryAPI){
                 scrollTop: $("#"+id).offset().top},
             'slow');
     }
+    
+    //This function gets all the lakes from the database
+    function getAllLakes(){
+        //TODO
+    }
+    
+    //This function inserts a new add
+    function insertAdd(){
+        var url = 'http://localhost:8080/webec/wakingUp/search';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "lake": $('#select_insert :selected').text(),
+                "date": $('#datepicker_insert').val(),
+                "message": $('#addContent').val()
+            }),
 
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+                console.log('insert add fails')
+            },
+            success: function (data) {
+                //TODO
+            }
+        });
+    }
+    
+    //This function starts a search add by sendig the inputs
+    function searchAdd(){
+        var url = 'http://localhost:8080/webec/wakingUp/search';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "lake": $('#select_search :selected').text(),
+                "fromDate": $('#datepicker_from').val(),
+                "untilDate": $('#datepicker_until').val()
+            }),
+
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+                console.log('search add fails')
+            },
+            success: function (data) {
+                //TODO
+            }
+        });
+        
+    }
 });
