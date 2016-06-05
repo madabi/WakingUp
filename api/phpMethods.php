@@ -17,7 +17,7 @@ function getDBConnection($connectionString, $user, $password)
         return new PDO($connectionString, $user, $password);
     } catch (PDOException $e) {
         echo $e->getMessage();
-        exit('Keine Verbindung. Grund: '.$e->getMessage());
+        exit('Keine Verbindung. Grund: ' . $e->getMessage());
     }
 }
 
@@ -29,69 +29,44 @@ function getDBConnection($connectionString, $user, $password)
  */
 function SignUp($app)
 {
-    $success = false;
     $user = getJSONFromBody($app);
+    var_dump($user);
 
-    if (checkNewUser($user)) {
-        $success = writeNewUser($user);
-    }
-    if ($success) {
-        //todo: id und cookie zurückschicken
-    }
-}
-
-
-/*
- * Überprüft, ob der User nicht bereits existiert
- *
- * @param $user
- * @return bool
- */
-function checkNewUser($user)
-{
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'eva', 'eva');
 
     //todo: Schutz vor SQL-Injections?
-    $selection = $db->prepare('SELECT * FROM users where email=:email and passwort=:passwort');
+
+    $selection = $db->prepare('SELECT * FROM wakingUp.users where email=:email and password=:password');
     $selection->bindParam(':email', $user->email);
-    $selection->bindParam(':passwort', $user->passwort);
+    $selection->bindParam(':passwort', $user->password);
     $selection->execute();
     $result = $selection->fetchAll();
     var_dump($result);
     $db = null;
-    $new = false;
     if ($selection->rowCount() > 0) {
         echo('user already exists');
-        $new = false;
+
+        //todo: was zurückgeben?
+
     } else {
         echo("new user can be created");
-        $new = true;
-    }
-    return $new;
+        $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password) VALUES (:email, :password)');
+        $insertion->bindParam(':email', $user->email);
+        $insertion->bindParam(':password', $user->password);
+        if ($insertion->execute()) {
 
-}
+            response($app, $result);
+            //todo: id und cookie zurückschicken
 
+        } else {
 
-/*
- * schreibt neuen User in die Datenbank
- *
- * @param $user
- */
-function writeNewUser($user)
-{
-    //todo: Schutz vor SQL-Injections?
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $insertion = $db->prepare('INSERT INTO users (email, password) VALUES (:email, :password)');
-    $insertion->bindParam(':email', $user->email);
-    $insertion->bindParam(':password', $user->password);
-    if ($insertion->execute()) {
-        $success = true;
-    } else {
-        $success = false;
+            //todo: was zurückgeben?
+        }
+
     }
     $db = null;
-    return $success;
 }
+
 
 
 /*
@@ -105,8 +80,8 @@ function login($app, $email, $password)
 
     //sind email und passwort gültig?
     //todo: Schutz vor SQL-Injections?
-    $userQuery = "SELECT * FROM users WHERE email = {$email} AND pwd = {$password}";
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $userQuery = "SELECT * FROM wakingUp.users WHERE email = {$email} AND pwd = {$password}";
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'eva', 'eva');
     $selectUser = $db->prepare($userQuery);
     if ($selectUser->execute()) {
         $user = $selectUser->fetchAll(PDO::FETCH_ASSOC);
@@ -127,14 +102,12 @@ function login($app, $email, $password)
 }
 
 
-
 /**
  * Eine Utility Funktion für die Ausgabe zum aufrufenden Client.
  *
  */
 function response($app, $result)
 {
-
     $response = $app->response();
     $response->headers->set('Content-Type', 'application/json');
     $response->body(json_encode($result));
@@ -159,8 +132,8 @@ function getJSONFromBody($app)
  */
 function getAllUsers()
 {
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $selection = $db->prepare('SELECT * FROM users');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'eva', 'eva');
+    $selection = $db->prepare('SELECT * FROM wakingUp.users');
     $selection->execute();
     $result = $selection->fetchAll();
     foreach ($result as $user) {

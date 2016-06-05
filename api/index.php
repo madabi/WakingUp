@@ -13,6 +13,7 @@ require 'Slim-2.6.0/Slim/Slim.php';
 
 $app = new \Slim\Slim();
 
+
 /*
  * Neuen Account erstellen
  */

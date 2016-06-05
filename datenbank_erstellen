@@ -1,5 +1,5 @@
 
-MySQL
+
 CREATE TABLE IF NOT EXISTS `users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(45) NOT NULL,
@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS `users` (
   `token` CHAR(16) NULL,
   `token_expire` DATETIME NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `username_UNIQUE` (`username` ASC))
-ENGINE = InnoDB
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
+
