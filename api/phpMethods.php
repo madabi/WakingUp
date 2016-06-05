@@ -36,9 +36,12 @@ function SignUp($app)
 
     //todo: Schutz vor SQL-Injections?
 
-    $selection = $db->prepare('SELECT * FROM wakingUp.users where email=:email and password=:password');
-    $selection->bindParam(':email', $user->email);
-    $selection->bindParam(':passwort', $user->password);
+    $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE email=:email AND password=:password');
+
+    $selection->bindParam(':email', $user['email'], PDO::PARAM_STR);
+    $selection->bindParam(':password', $user['password'], PDO::PARAM_STR);
+
+
     $selection->execute();
     $result = $selection->fetchAll();
     var_dump($result);
@@ -51,15 +54,15 @@ function SignUp($app)
     } else {
         echo("new user can be created");
         $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password) VALUES (:email, :password)');
-        $insertion->bindParam(':email', $user->email);
-        $insertion->bindParam(':password', $user->password);
+        $insertion->bindParam(':email', $user['email'], PDO::PARAM_STR);
+        $insertion->bindParam(':password', $user['password'], PDO::PARAM_STR);
         if ($insertion->execute()) {
 
-            response($app, $result);
+            echo('new user has been created');
             //todo: id und cookie zurückschicken
 
         } else {
-
+            echo('could not write new user into database');
             //todo: was zurückgeben?
         }
 
@@ -80,12 +83,15 @@ function login($app, $email, $password)
 
     //sind email und passwort gültig?
     //todo: Schutz vor SQL-Injections?
-    $userQuery = "SELECT * FROM wakingUp.users WHERE email = {$email} AND pwd = {$password}";
+
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $selectUser = $db->prepare($userQuery);
-    if ($selectUser->execute()) {
-        $user = $selectUser->fetchAll(PDO::FETCH_ASSOC);
-        if ($selectUser->rowCount() == 1) {
+    $verifyUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
+    $verifyUser = $db->prepare($verifyUser);
+    $verifyUser->bindParam(':email', $email);
+    $verifyUser->bindParam(':password', $password);
+    if ($verifyUser->execute()) {
+        $verifyUser->fetchAll(PDO::FETCH_ASSOC);
+        if ($verifyUser->rowCount() == 1) {
             echo('user found');
 
             //todo: id und cookie zurückschicken
@@ -122,6 +128,10 @@ function getJSONFromBody($app)
     $json = $app->request->getBody();
     return json_decode($json, true);
 }
+
+
+
+
 
 
 /**
