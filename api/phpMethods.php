@@ -6,7 +6,6 @@
  * Time: 21:49
  */
 
-require 'User.php';
 /*
  * Anfrage für PDO Database Connection
  *
