@@ -110,13 +110,11 @@ function showView(section, view) {
 function showRestrictedView(section, view) {
 
     if(verifyToken()) {
-        alert('token verified');
         showSection(section);
         var allViews = section.children();
         allViews.hide();
         view.show();
     }else{
-        alert('token not verified');
         showView($('#profile'), $('#login'));
     }
 }
