@@ -102,6 +102,7 @@ jQuery(document).ready(function(){
         console.log('From: ' + $('#datepicker_from').val());
         console.log('Until: ' + $('#datepicker_until').val());
         searchAdd();
+        showResults();
     });
 
     $("#hourlyForecastTitle").on('click', function(e) {
@@ -130,8 +131,8 @@ jQuery(document).ready(function(){
         var lakeData = getAllLakes();
         var length = lakeData.lakes.length;
         for(i=0; i< length;i++){
-            $('#select_search').append('<option>'+lakeData.lakes[i].name +'</option>')
-            $('#select_insert').append('<option>'+lakeData.lakes[i].name +'</option>')
+            $('#select_search').append('<option>'+lakeData.lakes[i].name +'</option>');
+            $('#select_insert').append('<option>'+lakeData.lakes[i].name +'</option>');
         }
     }
 
@@ -366,5 +367,28 @@ function getOpenWeatherData(searchQueryAPI){
             }
         });
         
+    }
+    
+    //This function shows the results of the search
+    function showResults(){
+        
+        //TODO Dies sind nur JSONDummies
+        console.log('excecuted showresults');
+        var dummys = {"dummy":[
+            {"message":"d", "date": "09/06/2016"},
+            {"message":"ldkfj", "date": "12/05/2016"},
+            {"message":"Nachricht", "date": "02/04/2016"}
+        ]};
+        
+        var employees = [
+            {"message":"John", "lastName":"Doe"},
+            {"message":"Anna", "lastName":"Smith"},
+            {"message":"Peter","lastName": "Jones"}
+        ]; 
+        
+        $('#ad_search').first().append('<h4 id=\"searchResults\">Resultate für</h4');
+        for(i = 0; i<dummys.dummy.length; i++){
+            $('#searchResults').after('<p> ' + employees[i].message+ '</p>');
+        }
     }
 });
