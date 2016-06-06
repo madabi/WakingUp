@@ -9,15 +9,20 @@
 require 'phpMethods.php';
 
 require 'Slim-2.6.0/Slim/Slim.php';
+require_once('/Middleware/TokenAuth.php');
+
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
+$app->config('debug', true);
+$app->add(new \TokenAuth());
+
 
 
 /*
  * Neuen Account erstellen
  */
-$app->post('/users', function () use ($app){
+$app->post('/users/signin', function () use ($app){
     signUp($app);
 });
 
@@ -25,8 +30,12 @@ $app->post('/users', function () use ($app){
 /*
  * User einloggen
  */
-$app->get('/users/login/:email/:password', function ($email, $password) use ($app){
-   login($app, $email, $password);
+$app->get('/users/login/:email/:password', function () use ($app){
+   login($app);
+});
+
+$app->get('/users/login', function () use ($app){
+    loginAuth($app);
 });
 
 

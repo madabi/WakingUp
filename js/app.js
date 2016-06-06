@@ -21,7 +21,6 @@ jQuery(document).ready(function () {
     setActive(weatherButton);
 
 
-
 // Eventhandler
 
     weatherButton.on('click', function () {
@@ -95,8 +94,6 @@ jQuery(document).ready(function () {
 });
 
 
-
-
 // Hilfsmethoden
 
 function setActive(button) {
@@ -116,7 +113,6 @@ function showView(section, view) {
     allViews.hide();
     view.show();
 }
-
 
 
 // Methoden
@@ -143,6 +139,7 @@ function tryLogin() {
 
         success: function (data) {
             console.log(data);
+
             showView($('#profile'), $('#myAds'));
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -152,6 +149,45 @@ function tryLogin() {
 }
 
 
+function tryLoginAuth() {
+
+    var loginEmail = $('#login').find('#email-logIn').val();
+    var loginPassword = $('#login').find('#pwd-logIn').val();
+
+    //todo: passwort hashen
+
+    console.log('inside tryLogin with ' + loginEmail + " and " + loginPassword);
+
+    //checken ob gültige Anmeldedaten
+    //todo
+
+    //wenn nicht:
+    //todo
+
+    //wenn ja:
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/login';
+    $.ajax({
+        url: url,
+        type: 'GET',
+
+        dataType: 'json',
+        data: JSON.stringify({
+            "email": loginEmail,
+            "password": loginPassword
+        }),
+        contentType: 'application/json',
+
+        success: function (data) {
+            console.log(data);
+            window.localStorage.setItem('wakingUp_token', data);
+
+            showView($('#profile'), $('#myAds'));
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
+    });
+}
 
 function trySignUp() {
 
@@ -163,7 +199,7 @@ function trySignUp() {
 
 
     //wenn ja:
-    var url = 'http://localhost:8080/webec/wakingUp/api/users';
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/signin';
     $.ajax({
         url: url,
         type: 'POST',
@@ -183,4 +219,52 @@ function trySignUp() {
             showView($('#profile'), $('#login'));
         }
     });
+}
+
+
+function verifyToken() {
+
+    /*
+     * lets assume that your browser can handle "local storage" for the sake of simplicity.
+     * You should have saves the token to local storage prior to this.
+     *
+     * localStorage.token=myApiResult.token
+     *
+     * myApiResult would be the JSON we received after the login
+     *
+     **/
+
+    var tokenString = localStorage.getItem('wakingUp_token');
+    if(tokenString!=null) {
+        $.ajax({
+            url: "http://localhost:8080/webec/wakingUp/api/users/auth",
+            method: "GET",
+            headers: {
+                Authorization: tokenString
+            },
+            statusCode: {
+                404: function () {
+                    //If the endpoint is not found, we'll end up in here
+                    alert("endpoint not found");
+                    return false;
+                },
+                200: function () {
+                    //Ok, everything worked as expected
+                    alert("worked like a charm");
+                    return true;
+                },
+                401: function () {
+                    //Our token is either expired, invalid or doesn't exist
+                    alert("token not valid or expired");
+                    window.localStorage.removeItem('wakingUp_token');
+                    return false;
+                }
+            }
+        });
+    }else{
+        alert("no token found in the browser");
+        return false;
+
+    }
+
 }

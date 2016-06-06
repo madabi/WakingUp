@@ -6,7 +6,7 @@
  * Time: 21:49
  */
 
-
+require 'User.php';
 /*
  * Anfrage für PDO Database Connection
  *
@@ -78,17 +78,17 @@ function SignUp($app)
  * @param $app
  * @param $userQuery
  */
-function login($app, $email, $password)
+function login($app)
 {
-
+    $user = getJSONFromBody($app);
     //sind email und passwort gültig?
     //todo: Schutz vor SQL-Injections?
 
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $verifyUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
     $verifyUser = $db->prepare($verifyUser);
-    $verifyUser->bindParam(':email', $email);
-    $verifyUser->bindParam(':password', $password);
+    $verifyUser->bindParam(':email', $user['email']);
+    $verifyUser->bindParam(':password', $user['password']);
     if ($verifyUser->execute()) {
         $verifyUser->fetchAll(PDO::FETCH_ASSOC);
         if ($verifyUser->rowCount() == 1) {
@@ -185,5 +185,59 @@ function deleteUserById($id)
     $deletion = $db->prepare('DELETE FROM users where id=:id');
     $deletion->bindParam(':id', $id);
     $deletion->execute();
+}
+
+
+
+
+function loginAuth($app) {
+
+    $user = getJSONFromBody($app);
+    $email = $user['email'];
+    $userObject = validateUser($app, $user);
+    if (isset ($userObject)) { //implement your own validation method against your db
+
+       // $arrRtn['user'] = $email; //Just return the user name for reference
+        $arrRtn['token'] = bin2hex(openssl_random_pseudo_bytes(16)); //generate a random token
+
+        $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));//the expiration date will be in one hour from the current moment
+
+        $userObject->updateToken($email, $arrRtn['token'], $tokenExpiration); //This function can update the token on the database and set the expiration date-time, implement your own
+        response($app,$arrRtn);
+    }
+    return false;
+}
+
+
+
+/**
+ * @param $app
+ * @param $user
+ * @return bool
+ */
+function validateUser($app, $user){
+
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $verifyUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
+    $verifyUser = $db->prepare($verifyUser);
+    $verifyUser->bindParam(':email', $user['email']);
+    $verifyUser->bindParam(':password', $user['password']);
+    if ($verifyUser->execute()) {
+        $verifyUser->fetch(PDO::FETCH_CLASS, 'User');
+        if ($verifyUser->rowCount() == 1) {
+            echo 'login valid';
+            $db =null;
+            return $verifyUser;
+        } else {
+            echo 'login invalid';
+            $db =null;
+            return null;
+        }
+    } else {
+        $db =null;
+        $app->halt(500, "Error in quering database.");
+    }
+
+
 }
 
