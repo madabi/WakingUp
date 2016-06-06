@@ -35,9 +35,9 @@ jQuery(document).ready(function () {
 
     profileButton.on('click', function (event) {
         event.preventDefault();
-        showSection(profile);
         setActive(this);
-        showRestrictedView(profile, $('#login'));
+        showRestrictedView(profile, $('#myAds'));
+
     });
 
 
@@ -110,13 +110,13 @@ function showView(section, view) {
 function showRestrictedView(section, view) {
 
     if(verifyToken()) {
-
-
+        alert('token verified');
         showSection(section);
         var allViews = section.children();
         allViews.hide();
         view.show();
     }else{
+        alert('token not verified');
         showView($('#profile'), $('#login'));
     }
 }
@@ -211,28 +211,27 @@ function verifyToken() {
 
 
     var tokenString = localStorage.getItem('wakingUp_token');
-    if (tokenString != null) {
-        $.ajax({
+    if (tokenString) {
+        var verified = $.ajax({
             url: "http://localhost:8080/webec/wakingUp/api/users/auth",
             method: "GET",
             headers: {
                 Authorization: tokenString
             },
-            statusCode: {
-                200: function () {
-                    //Ok, everything worked as expected
-                    return true;
-                },
-                401: function () {
-                    //Our token is either expired, invalid or doesn't exist
+            success: function () {
+                console.log();
+                return true;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
                     window.localStorage.removeItem('wakingUp_token');
-                    return false;
-                }
+                return false;
             }
+
         });
+    return verified;
     } else {
         return false;
-
     }
 
 }

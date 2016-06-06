@@ -55,7 +55,6 @@ $app->get('/users/ads', 'middleware', function() use ($app){
 
 $app->get('/users/auth', 'middleware', function() use ($app) {
     responseWithStatus($app, 200);
-
 });
 
 
