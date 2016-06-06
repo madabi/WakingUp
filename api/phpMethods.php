@@ -228,38 +228,3 @@ function getAllUsers()
 */
 
 
-
-/*
- * Check if user email and password are valid
- *
- * @param $app
- * @param $userQuery
- */
-/*function login($app)
-{
-    $user = getJSONFromBody($app);
-    //sind email und passwort gültig?
-    //todo: Schutz vor SQL-Injections?
-
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $verifyUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
-    $verifyUser = $db->prepare($verifyUser);
-    $verifyUser->bindParam(':email', $user['email']);
-    $verifyUser->bindParam(':password', $user['password']);
-    if ($verifyUser->execute()) {
-        $verifyUser->fetchAll(PDO::FETCH_ASSOC);
-        if ($verifyUser->rowCount() == 1) {
-            echo('user found');
-
-            //todo: id und cookie zurückschicken
-
-        } else {
-            echo("No user found.");
-
-            //todo: client benachrichtigen
-
-        }
-    } else {
-        $app->halt(500, "Error in quering database.");
-    }
-}*/

@@ -247,35 +247,3 @@ function removeToken(){
 }
 
 
-
-/*
- function tryLogin() {
-
- var loginEmail = $('#login').find('#email-logIn').val();
- var loginPassword = $('#login').find('#pwd-logIn').val();
- console.log('inside tryLogin with ' + loginEmail + " and " + loginPassword);
-
- //checken ob gültige Anmeldedaten
- //todo
-
- //wenn nicht:
- //todo
-
- //wenn ja:
- var url = 'http://localhost:8080/webec/wakingUp/api/users/login';
- $.ajax({
- url: url + '/' + loginEmail + '/' + loginPassword,
- type: 'GET',
- dataType: 'json',
- contentType: 'application/json',
-
- success: function (data) {
- console.log(data);
-
- showView($('#profile'), $('#myAds'));
- },
- error: function (jqXHR, textStatus, errorThrown) {
- console.log(textStatus, errorThrown);
- }
- });
- }*/
