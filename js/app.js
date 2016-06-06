@@ -51,6 +51,7 @@ jQuery(document).ready(function(){
         showSection(weather);
         setActive(this);
         hideArticles();
+        deleteResults();
     });
 
     adButton.on('click', function(){
@@ -64,6 +65,7 @@ jQuery(document).ready(function(){
         showSection(profile);
         setActive(this);
         hideArticles();
+        deleteResults();
     });
 
     scoreNow.on('click', function(){
@@ -88,11 +90,13 @@ jQuery(document).ready(function(){
     backAddButton02.on('click', function(){
         $('article').last().hide();
         $('article').first().show();
+        deleteResults();
     });
     
     insertAddButton.on('click', function(){
         console.log('Lake: '+ $('#select_insert :selected').text());
         console.log('Date: ' + $('#datepicker_insert').val());
+        console.log('Title: ' + $('#title_insert').val());
         console.log('Message: ' + $('#addContent').val());
         insertAdd();
     });
@@ -331,6 +335,7 @@ function getOpenWeatherData(searchQueryAPI){
             data: JSON.stringify({
                 "lake": $('#select_insert :selected').text(),
                 "date": $('#datepicker_insert').val(),
+                "title": $('#title_insert').val(),
                 "message": $('#addContent').val()
             }),
 
@@ -374,21 +379,30 @@ function getOpenWeatherData(searchQueryAPI){
         
         //TODO Dies sind nur JSONDummies
         console.log('excecuted showresults');
-        var dummys = {"dummy":[
-            {"message":"d", "date": "09/06/2016"},
-            {"message":"ldkfj", "date": "12/05/2016"},
-            {"message":"Nachricht", "date": "02/04/2016"}
-        ]};
-        
-        var employees = [
-            {"message":"John", "lastName":"Doe"},
-            {"message":"Anna", "lastName":"Smith"},
-            {"message":"Peter","lastName": "Jones"}
-        ]; 
-        
-        $('#ad_search').first().append('<h4 id=\"searchResults\">Resultate für</h4');
-        for(i = 0; i<dummys.dummy.length; i++){
-            $('#searchResults').after('<p> ' + employees[i].message+ '</p>');
+        var dummys = {
+            "lake":"Zugersee",
+                "messages":[
+                {"title":"Titel 1", "message":"Wer will Wakeboarden?", "date": "09/06/2016", "contact":"clara@gmail.ch"},
+                {"title":"Titel 2","message":"Grossevent auf dem Zugersee", "date": "12/05/2016", "contact":"nicolas@intergga.ch"},
+                {"title":"Titel 3","message":"Infos zu Sommer-Wakeboard-Camp!", "date": "02/04/2016", "contact":"hugo@salt.ch"}
+                ]
+        };
+                
+        deleteResults();
+        //$('#ad_search').first().append('<h4 id=\"searchResults\">Resultate für ' + dummys.lake +'</h4');  
+        $('#results').append('<h4 id=\"searchResults\">Resultate für ' + dummys.lake +'</h4');
+        for(i = 0; i<dummys.messages.length; i++){
+            var title = dummys.messages[i].title;
+            var message = dummys.messages[i].message;
+            $('#results').append('<header class=\"messageStart\"><h5> ' + title + '</h5></header><div class=\"content\">'+ dummys.messages[i].message + '<br> ' +dummys.messages[i].contact+'</div>');
         }
+        $('.content').toggle();
+        $('.messageStart').on('click', function(){
+            $(this).next().toggle();
+        })
+    }
+    
+    function deleteResults(){
+        $('#results').empty();
     }
 });
