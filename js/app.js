@@ -29,7 +29,7 @@ jQuery(document).ready(function(){
     var forecastScoreGauges = [];
 
 
-
+    var weatherNowIconTable = $('#weatherNowIconTable');
     var hourlyForecastTable = $('#hourlyForecastTable');
     var dailyForecastTable = $('#dailyForecastTable');
 
@@ -143,19 +143,17 @@ jQuery(document).ready(function(){
             var weatherNowTable = $('#weatherNowTable');
             var withSunset = true;
             updateWeatherTable(weatherNowTable,openWeatherNowData[0], wieWarmData[0], withSunset);
-
-            updateHourlyForecastTable(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts);
-
-
+            updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts);
             scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', 5, config1);
         });
     }
 
     function initScoreConfig(){
         config1 = liquidFillGaugeDefaultSettings();
-        config1.circleColor= "#00bfff";
+        config1.circleColor= "#4D4F4F";
         config1.circleFillGap = 0.05;
         config1.textSize = 3;
+        config1.textColor= "#4D4F4F";
         config1.textVertPosition = 0.5;
         config1.maxValue = 12;
         config1.minValue = 0;
@@ -207,22 +205,34 @@ function getWeatherData(searchQueryAPI){
     function createWeatherDetailTable(openWeatherData, wieWarmData, withSunrise){
         var amountOfRain = "0";
         if(openWeatherData.rain != undefined) {
-            amountOfRain = openWeatherData.rain["3h"] == undefined ? "0" : openWeatherData.rain["3h"].toFixed(1);
+            console.log(openWeatherData.rain);
+            for(el in openWeatherData.rain){
+                amountOfRain = openWeatherData.rain[el];
+            }
         }
         var sunrise = new Date(openWeatherData.sys.sunrise*1000);
         var sunset = new Date(openWeatherData.sys.sunset*1000);
 
         var table = '<tr>'+
-            '<td><i class="wi wi-owm-'+openWeatherData.weather[0].id+'"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
+            '<td><i class="wi wi-thermometer"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
             '<td><i class="wi wi-fs wi-strong-wind"></i></td><td>'+openWeatherData.wind.speed.toFixed(1)+' km/h</td></tr>'+
-            '<tr><td><i class="wi wi-fs wi-thermometer"></i></td> <td>'+wieWarmData.becken.Bodensee.temp+' <i class="wi wi-fs wi-celsius"></i></td>'+
+            '<tr><td><i class="wi wi-fs wi-flood"></i></td> <td>'+wieWarmData.becken.Bodensee.temp+' <i class="wi wi-fs wi-celsius"></i></td>'+
             '<td><i class="wi wi-fs wi-raindrops"></i></td><td>'+amountOfRain+' mm</td></tr>';
 
         if(withSunrise){
+            console.log(openWeatherData);
+            updateThreeWeatherNowIcons(openWeatherData.weather[0].id);
             table = table.concat('<tr><td><i class="wi wi-fs wi-sunrise"></i></td><td>'+sunrise.getHours()+':'+('0' + sunrise.getMinutes()).slice(-2)+'</td>'+
                 '<td><i class="wi wi-fs wi-sunset"></i></td><td>'+sunset.getHours()+':'+sunset.getMinutes()+'</td></tr>');
         }
         return table;
+    }
+
+    function updateThreeWeatherNowIcons(openWeatherDataIconID){
+        weatherNowIconTable.empty();
+        weatherNowIconTable.append('<tr><td><i class="wi wi-fs wi-owm-'+openWeatherDataIconID+'"></i></td>'+
+            '<td><i class="wi wi-fs wi-owm-'+openWeatherDataIconID+'"></i></td>'+
+            '<td><i class="wi wi-fs wi-owm-'+openWeatherDataIconID+'"></i></td></tr>');
     }
 
     function getHourlyForecastOverview(openWeatherData,wieWarmData,numOfHourlyForecasts){
@@ -283,7 +293,7 @@ function getWeatherData(searchQueryAPI){
         return dailyForecastTable;
     }
 
-    function updateHourlyForecastTable(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
+    function updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
         hourlyForecastTable.empty();
         hourlyForecastTable.append(getHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts));
         hideForecastDetails(hourlyForecastSection);

@@ -24,6 +24,7 @@ html {
 
 body {
     background: white;
+    color: #4D4F4F;
 }
 
 html, body {
@@ -66,6 +67,27 @@ nav button:last-child{
 }
 
 /*weatherNow table*/
+#scoreNowSVG{
+    position:relative;
+    margin-top:0px;
+    margin-bottom:0px;
+}
+#weatherNowIconTable{
+    font-size: 30px;
+    margin-left:auto;
+    margin-right:auto;
+    width:80%;
+    text-align:right;
+    margin-top:0px;
+    margin-bottom:0px;
+}
+#weatherNowIconTable td:nth-child(even){
+    text-align:center;
+    font-size: 60px;
+}
+#weatherNowIconTable td:last-child{
+    text-align:left;
+}
 
 /* forecast tables */
 table {
@@ -74,6 +96,7 @@ table {
     width: 100%;
     font-size: 2.5em;
     text-align: center;
+
 }
 
 
@@ -94,9 +117,6 @@ h4,h3{
     height:100%;
  }
 
-#nowForecastSection table {
-    margin-top:20px;
-}
 #todayForecastSection{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     background-color: #FFCF95;
@@ -115,13 +135,13 @@ h4,h3{
     margin-top:8px;
 }
 #hourlyForecastTable tr:nth-child(3n+1) {
-    background-image: linear-gradient(0deg, #F8A82F,#FFCF95);
+    background-image: linear-gradient(0deg, #FFA94C,#FFCF95);
 }
 #hourlyForecastTable tr:nth-child(3n+2){
-    background-color: #F8A82F;
+    background-color: #FFA94C;
 }
 #hourlyForecastTable tr:nth-child(3n+3){
-    background-color: #F8A82F;
+    background-color: #FFA94C;
 }
 
 
