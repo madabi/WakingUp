@@ -111,13 +111,13 @@ function loginAuth($app, $email, $password) {
 
     if (validateUser($app, $email, $password)) { //implement your own validation method against your db
 
-        $arrRtn['token'] = bin2hex(openssl_random_pseudo_bytes(16)); //generate a random token
+        $return['token'] = bin2hex(openssl_random_pseudo_bytes(16)); //generate a random token
 
         $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));//the expiration date will be in one hour from the current moment
 
-        $tokenSet = updateToken($email, $arrRtn['token'], $tokenExpiration); //This function can update the token on the database and set the expiration date-time, implement your own
+        $tokenSet = updateToken($email, $return['token'], $tokenExpiration); //This function can update the token on the database and set the expiration date-time, implement your own
 
-        if($tokenSet){responseTokenWithStatus($app, $arrRtn, 200);
+        if($tokenSet){responseTokenWithStatus($app, $return, 200);
         }else {
             responseWithStatus($app, 401);
         }
@@ -138,18 +138,16 @@ function loginAuth($app, $email, $password) {
 function validateUser($app, $email, $password){
 
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $verifyUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
-    $verifyUser = $db->prepare($verifyUser);
-    $verifyUser->bindParam(':email', $email);
-    $verifyUser->bindParam(':password', $password);
-    if ($verifyUser->execute()) {
-        $verifyUser->fetchAll(PDO::FETCH_ASSOC);
-        if ($verifyUser->rowCount() == 1) {
-            echo 'login valid';
+    $validateUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
+    $validateUser = $db->prepare($validateUser);
+    $validateUser->bindParam(':email', $email);
+    $validateUser->bindParam(':password', $password);
+    if ($validateUser->execute()) {
+        $validateUser->fetchAll(PDO::FETCH_ASSOC);
+        if ($validateUser->rowCount() == 1) {
             $db =null;
             return true;
         } else {
-            echo 'login invalid';
             $db =null;
             return null;
         }
@@ -162,19 +160,17 @@ function validateUser($app, $email, $password){
 
 function updateToken($email, $token, $tokenExpiration){
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $update = $db->prepare('UPDATE wakingUp.users SET token=:token AND token_expire=:token_expire WHERE email=:email');
+    $update = $db->prepare('UPDATE wakingUp.users SET token=:token, token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token', $token);
     $update->bindParam(':token_expire', $tokenExpiration);
     $update->bindParam(':email', $email, PDO::PARAM_STR);
 
     if ($update->execute()) {
-        echo('new token_expire in database');
         $db = null;
 
         return true;
 
     } else {
-        echo('could not write new token_expire into database');
         $db = null;
 
         return false;

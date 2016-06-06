@@ -79,9 +79,7 @@ jQuery(document).ready(function () {
 
     profile.find('#myAds').find('#abmeldeButton').on('click', function (event) {
         event.preventDefault();
-
-        //todo: logout
-
+        removeToken();
         showSection(weather);
         setActive(weatherButton);
     });
@@ -150,7 +148,8 @@ function tryLoginAuth() {
         dataType: 'json',
         contentType: 'application/json',
         statusCode: {
-            200: function () {
+            200: function (data) {
+                setToken(data['token']);
                 showView($('#profile'), $('#myAds'));
             },
             401: function () {
@@ -222,12 +221,10 @@ function verifyToken() {
             statusCode: {
                 200: function () {
                     //Ok, everything worked as expected
-                    alert("worked like a charm");
                     return true;
                 },
                 401: function () {
                     //Our token is either expired, invalid or doesn't exist
-                    alert("token not valid or expired");
                     window.localStorage.removeItem('wakingUp_token');
                     return false;
                 }
@@ -239,6 +236,17 @@ function verifyToken() {
     }
 
 }
+
+
+function setToken(token){
+
+    localStorage.setItem('wakingUp_token', token);
+}
+
+function removeToken(){
+    window.localStorage.removeItem('wakingUp_token');
+}
+
 
 
 /*
