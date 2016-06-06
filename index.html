@@ -3,7 +3,7 @@
     <head>
         <title>WakingUp</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 
         
         <!-- Apple mobile support -->
@@ -27,16 +27,15 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <link type="text/css" href="css/style.css" rel="stylesheet">
         <link type="text/css" href="css/weather-icons.min.css" rel="stylesheet">
+        <link type="text/css" href="css/icon-works.css" rel="stylesheet">
     </head>
-    
     <body>
 
         <section id="weather" >
-          <div class="nowForecast text-center">
-              <h4>Wakeboard-Score</h4>
-            <svg id="scoreNow" width="100%" height="200"></svg>
-           <h4>Aktuelle Bedingungen</h4>
-            <table>
+          <section id="nowForecastSection" class="text-center">
+              <h4 id="nowForecastTitle">Momentane Wake-Bedingungen</h4>
+            <svg id="scoreNowSVG" width="100%" height="200"></svg>
+              <table id="weatherNowTable">
                 <tr>
                     <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
                     <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
@@ -50,8 +49,8 @@
                     <td><i class="wi wi-fs wi-sunset"></i></td><td><span>19.34</span></td>
                 </tr>
             </table>
-          </div>
-            <div class="todayForecast">
+          </section>
+            <section id="todayForecastSection">
                 <h4 id="hourlyForecastTitle" class="text-center">Tagesverlauf</h4>
 
                 <table id="hourlyForecastTable" class="center-table">
@@ -119,8 +118,62 @@
                     </tr>
 
                 </table>
-            </div>
-            <p> PLATZHALTER</p>
+            </section>
+            <section id="dailyForecastSection">
+                <h4 id="dailyForecastTitle" class="text-center">Wochenverlauf</h4>
+                <table id="dailyForecastTable" class="center-table">
+                <tr class="dailyForecastOverview">
+                    <td><i class="wi wi-fs wi-time-12"></i></td><td><span>12 Uhr</span></td>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score12" width="40" height="40"></svg></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+                </tr>
+
+                <tr class="hourlyForecastOverview">
+                    <td><i class="wi wi-fs wi-time-3"></i></td><td><span>15 Uhr</span></td>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score15" width="40" height="40"></svg></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+                </tr>
+                <tr class="hourlyForecastOverview">
+                    <td><i class="wi wi-fs wi-time-6"></i></td><td><span>18 Uhr</span></td>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score18" width="40" height="40"></svg></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+                </tr>
+                <tr class="hourlyForecastOverview">
+                    <td><i class="wi wi-fs wi-time-9"></i></td><td><span>21 Uhr</span></td>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score21" width="40" height="40"></svg></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+                </tr>
+
+                </table>
+            </section>
 
 
         </section>

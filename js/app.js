@@ -8,24 +8,37 @@ jQuery(document).ready(function(){
     var searchResultOpenWeather = null;
     var searchResultWieWarm = null;
 
+    var todayForecastSectionClosed = ("calc(100% - 165px)").toString();
+    var dailyForecastSectionClosed = ("calc(100% - 100px)").toString();
+    var todayForecastSectionOpened = ("70px");
+    var dailyForecastSectionOpened = ("140px");
+
+    var hourlyForecastSection = $('#todayForecastSection');
+    var dailyForecastSection = $('#dailyForecastSection');
+
+
+
     //note for later coding: openweathermap access via string, but wiewarm.ch works better with IDS, eg. '192' for bodensee..
     var chosenLake = "Bodensee";
     var NUM_OF_HOURLY_FORECASTS = 4;
+    var NUM_OF_DAILY_FORECASTS = 4;
 
     var config1;
-    var scoreNow= $('#scoreNow');
+    var scoreNowSVG = $('#scoreNowSVG');
     var scoreNowGauge;
-    var hourlyForecastData = [NUM_OF_HOURLY_FORECASTS];
-    var hourlyScores = [NUM_OF_HOURLY_FORECASTS];
+    var forecastScoreGauges = [];
+
+
 
     var hourlyForecastTable = $('#hourlyForecastTable');
+    var dailyForecastTable = $('#dailyForecastTable');
 
     var nav = $('nav').children();
     var weatherButton = nav.first();
     var adButton = nav.first().next();
     var profileButton = nav.last();
 
-    var sections = $('section');
+    var sections = $('body').find('section');
     var weather = sections.first();
     var ad = sections.first().next();
     var profile = sections.last();
@@ -36,7 +49,14 @@ jQuery(document).ready(function(){
     initScoreConfig();
     initWeather(chosenLake, NUM_OF_HOURLY_FORECASTS);
 
+    //MANUELL ::: TEMPORÄR ::: NOCH auszulagern in updateDailyForecast
+    hideForecastDetails(dailyForecastSection);
+    //
 
+    //prevents scrolling on mobile device
+    $(document).bind('touchmove', function(e) {
+        e.preventDefault();
+    });
 
     weatherButton.on('click', function(){
         showSection(weather);
@@ -53,27 +73,54 @@ jQuery(document).ready(function(){
         setActive(this);
     });
 
-    scoreNow.on('click', function(){
+    scoreNowSVG.on('click', function(){
         scoreNowGauge.update(NewValue())
     });
 
-    $("#hourlyForecastTitle").on('click', function(e) {
-        // Prevent a page reload when a link is pressed
-        console.log("LOL");
-        e.preventDefault();
-        // Call the scroll function
-        goToByScroll(this.id);
+    $('#nowForecastTitle').on("click", function(){
+        $('#todayForecastSection').css("top",todayForecastSectionClosed);
+        $('#dailyForecastSection').css("top",dailyForecastSectionClosed);
+    });
+
+    $("#hourlyForecastTitle").on("click", function() {
+        handleHourlyForecastPositions();
+    });
+
+    $("#dailyForecastTitle").on("click", function() {
+        handleDailyForecastPositions();
     });
 
     //TODO: Check for better more directly solution..
-   hourlyForecastTable.on('click', 'tr',function(){
-        if($(this).attr('class') == 'hourlyForecastOverview'){
+   hourlyForecastTable.on('click', 'tr:nth-child(3n+1)',function(){
+            hideForecastDetails(hourlyForecastSection);
             $(this).nextAll(':lt(2)').toggle();
-        }
-
+    });
+    dailyForecastTable.on('click', 'tr:nth-child(3n+1)',function(){
+        hideForecastDetails(dailyForecastSection);
+        $(this).nextAll(':lt(2)').toggle();
     });
 
+    function handleHourlyForecastPositions(){
+        if(hourlyForecastSection.css("top") != todayForecastSectionOpened){
+            hourlyForecastSection.css("top", todayForecastSectionOpened);
+        }else{
+            if(dailyForecastSection.css("top") == dailyForecastSectionOpened){
+                dailyForecastSection.css("top", dailyForecastSectionClosed);
+            }else{
+                hourlyForecastSection.css("top", todayForecastSectionClosed);
+            }
+        }
+    }
 
+    function handleDailyForecastPositions(){
+     if(dailyForecastSection.css("top") != dailyForecastSectionOpened){
+            hourlyForecastSection.css("top", todayForecastSectionOpened);
+            dailyForecastSection.css("top", dailyForecastSectionOpened);
+        }else{
+            hourlyForecastSection.css("top", todayForecastSectionClosed);
+            dailyForecastSection.css("top", dailyForecastSectionClosed);
+        }
+    }
 
     function setActive(button){
         $('nav').find('button').removeClass("activeButton");
@@ -82,26 +129,25 @@ jQuery(document).ready(function(){
     }
 
     function showSection(section){
-        $('section').hide();
+        sections.hide();
         section.show();
+        section.children().show();
+
     }
 
     function initWeather(lake, numOfHourlyForecasts){
         var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lake);
         var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lake);
         var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/bad.json/'.concat('192').concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
-        $.when(getOpenWeatherData(openWeatherNowURL),getOpenWeatherData(openWeatherForecastURL),getWieWarmData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
-            var weatherNowTable = $('section').first().find('div').first().find('table');
+        $.when(getWeatherData(openWeatherNowURL),getWeatherData(openWeatherForecastURL),getWeatherData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
+            var weatherNowTable = $('#weatherNowTable');
             var withSunset = true;
             updateWeatherTable(weatherNowTable,openWeatherNowData[0], wieWarmData[0], withSunset);
 
             updateHourlyForecastTable(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts);
 
-            //TODO Refactoring calculation and creation of scores.. not yet stateless..
-            calculateHourlyScores();
-            createScoreGauges(hourlyScores);
 
-            loadLiquidFillGauge('scoreNow', 5, config1);
+            scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', 5, config1);
         });
     }
 
@@ -120,9 +166,9 @@ jQuery(document).ready(function(){
         config1.waveHeight = 0.02;
     }
 
-    function createScoreGauges(hourlyScores){
-        hourlyScores.map(function(score, index) {
-            loadLiquidFillGauge("score".concat(index), score, config1);
+    function createForecastScoreGauge(forecastGaugeMap){
+        forecastGaugeMap.map(function(element){
+            loadLiquidFillGauge(element.id, calculateScore(element.data), config1);
         });
     }
 
@@ -136,8 +182,7 @@ jQuery(document).ready(function(){
     }
 
 
-// OpenWeather
-function getOpenWeatherData(searchQueryAPI){
+function getWeatherData(searchQueryAPI){
     return $.ajax({
         url: searchQueryAPI,
         dataType: 'json',
@@ -150,19 +195,6 @@ function getOpenWeatherData(searchQueryAPI){
         }
     });
 }
-    function getWieWarmData(searchQueryAPI){
-        return $.ajax({
-            url: searchQueryAPI,
-            dataType: 'json',
-            type: 'GET',
-            error: function(jqXHR, textStatus, errorThrown){
-                console.log(errorThrown, textStatus);
-            },
-            success: function(data){
-              return data;
-            }
-        });
-    }
 
 
 
@@ -181,66 +213,100 @@ function getOpenWeatherData(searchQueryAPI){
         var sunset = new Date(openWeatherData.sys.sunset*1000);
 
         var table = '<tr>'+
-            '<td><i class="wi wi-owm-'+openWeatherData.weather[0].id+'"></i></td><td><span>'+openWeatherData.main.temp.toFixed(1)+'</span> <i class="wi wi-fs wi-celsius"></i></td>'+
-            '<td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>'+openWeatherData.wind.speed.toFixed(1)+' km/h</span></td></tr>'+
-            '<tr><td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>'+wieWarmData.becken.Bodensee.temp+'</span> <i class="wi wi-fs wi-celsius"></i></td>'+
-            '<td><i class="wi wi-fs wi-raindrops"></i></td><td><span>'+amountOfRain+' mm</span></td></tr>';
+            '<td><i class="wi wi-owm-'+openWeatherData.weather[0].id+'"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
+            '<td><i class="wi wi-fs wi-strong-wind"></i></td><td>'+openWeatherData.wind.speed.toFixed(1)+' km/h</td></tr>'+
+            '<tr><td><i class="wi wi-fs wi-thermometer"></i></td> <td>'+wieWarmData.becken.Bodensee.temp+' <i class="wi wi-fs wi-celsius"></i></td>'+
+            '<td><i class="wi wi-fs wi-raindrops"></i></td><td>'+amountOfRain+' mm</td></tr>';
 
         if(withSunrise){
-            table = table.concat('<tr><td><i class="wi wi-fs wi-sunrise"></i></td><td><span>'+sunrise.getHours()+':'+('0' + sunrise.getMinutes()).slice(-2)+'</span> </td>'+
-                '<td><i class="wi wi-fs wi-sunset"></i></td><td><span>'+sunset.getHours()+':'+sunset.getMinutes()+'</span></td></tr>');
+            table = table.concat('<tr><td><i class="wi wi-fs wi-sunrise"></i></td><td>'+sunrise.getHours()+':'+('0' + sunrise.getMinutes()).slice(-2)+'</td>'+
+                '<td><i class="wi wi-fs wi-sunset"></i></td><td>'+sunset.getHours()+':'+sunset.getMinutes()+'</td></tr>');
         }
         return table;
     }
 
-    function getHourlyForecastOverview(openWeatherData,wieWarmData,numOfHours){
-        var hourlyForecastOverviewTable = "";
+    function getHourlyForecastOverview(openWeatherData,wieWarmData,numOfHourlyForecasts){
+        var hourlyForecastTable = "";
         var hoursOfForecast;
 
-        for(var i=0;i<numOfHours;i++)
-        {
-            //TODO: Data is being stored to array for later calculations.. ok?
-            hourlyForecastData[i] = openWeatherData.list[i];
 
+        for(var i=0;i<numOfHourlyForecasts;i++)
+        {
+            var ScoreGaugeID = ("hourlyScore"+i);
             hoursOfForecast = (new Date(openWeatherData.list[i].dt*1000)).getHours();
-            hourlyForecastOverviewTable = hourlyForecastOverviewTable.concat('<tr class="hourlyForecastOverview">' +
-                '<td><i class="wi wi-fs wi-time-'+(hoursOfForecast>12 ? hoursOfForecast-12 : hoursOfForecast)+'"></i></td><td><span>' + hoursOfForecast + ' Uhr</span></td>' +
-                '<td><i class="wi wi-owm-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="score'+i+'" width="40" height="40"></svg></td></tr>');
+            hourlyForecastTable = hourlyForecastTable.concat('<tr>' +
+                '<td><i class="wi wi-fs wi-time-'+(hoursOfForecast>12 ? hoursOfForecast-12 : hoursOfForecast)+'"></i></td><td>' + hoursOfForecast + ' Uhr</td>' +
+                '<td><i class="wi wi-owm-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+ScoreGaugeID+'" width="40" height="40"></svg></td></tr>');
             console.log(i);
 
-            hourlyForecastOverviewTable+=(createWeatherDetailTable(openWeatherData.list[i],wieWarmData,false));
-
+            hourlyForecastTable+=(createWeatherDetailTable(openWeatherData.list[i],wieWarmData,false));
+            forecastScoreGauges.push({id:ScoreGaugeID,data:openWeatherData.list[i]});
         }
-    return hourlyForecastOverviewTable;
+    return hourlyForecastTable;
+    }
+
+    function getDailyForecastOverview(openWeatherData,wieWarmData,numOfDailyForecasts){
+        var dailyForecastTable = "";
+        var foreCastCounter = 0;
+        var i = 0;
+        var currentDay = new Date().getDay();
+        var dateOfForecast;
+        var dayOfForecast;
+
+        var daysOfWeek= ["So","Mo","Di","Mi","Do","Fr","Sa","So"];
+
+        while(foreCastCounter < numOfDailyForecasts && i != openWeatherData.list.length) {
+
+            dateOfForecast = (new Date(openWeatherData.list[i].dt * 1000));
+            dayOfForecast  = dateOfForecast.getDay();
+
+            if(currentDay!=dayOfForecast && dateOfForecast.getHours()==14) {
+                //TODO: Data is being stored to array for later calculations.. ok?
+                var scoreGaugeID = ("dailyScore"+foreCastCounter);
+
+                var formattedDate = daysOfWeek[dayOfForecast]+". "+dateOfForecast.getDate()+"."+(dateOfForecast.getMonth()+1)+".";
+
+                dailyForecastTable = dailyForecastTable.concat('<tr>' +
+                    '<td><i class="wi wi-fs wi-time-2"></i></td><td>' + formattedDate + '</td>' +
+                    '<td><i class="wi wi-owm-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+scoreGaugeID+'" width="40" height="40"></svg></td></tr>');
+
+
+                dailyForecastTable += (createWeatherDetailTable(openWeatherData.list[i], wieWarmData, false));
+
+                forecastScoreGauges.push({id:scoreGaugeID,data:openWeatherData.list[i]});
+
+                ++foreCastCounter;
+                ++i;
+                currentDay = dayOfForecast;
+            }else ++i;
+        }
+        return dailyForecastTable;
     }
 
     function updateHourlyForecastTable(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
         hourlyForecastTable.empty();
         hourlyForecastTable.append(getHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts));
-        hideHourlyForecastDetails();
+        hideForecastDetails(hourlyForecastSection);
+        dailyForecastTable.empty();
+        dailyForecastTable.append(getDailyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], 4));
+        hideForecastDetails(dailyForecastSection);
+        createForecastScoreGauge(forecastScoreGauges);
     }
 
-    function hideHourlyForecastDetails(){
-        var hourlyForecast = $('.todayForecast').find('table').find('tr');
-        hourlyForecast.hide();
-        hourlyForecast.closest('table').find('tr.hourlyForecastOverview').show();
+    function hideForecastDetails(forecastSection){
+        var forecastTableRows = forecastSection.find('table').find('tr');
+        forecastTableRows.hide();
+        forecastTableRows.closest('table').find('tr:nth-child(3n+1)').show();
     }
 
-    function calculateHourlyScores(){
-       hourlyForecastData.map(function(element,index){
-           //TODO Calculation of Scores
-           hourlyScores[index]= Math.floor(Math.random()*10);
-       });
-    }
-
-    // This is a functions that scrolls to #{blah}link
-    function goToByScroll(id){
-        // Remove "link" from the ID
-        id = id.replace("link", "");
-        // Scroll
-        $('html,body').animate({
-                scrollTop: $("#"+id).offset().top},
-            'slow');
+    function calculateScore(forecastData){
+        //TODO Calculation of Scores
+          return Math.floor(Math.random()*10);
     }
 
 });
+
+
+
+
+
