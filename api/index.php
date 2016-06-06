@@ -47,13 +47,14 @@ $app->put('/users/logout', function () use ($app){
 /*
  * Inserate eines Users
  */
-$app->get('/users/ads', 'middleware', function($id) use ($app){
+$app->get('/users/ads', 'middleware', function() use ($app){
     //todo
     getMyAds();
 });
 
 
-$app->get('/users/auth', function() use ($app) {
+$app->get('/users/auth', 'middleware', function() use ($app) {
+    responseWithStatus($app, 200);
 
 });
 
@@ -82,10 +83,8 @@ function middleware(){
             if(strtotime($token_expire) > strtotime($dateNow)){
                 $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
                 updateToken($myEmail, $tokenToVerify, $newTokenExpiration);
-                echo('token valid');
-                responseWithStatus($app, 200);
+
             }else{
-                echo ('token invalid or expired');
                 responseWithStatus($app, 401);
             }
         }
