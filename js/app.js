@@ -36,10 +36,8 @@ jQuery(document).ready(function () {
     profileButton.on('click', function (event) {
         event.preventDefault();
         showSection(profile);
-        showView(profile, $('#login'));
         setActive(this);
-        /*path = '/webec/wakingUp/profil';
-         history.pushState(null, '', path);*/
+        showRestrictedView(profile, $('#login'));
     });
 
 
@@ -47,7 +45,7 @@ jQuery(document).ready(function () {
     profile.find('#login').find('#loginButton').on('click', function (event) {
         event.preventDefault();
         console.log('loginButton clicked');
-        tryLogin();
+        tryLoginAuth();
 
         //todo: werte im formular zurücksetzen
     });
@@ -64,9 +62,6 @@ jQuery(document).ready(function () {
 
     profile.find('#signUp').find('button').on('click', function (event) {
         event.preventDefault();
-        var newEmail = $('#signUp').find('#email-signUp').val();
-        var newPassword = $('#signUp').find('#pwd-signUp').val();
-
         //todo: input validation
 
         trySignUp();
@@ -114,39 +109,21 @@ function showView(section, view) {
     view.show();
 }
 
+function showRestrictedView(section, view) {
 
-// Methoden
+    if(verifyToken()) {
 
-function tryLogin() {
 
-    var loginEmail = $('#login').find('#email-logIn').val();
-    var loginPassword = $('#login').find('#pwd-logIn').val();
-    console.log('inside tryLogin with ' + loginEmail + " and " + loginPassword);
-
-    //checken ob gültige Anmeldedaten
-    //todo
-
-    //wenn nicht:
-    //todo
-
-    //wenn ja:
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/login';
-    $.ajax({
-        url: url + '/' + loginEmail + '/' + loginPassword,
-        type: 'GET',
-        dataType: 'json',
-        contentType: 'application/json',
-
-        success: function (data) {
-            console.log(data);
-
-            showView($('#profile'), $('#myAds'));
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
-        }
-    });
+        showSection(section);
+        var allViews = section.children();
+        allViews.hide();
+        view.show();
+    }else{
+        showView($('#profile'), $('#login'));
+    }
 }
+
+
 
 
 function tryLoginAuth() {
@@ -155,6 +132,7 @@ function tryLoginAuth() {
     var loginPassword = $('#login').find('#pwd-logIn').val();
 
     //todo: passwort hashen
+    //var hashedPassword = Sha1.hash(loginPassword);
 
     console.log('inside tryLogin with ' + loginEmail + " and " + loginPassword);
 
@@ -165,27 +143,23 @@ function tryLoginAuth() {
     //todo
 
     //wenn ja:
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/login';
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/login/'+loginEmail +'/' +loginPassword;
     $.ajax({
         url: url,
         type: 'GET',
-
         dataType: 'json',
-        data: JSON.stringify({
-            "email": loginEmail,
-            "password": loginPassword
-        }),
         contentType: 'application/json',
+        statusCode: {
+            200: function () {
+                showView($('#profile'), $('#myAds'));
+            },
+            401: function () {
+                alert('Ungültige Logindaten');
+                showView($('#profile'), $('#login'));
 
-        success: function (data) {
-            console.log(data);
-            window.localStorage.setItem('wakingUp_token', data);
-
-            showView($('#profile'), $('#myAds'));
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
+            }
         }
+
     });
 }
 
@@ -199,7 +173,14 @@ function trySignUp() {
 
 
     //wenn ja:
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/signin';
+
+    var pwd = $('#signUp').find('#pwd-signUp').val();
+
+    //todo: pwd hashen
+    // var hashedPassword = Sha1.hash(pwd);
+
+
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/signup';
     $.ajax({
         url: url,
         type: 'POST',
@@ -207,35 +188,31 @@ function trySignUp() {
         contentType: 'application/json',
         data: JSON.stringify({
             "email": $('#signUp').find('#email-signUp').val(),
-            "password": $('#signUp').find('#pwd-signUp').val()
+            "password": pwd
         }),
-
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
-        },
-        success: function (data) {
-            console.log(data);
-            alert('Ihr Account wurde erstellt');
-            showView($('#profile'), $('#login'));
+        statusCode: {
+            200: function () {
+                //Ok, everything worked as expected
+                alert('Ihr Account wurde erstellt');
+                showView($('#profile'), $('#login'));
+            },
+            401: function () {
+                //Our token is either expired, invalid or doesn't exist
+                alert("Es gibt bereits einen Benutzer mit dieser Email-Adresse");
+                showView($('#profile'), $('#login'));
+            }
         }
+
     });
 }
 
 
+
 function verifyToken() {
 
-    /*
-     * lets assume that your browser can handle "local storage" for the sake of simplicity.
-     * You should have saves the token to local storage prior to this.
-     *
-     * localStorage.token=myApiResult.token
-     *
-     * myApiResult would be the JSON we received after the login
-     *
-     **/
 
     var tokenString = localStorage.getItem('wakingUp_token');
-    if(tokenString!=null) {
+    if (tokenString != null) {
         $.ajax({
             url: "http://localhost:8080/webec/wakingUp/api/users/auth",
             method: "GET",
@@ -243,11 +220,6 @@ function verifyToken() {
                 Authorization: tokenString
             },
             statusCode: {
-                404: function () {
-                    //If the endpoint is not found, we'll end up in here
-                    alert("endpoint not found");
-                    return false;
-                },
                 200: function () {
                     //Ok, everything worked as expected
                     alert("worked like a charm");
@@ -261,10 +233,42 @@ function verifyToken() {
                 }
             }
         });
-    }else{
-        alert("no token found in the browser");
+    } else {
         return false;
 
     }
 
 }
+
+
+/*
+ function tryLogin() {
+
+ var loginEmail = $('#login').find('#email-logIn').val();
+ var loginPassword = $('#login').find('#pwd-logIn').val();
+ console.log('inside tryLogin with ' + loginEmail + " and " + loginPassword);
+
+ //checken ob gültige Anmeldedaten
+ //todo
+
+ //wenn nicht:
+ //todo
+
+ //wenn ja:
+ var url = 'http://localhost:8080/webec/wakingUp/api/users/login';
+ $.ajax({
+ url: url + '/' + loginEmail + '/' + loginPassword,
+ type: 'GET',
+ dataType: 'json',
+ contentType: 'application/json',
+
+ success: function (data) {
+ console.log(data);
+
+ showView($('#profile'), $('#myAds'));
+ },
+ error: function (jqXHR, textStatus, errorThrown) {
+ console.log(textStatus, errorThrown);
+ }
+ });
+ }*/

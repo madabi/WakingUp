@@ -9,20 +9,17 @@
 require 'phpMethods.php';
 
 require 'Slim-2.6.0/Slim/Slim.php';
-require_once('/Middleware/TokenAuth.php');
 
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
-$app->config('debug', true);
-$app->add(new \TokenAuth());
 
 
 
 /*
  * Neuen Account erstellen
  */
-$app->post('/users/signin', function () use ($app){
+$app->post('/users/signup', function () use ($app){
     signUp($app);
 });
 
@@ -30,12 +27,12 @@ $app->post('/users/signin', function () use ($app){
 /*
  * User einloggen
  */
-$app->get('/users/login/:email/:password', function () use ($app){
+/*$app->get('/users/login/:email/:password', function () use ($app){
    login($app);
-});
+});*/
 
-$app->get('/users/login', function () use ($app){
-    loginAuth($app);
+$app->get('/users/login/:email/:password', function ($email, $password) use ($app){
+    loginAuth($app, $email, $password);
 });
 
 
@@ -50,8 +47,57 @@ $app->put('/users/logout', function () use ($app){
 /*
  * Inserate eines Users
  */
-$app->get('/ads/:id', function($id) use ($app){
+$app->get('/users/ads', 'middleware', function($id) use ($app){
     //todo
+    getMyAds();
 });
 
+
+$app->get('/users/auth', function() use ($app) {
+
+});
+
+
+
 $app->run();
+
+
+function middleware(){
+    $app = \Slim\Slim::getInstance();
+    $tokenToVerify = $app->request->headers->get('Authorization');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $verifyToken = 'SELECT * FROM wakingUp.users WHERE token=:token';
+    $verifyToken = $db->prepare($verifyToken);
+    $verifyToken->bindParam(':token', $tokenToVerify);
+    if ($verifyToken->execute()) {
+        $verifyToken->fetchAll(PDO::FETCH_ASSOC);
+        if ($verifyToken->rowCount() == 1) {
+            $token_expire = date('Y-m-d H:i:s', strtotime('now'));
+            $myEmail = '';
+            foreach($verifyToken as $user){
+                $token_expire = $user[5];
+                $myEmail = $user[2];
+            }
+            $dateNow = date('Y-m-d H:i:s', strtotime('now'));
+            if(strtotime($token_expire) > strtotime($dateNow)){
+                $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+                updateToken($myEmail, $tokenToVerify, $newTokenExpiration);
+                echo('token valid');
+                responseWithStatus($app, 200);
+            }else{
+                echo ('token invalid or expired');
+                responseWithStatus($app, 401);
+            }
+        }
+    } else {
+        $app->halt(500, "Error in quering database.");
+    }
+
+
+
+}
+
+
+//todo
+function getMyAds(){
+}
