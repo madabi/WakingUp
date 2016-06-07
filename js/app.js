@@ -326,7 +326,7 @@ function getOpenWeatherData(searchQueryAPI){
     
     //This function inserts a new add
     function insertAdd(){
-        var url = 'http://localhost:8080/webec/wakingUp/search';
+        var url = 'http://localhost:8080/webec/wakingUp/insert';
         $.ajax({
             url: url,
             type: 'POST',
@@ -354,7 +354,7 @@ function getOpenWeatherData(searchQueryAPI){
         var url = 'http://localhost:8080/webec/wakingUp/search';
         $.ajax({
             url: url,
-            type: 'POST',
+            type: 'GET',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
