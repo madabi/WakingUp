@@ -8,18 +8,26 @@ jQuery(document).ready(function(){
     var searchResultOpenWeather = null;
     var searchResultWieWarm = null;
 
-    var todayForecastSectionClosed = ("calc(100% - 165px)").toString();
-    var dailyForecastSectionClosed = ("calc(100% - 100px)").toString();
-    var todayForecastSectionOpened = ("70px");
-    var dailyForecastSectionOpened = ("140px");
 
+
+    var currentWeatherSectionOpened = ("45px");
+    var currentWeatherSectionClosed = ("140px");//("calc(100% - 230px)").toString();
+    var todayForecastSectionClosed = ("calc(100% - 140px)").toString();
+    var dailyForecastSectionClosed = ("calc(100% - 90px)").toString();
+    var todayForecastSectionOpened = ("95px");
+    var dailyForecastSectionOpened = ("145px");
+
+    var changeLakeSection = $('#changeLakeSection');
+    var currentWeatherSection = $('#nowForecastSection');
     var hourlyForecastSection = $('#todayForecastSection');
     var dailyForecastSection = $('#dailyForecastSection');
 
+    var changeLakeDropdownList = $('#changeLakeDropdown');
 
 
     //note for later coding: openweathermap access via string, but wiewarm.ch works better with IDS, eg. '192' for bodensee..
-    var chosenLake = "Bodensee";
+    var currentLake = "Bielersee";
+    var currentLakeID = 70;
     var NUM_OF_HOURLY_FORECASTS = 4;
     var NUM_OF_DAILY_FORECASTS = 4;
 
@@ -32,6 +40,31 @@ jQuery(document).ready(function(){
     var weatherNowIconTable = $('#weatherNowIconTable');
     var hourlyForecastTable = $('#hourlyForecastTable');
     var dailyForecastTable = $('#dailyForecastTable');
+
+    var lakeIDs = {"Bielersee":70,
+        "Bodensee":192,
+        "Brienzersee": 153,
+        "Greifensee":196,
+        "Pfäffikersee":198,
+        "Sempachersee":103,
+        "Thunersee":7,
+        "Vierwaldstättersee":148,
+        "Walensee":121,
+        "Zugersee":177,
+        "Zürichsee":14};
+
+    var lakePoolIDs = {"Bielersee":184,
+        "Bodensee":397,
+        "Brienzersee": 331,
+        "Greifensee":401,
+        "Pfäffikersee":406,
+        "Sempachersee":240,
+        "Thunersee":23,
+        "Vierwaldstättersee":326,
+        "Walensee":280,
+        "Zugersee":369,
+        "Zürichsee":44};
+
 
     var nav = $('nav').children();
     var weatherButton = nav.first();
@@ -47,11 +80,14 @@ jQuery(document).ready(function(){
     showSection(weather);
     setActive(weatherButton);
     initScoreConfig();
-    initWeather(chosenLake, NUM_OF_HOURLY_FORECASTS);
+    createLakeSelection(lakeIDs);
+    updateCurrentlySelectedLake();
+    initWeather(currentLake,currentLakeID, NUM_OF_HOURLY_FORECASTS);
 
     //MANUELL ::: TEMPORÄR ::: NOCH auszulagern in updateDailyForecast
-    hideForecastDetails(dailyForecastSection);
+    //hideForecastDetails(dailyForecastSection);
     //
+
 
     //prevents scrolling on mobile device
     $(document).bind('touchmove', function(e) {
@@ -77,18 +113,17 @@ jQuery(document).ready(function(){
         scoreNowGauge.update(NewValue())
     });
 
-    $('#nowForecastTitle').on("click", function(){
-        $('#todayForecastSection').css("top",todayForecastSectionClosed);
-        $('#dailyForecastSection').css("top",dailyForecastSectionClosed);
+
+    changeLakeDropdownList.on("change", function() {
+        updateCurrentlySelectedLake();
+        initWeather(currentLake, currentLakeID.toString(), NUM_OF_HOURLY_FORECASTS);
+        currentWeatherSection.css("top", currentWeatherSectionOpened);
     });
 
-    $("#hourlyForecastTitle").on("click", function() {
-        handleHourlyForecastPositions();
-    });
-
-    $("#dailyForecastTitle").on("click", function() {
-        handleDailyForecastPositions();
-    });
+    $('#changeLakeTitle').on("click", handleChangeLake);
+    $('#nowForecastTitle').on("click", handleCurrentWeatherPositions);
+    $("#hourlyForecastTitle").on("click", handleHourlyForecastPositions);
+    $("#dailyForecastTitle").on("click", handleDailyForecastPositions);
 
     //TODO: Check for better more directly solution..
    hourlyForecastTable.on('click', 'tr:nth-child(3n+1)',function(){
@@ -100,9 +135,47 @@ jQuery(document).ready(function(){
         $(this).nextAll(':lt(2)').toggle();
     });
 
+    function createLakeSelection(lakeIDs){
+        var dropDownSelection= "";
+        $.each(lakeIDs, function(key,value){
+            dropDownSelection = dropDownSelection.concat('<option value="'+value+'">'+key+'</option>');
+        });
+        changeLakeSection.find('select').empty().append(dropDownSelection);
+    }
+
+    function handleChangeLake(){
+        if(currentWeatherSection.css("top") == currentWeatherSectionOpened){
+            currentWeatherSection.css("top", currentWeatherSectionClosed);
+            hourlyForecastSection.css("top", todayForecastSectionClosed);
+            dailyForecastSection.css("top", dailyForecastSectionClosed);
+        }else{
+            currentWeatherSection.css("top", currentWeatherSectionOpened);
+            hourlyForecastSection.css("top", todayForecastSectionClosed);
+            dailyForecastSection.css("top", dailyForecastSectionClosed);
+        }
+    }
+
+    function handleCurrentWeatherPositions(){
+        if(currentWeatherSection.css("top") != currentWeatherSectionOpened){
+            currentWeatherSection.css("top", currentWeatherSectionOpened);
+            hourlyForecastSection.css("top", todayForecastSectionClosed);
+            dailyForecastSection.css("top", dailyForecastSectionClosed);
+        }else{
+            if(hourlyForecastSection.css("top") != todayForecastSectionOpened
+                && dailyForecastSection.css("top") != dailyForecastSectionOpened){
+                currentWeatherSection.css("top", currentWeatherSectionClosed);
+            }else{
+                currentWeatherSection.css("top", currentWeatherSectionOpened);
+                hourlyForecastSection.css("top", todayForecastSectionClosed);
+                dailyForecastSection.css("top", dailyForecastSectionClosed);
+            }
+        }
+    }
+
     function handleHourlyForecastPositions(){
         if(hourlyForecastSection.css("top") != todayForecastSectionOpened){
             hourlyForecastSection.css("top", todayForecastSectionOpened);
+            currentWeatherSection.css("top", currentWeatherSectionOpened);
         }else{
             if(dailyForecastSection.css("top") == dailyForecastSectionOpened){
                 dailyForecastSection.css("top", dailyForecastSectionClosed);
@@ -114,12 +187,17 @@ jQuery(document).ready(function(){
 
     function handleDailyForecastPositions(){
      if(dailyForecastSection.css("top") != dailyForecastSectionOpened){
+            currentWeatherSection.css("top", currentWeatherSectionOpened);
             hourlyForecastSection.css("top", todayForecastSectionOpened);
             dailyForecastSection.css("top", dailyForecastSectionOpened);
         }else{
             hourlyForecastSection.css("top", todayForecastSectionClosed);
             dailyForecastSection.css("top", dailyForecastSectionClosed);
         }
+    }
+    function updateCurrentlySelectedLake(){
+        currentLakeID = changeLakeDropdownList.find(':selected').val();
+        currentLake = changeLakeDropdownList.find(':selected').text();
     }
 
     function setActive(button){
@@ -135,16 +213,16 @@ jQuery(document).ready(function(){
 
     }
 
-    function initWeather(lake, numOfHourlyForecasts){
-        var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lake);
-        var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lake);
-        var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/bad.json/'.concat('192').concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
+    function initWeather(lakeName, lakeID, numOfHourlyForecasts){
+        var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName);
+        var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName);
+        var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
         $.when(getWeatherData(openWeatherNowURL),getWeatherData(openWeatherForecastURL),getWeatherData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
             var weatherNowTable = $('#weatherNowTable');
-            var withSunset = true;
-            updateWeatherTable(weatherNowTable,openWeatherNowData[0], wieWarmData[0], withSunset);
+            var isCurrentWeather = true;
+            updateWeatherTable(weatherNowTable,openWeatherNowData[0], wieWarmData[0], isCurrentWeather);
             updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts);
-            scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', 5, config1);
+            //loadLiquidFillGauge('scoreNowSVG', 5, config1);
         });
     }
 
@@ -165,6 +243,7 @@ jQuery(document).ready(function(){
     }
 
     function createForecastScoreGauge(forecastGaugeMap){
+
         forecastGaugeMap.map(function(element){
             loadLiquidFillGauge(element.id, calculateScore(element.data), config1);
         });
@@ -196,13 +275,13 @@ function getWeatherData(searchQueryAPI){
 
 
 
-    function updateWeatherTable(weatherTable,openWeatherData,wieWarmData,withSunrise){
+    function updateWeatherTable(weatherTable,openWeatherData,wieWarmData,isCurrentWeather){
         weatherTable.empty();
-        weatherTable.append(createWeatherDetailTable(openWeatherData,wieWarmData,withSunrise));
+        weatherTable.append(createWeatherDetailTable(openWeatherData,wieWarmData,isCurrentWeather));
         return true;
     }
 
-    function createWeatherDetailTable(openWeatherData, wieWarmData, withSunrise){
+    function createWeatherDetailTable(openWeatherData, wieWarmData, isCurrentWeather){
         var amountOfRain = "0";
         if(openWeatherData.rain != undefined) {
             console.log(openWeatherData.rain);
@@ -214,15 +293,21 @@ function getWeatherData(searchQueryAPI){
         var table = '<tr>'+
             '<td><i class="wi wi-thermometer"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
             '<td><i class="wi wi-fs wi-strong-wind"></i></td><td>'+openWeatherData.wind.speed.toFixed(1)+' km/h</td></tr>'+
-            '<tr><td><i class="wi wi-fs wi-flood"></i></td> <td>'+wieWarmData.becken.Bodensee.temp+' <i class="wi wi-fs wi-celsius"></i></td>'+
+            '<tr><td><i class="wi wi-fs wi-flood"></i></td> <td>'+wieWarmData[lakePoolIDs[currentLake]].temp+' <i class="wi wi-fs wi-celsius"></i></td>'+
             '<td><i class="wi wi-fs wi-raindrops"></i></td><td>'+amountOfRain+' mm</td></tr>';
 
-        if(withSunrise){
+        if(isCurrentWeather){
+            $('#nowForecastTitle').text("Momentan am "+currentLake);
+            if(scoreNowGauge==null) {
+                scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', calculateScore(openWeatherData), config1);
+            }else {
+                scoreNowGauge.update(calculateScore(openWeatherData));
+            }
             var actualDate = new Date();
             var sunrise = new Date(openWeatherData.sys.sunrise*1000);
             var sunset = new Date(openWeatherData.sys.sunset*1000);
             var isDaytime = actualDate>sunrise && actualDate<sunset;
-            console.log(openWeatherData);
+
             updateThreeCurrentWeatherIcons(openWeatherData.weather[0].id, isDaytime);
             table = table.concat('<tr><td><i class="wi wi-fs wi-sunrise"></i></td><td>'+sunrise.getHours()+':'+('0' + sunrise.getMinutes()).slice(-2)+'</td>'+
                 '<td><i class="wi wi-fs wi-sunset"></i></td><td>'+sunset.getHours()+':'+sunset.getMinutes()+'</td></tr>');
@@ -298,6 +383,7 @@ function getWeatherData(searchQueryAPI){
     }
 
     function updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
+        forecastScoreGauges = [];
         hourlyForecastTable.empty();
         hourlyForecastTable.append(getHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts));
         hideForecastDetails(hourlyForecastSection);
