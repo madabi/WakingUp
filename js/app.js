@@ -36,7 +36,9 @@ jQuery(document).ready(function () {
     profileButton.on('click', function (event) {
         event.preventDefault();
         setActive(this);
-        showRestrictedView(profile, $('#myAds'));
+        getMyAds();
+        showView(profile, $('#myAds'));
+
 
     });
 
@@ -135,10 +137,11 @@ function getMyAds(){
         statusCode: {
             200: function (data) {
                 setToken(data['token']);
+                console.log(data);
                 createAdTable(data);
             },
             401: function () {
-                alert('Ungültige Logindaten');
+                alert('fehler beim empfangen der inserate');
                 showView($('#profile'), $('#login'));
 
             }

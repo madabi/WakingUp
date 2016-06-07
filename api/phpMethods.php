@@ -180,27 +180,59 @@ function updateToken($email, $token, $tokenExpiration){
 function getMyAds($app){
     $token = $app->request->headers->get('Authorization');
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $getUser = 'SELECT * FROM wakingUp.users WHERE token=:token';
-    $getUser = $db->prepare($getUser);
-    $getUser->bindParam(':token', $token);
+    $getUser = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
+    $getUser->bindParam(':token', $token, PDO::PARAM_STR);
     if ($getUser->execute()) {
         $getUser->fetchAll(PDO::FETCH_ASSOC);
-        if ($getUser->rowCount() == 1) {
-            $id = $getUser[1];
-            $ads = 'SELECT * FROM wakingUp.ads WHERE user_id=:user_id';
-            $ads = $db->prepare($ads);
-            $ads->bindParam(':user_id', $id);
-            $ads->execute();
-            $ads->fetchAll(PDO::FETCH_ASSOC);
-            response($app, $ads);
+        foreach($getUser as $user) {
+            $user_email = $user[2];
         }
+            $ads = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
+            $ads->bindParam(':user_email', $user_email);
+            if($ads->execute()) {
+                $ads->fetchAll();
+                $db = null;
+
+
+
+
+
+                response($app, $ads);
+            }else{
+                responseWithStatus($app, 401);
+            }
+    }else {
+        $db = null;
+
         responseWithStatus($app, 401);
     }
-    responseWithStatus($app, 401);
 }
 
 
+function createRandomAd(){
 
+    $title = 'myTitle';
+    $message = 'myMessage blablabla';
+    $email = 'lea@lea.com';
+
+
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, user_email) VALUES (:title, :message, :user_email)');
+    $insertion->bindParam(':title', $title, PDO::PARAM_STR);
+    $insertion->bindParam(':message', $message, PDO::PARAM_STR);
+    $insertion->bindParam(':user_email', $email, PDO::PARAM_STR);
+
+    if ($insertion->execute()) {
+
+        echo('new ad has been created');
+
+    } else {
+        echo('could not write new user into database');
+        //todo: was zurückgeben?
+    }
+
+
+}
 
 
 

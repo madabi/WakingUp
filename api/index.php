@@ -15,6 +15,13 @@ require 'Slim-2.6.0/Slim/Slim.php';
 $app = new \Slim\Slim();
 
 
+/*
+createRandomAd();
+createRandomAd();
+createRandomAd();
+createRandomAd();*/
+
+
 
 /*
  * Neuen Account erstellen
@@ -96,6 +103,3 @@ function middleware(){
 }
 
 
-//todo
-function getMyAds(){
-}
