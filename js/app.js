@@ -210,8 +210,6 @@ function getWeatherData(searchQueryAPI){
                 amountOfRain = openWeatherData.rain[el];
             }
         }
-        var sunrise = new Date(openWeatherData.sys.sunrise*1000);
-        var sunset = new Date(openWeatherData.sys.sunset*1000);
 
         var table = '<tr>'+
             '<td><i class="wi wi-thermometer"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
@@ -220,19 +218,24 @@ function getWeatherData(searchQueryAPI){
             '<td><i class="wi wi-fs wi-raindrops"></i></td><td>'+amountOfRain+' mm</td></tr>';
 
         if(withSunrise){
+            var actualDate = new Date();
+            var sunrise = new Date(openWeatherData.sys.sunrise*1000);
+            var sunset = new Date(openWeatherData.sys.sunset*1000);
+            var isDaytime = actualDate>sunrise && actualDate<sunset;
             console.log(openWeatherData);
-            updateThreeWeatherNowIcons(openWeatherData.weather[0].id);
+            updateThreeCurrentWeatherIcons(openWeatherData.weather[0].id, isDaytime);
             table = table.concat('<tr><td><i class="wi wi-fs wi-sunrise"></i></td><td>'+sunrise.getHours()+':'+('0' + sunrise.getMinutes()).slice(-2)+'</td>'+
                 '<td><i class="wi wi-fs wi-sunset"></i></td><td>'+sunset.getHours()+':'+sunset.getMinutes()+'</td></tr>');
         }
         return table;
     }
 
-    function updateThreeWeatherNowIcons(openWeatherDataIconID){
+    function updateThreeCurrentWeatherIcons(openWeatherDataIconID, isDaytime){
         weatherNowIconTable.empty();
-        weatherNowIconTable.append('<tr><td><i class="wi wi-fs wi-owm-'+openWeatherDataIconID+'"></i></td>'+
-            '<td><i class="wi wi-fs wi-owm-'+openWeatherDataIconID+'"></i></td>'+
-            '<td><i class="wi wi-fs wi-owm-'+openWeatherDataIconID+'"></i></td></tr>');
+        var weatherIconPrefix = isDaytime ? "wi-owm-day-" : "wi-owm-night-";
+        weatherNowIconTable.append('<tr><td><i class="wi wi-fs '+weatherIconPrefix+openWeatherDataIconID+'"></i></td>'+
+            '<td><i class="wi wi-fs '+weatherIconPrefix+openWeatherDataIconID+'"></i></td>'+
+            '<td><i class="wi wi-fs '+weatherIconPrefix+openWeatherDataIconID+'"></i></td></tr>');
     }
 
     function getHourlyForecastOverview(openWeatherData,wieWarmData,numOfHourlyForecasts){
@@ -244,9 +247,10 @@ function getWeatherData(searchQueryAPI){
         {
             var ScoreGaugeID = ("hourlyScore"+i);
             hoursOfForecast = (new Date(openWeatherData.list[i].dt*1000)).getHours();
+            var weatherIconPrefix = hoursOfForecast<22 && hoursOfForecast> 6 ? "wi-owm-day-" : "wi-owm-night-";
             hourlyForecastTable = hourlyForecastTable.concat('<tr>' +
                 '<td><i class="wi wi-fs wi-time-'+(hoursOfForecast>12 ? hoursOfForecast-12 : hoursOfForecast)+'"></i></td><td>' + hoursOfForecast + ' Uhr</td>' +
-                '<td><i class="wi wi-owm-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+ScoreGaugeID+'" width="40" height="40"></svg></td></tr>');
+                '<td><i class="wi '+weatherIconPrefix+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+ScoreGaugeID+'" width="40" height="40"></svg></td></tr>');
             console.log(i);
 
             hourlyForecastTable+=(createWeatherDetailTable(openWeatherData.list[i],wieWarmData,false));
@@ -278,7 +282,7 @@ function getWeatherData(searchQueryAPI){
 
                 dailyForecastTable = dailyForecastTable.concat('<tr>' +
                     '<td><i class="wi wi-fs wi-time-2"></i></td><td>' + formattedDate + '</td>' +
-                    '<td><i class="wi wi-owm-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+scoreGaugeID+'" width="40" height="40"></svg></td></tr>');
+                    '<td><i class="wi wi-owm-day-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+scoreGaugeID+'" width="40" height="40"></svg></td></tr>');
 
 
                 dailyForecastTable += (createWeatherDetailTable(openWeatherData.list[i], wieWarmData, false));
