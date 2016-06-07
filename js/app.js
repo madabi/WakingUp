@@ -337,19 +337,20 @@ function getOpenWeatherData(searchQueryAPI){
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
+            crossDomain: true,
             data: JSON.stringify({
                 "lake": $('#select_insert :selected').text(),
                 "date": $('#datepicker_insert').val(),
                 "title": $('#title_insert').val(),
                 "message": $('#addContent').val()
             }),
-
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus, errorThrown);
-                console.log('insert add fails')
-            },
-            success: function (data) {
-                //TODO
+            statusCode: {
+                200: function () {
+                    alert('Ihr Inserat wurde erstellt');
+                },
+                401: function () {
+                    alert("Inserat konnte nicht erstellt werden");
+                }
             }
         });
     }
