@@ -95,7 +95,7 @@ jQuery(document).ready(function(){
     
     insertAddButton.on('click', function(){
         console.log('Lake: '+ $('#select_insert :selected').text());
-        console.log('Date: ' + $('#datepicker_insert').val());
+        console.log('Date: ' + $('#datepicker_insert').val().replace(/\//g,"-"));
         console.log('Title: ' + $('#title_insert').val());
         console.log('Message: ' + $('#addContent').val());
         insertAdd();
@@ -327,6 +327,7 @@ function getOpenWeatherData(searchQueryAPI){
     //This function inserts a new add
     function insertAdd(){
         var url = 'http://localhost:8080/webec/wakingUp/insert';
+        //var date = $('#datepicker_insert').val().replace(/\//g, "-");
         $.ajax({
             url: url,
             type: 'POST',
