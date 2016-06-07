@@ -177,6 +177,39 @@ function updateToken($email, $token, $tokenExpiration){
 
 }
 
+function getMyAds($app){
+    $token = $app->request->headers->get('Authorization');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $getUser = 'SELECT * FROM wakingUp.users WHERE token=:token';
+    $getUser = $db->prepare($getUser);
+    $getUser->bindParam(':token', $token);
+    if ($getUser->execute()) {
+        $getUser->fetchAll(PDO::FETCH_ASSOC);
+        if ($getUser->rowCount() == 1) {
+            $id = $getUser[1];
+            $ads = 'SELECT * FROM wakingUp.ads WHERE user_id=:user_id';
+            $ads = $db->prepare($ads);
+            $ads->bindParam(':user_id', $id);
+            $ads->execute();
+            $ads->fetchAll(PDO::FETCH_ASSOC);
+            response($app, $ads);
+        }
+        responseWithStatus($app, 401);
+    }
+    responseWithStatus($app, 401);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 function getUserById($id)

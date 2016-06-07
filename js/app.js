@@ -120,6 +120,41 @@ function showRestrictedView(section, view) {
 }
 
 
+function getMyAds(){
+    var tokenString = localStorage.getItem('wakingUp_token');
+
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/ads';
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {
+            Authorization: tokenString
+        },
+        dataType: 'json',
+        contentType: 'application/json',
+        statusCode: {
+            200: function (data) {
+                setToken(data['token']);
+                createAdTable(data);
+            },
+            401: function () {
+                alert('Ungültige Logindaten');
+                showView($('#profile'), $('#login'));
+
+            }
+        }
+
+    });
+
+}
+
+function createAdTable(data){
+
+    // für alle ads in data eine neue tabellenreihe zum dom hinzufügen.
+
+}
+
+
 
 
 function tryLoginAuth() {

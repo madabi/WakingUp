@@ -49,7 +49,7 @@ $app->put('/users/logout', function () use ($app){
  */
 $app->get('/users/ads', 'middleware', function() use ($app){
     //todo
-    getMyAds();
+    getMyAds($app);
 });
 
 
