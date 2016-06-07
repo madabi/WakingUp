@@ -190,14 +190,16 @@ function getMyAds($app){
             $ads = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
             $ads->bindParam(':user_email', $user_email);
             if($ads->execute()) {
-                $ads->fetchAll();
+                $ads->fetchAll(PDO::FETCH_ASSOC);
                 $db = null;
+                $return_arr = array();
+                $index = 0;
+                foreach($ads as $ad) {
+                    $return_arr[$index] = $ad;
+                    $index++;
+                }
 
-
-
-
-
-                response($app, $ads);
+                response($app, $return_arr);
             }else{
                 responseWithStatus($app, 401);
             }

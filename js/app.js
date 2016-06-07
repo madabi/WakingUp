@@ -36,8 +36,8 @@ jQuery(document).ready(function () {
     profileButton.on('click', function (event) {
         event.preventDefault();
         setActive(this);
+        showRestrictedView(profile, $('#myAds'));
         getMyAds();
-        showView(profile, $('#myAds'));
 
 
     });
@@ -247,25 +247,24 @@ function verifyToken() {
 
 
     var tokenString = localStorage.getItem('wakingUp_token');
-    if (tokenString) {
-        var verified = $.ajax({
+    if (tokenString && tokenString!='undefined') {
+         var verified = $.ajax({
             url: "http://localhost:8080/webec/wakingUp/api/users/auth",
             method: "GET",
             headers: {
                 Authorization: tokenString
             },
             success: function () {
-                console.log();
-                return true;
+                verified=true;
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
                     window.localStorage.removeItem('wakingUp_token');
-                return false;
+                verified=false;
             }
-
         });
-    return verified;
+        return verified;
+
     } else {
         return false;
     }
