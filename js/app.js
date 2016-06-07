@@ -308,7 +308,9 @@ function getOpenWeatherData(searchQueryAPI){
             'slow');
     }
     
-    //This function gets all the lakes from the database
+    /*
+    * Gets all the lakes from the database
+    */
     function getAllLakes(){
         //TODO Dies ist nur ein DummyJSON
         var lake = '{"lakes" : [' + 
@@ -324,7 +326,9 @@ function getOpenWeatherData(searchQueryAPI){
         return dummy;
     }
     
-    //This function inserts a new add
+    /*
+    * Sends a POST-Request with input to insert an ad
+    */
     function insertAdd(){
         var url = 'http://localhost:8080/webec/wakingUp/insert';
         //var date = $('#datepicker_insert').val().replace(/\//g, "-");
@@ -350,7 +354,9 @@ function getOpenWeatherData(searchQueryAPI){
         });
     }
     
-    //This function starts a search add by sendig the inputs
+    /*
+    * Sends a GET-Request with search filter inputs
+    */
     function searchAdd(){
         var url = 'http://localhost:8080/webec/wakingUp/search';
         $.ajax({
@@ -375,11 +381,13 @@ function getOpenWeatherData(searchQueryAPI){
         
     }
     
-    //This function shows the results of the search
+    /*
+    * Displays the ads according the search filter
+    */
     function showResults(){
-        
-        //TODO Dies sind nur JSONDummies
+        //Log
         console.log('excecuted showresults');
+        //TODO Dies sind nur JSONDummies
         var dummys = {
             "lake":"Zugersee",
                 "messages":[
@@ -390,19 +398,24 @@ function getOpenWeatherData(searchQueryAPI){
         };
                 
         deleteResults();
-        //$('#ad_search').first().append('<h4 id=\"searchResults\">Resultate für ' + dummys.lake +'</h4');  
+        //Puts the name of the lake in the title
         $('#results').append('<h4 id=\"searchResults\">Resultate für ' + dummys.lake +'</h4');
+        //Iterates through the dummy and displays in the dropdownmenut
         for(i = 0; i<dummys.messages.length; i++){
             var title = dummys.messages[i].title;
             var message = dummys.messages[i].message;
             $('#results').append('<header class=\"messageStart\"><h5> ' + title + '</h5></header><div class=\"content\">'+ dummys.messages[i].message + '<br> ' +dummys.messages[i].contact+'</div>');
         }
+        //Hides content and shows it on click on the title
         $('.content').toggle();
         $('.messageStart').on('click', function(){
             $(this).next().toggle();
         })
     }
     
+    /*
+    * Removes the results of the search 
+    */
     function deleteResults(){
         $('#results').empty();
     }
