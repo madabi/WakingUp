@@ -11,12 +11,16 @@ $app->post('/ads/insert', function() use ($app)
 {
     responseWithStatus($app, 418);
     //insertAd($app);
-})
+});
         
-$app->get('/ads/search', function() use ($app))
+$app->get('/ads/search', function() use ($app)
 {
     searchAds();
-}
+});
 
 $app->run();
+
+
+
 ?>
+

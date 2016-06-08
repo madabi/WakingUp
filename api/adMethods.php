@@ -9,9 +9,10 @@ function getDBConnection($connectionString, $user, $pwd)
         exit('Keine Verbindung: Grund -' . $e->getMessage());
     }
 }
-    
-    
-    
+
+
+
+
 function insertAd($app)
 {
     $ad = getJSONFromBody($app);
