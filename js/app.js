@@ -78,7 +78,7 @@ jQuery(document).ready(function () {
 
     });
 
-    profile.find('#myAds').find('#abmeldeButton').on('click', function (event) {
+    profile.find('#myAds').find('#signOutButton').on('click', function (event) {
         event.preventDefault();
         removeToken();
         showSection(weather);
@@ -213,6 +213,7 @@ function trySignUp() {
     //wenn ja:
 
     var pwd = $('#signUp').find('#pwd-signUp').val();
+    var email = $('#signUp').find('#email-signUp').val();
 
     //todo: pwd hashen
     // var hashedPassword = Sha1.hash(pwd);
@@ -225,14 +226,15 @@ function trySignUp() {
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify({
-            "email": $('#signUp').find('#email-signUp').val(),
+            "email": email,
             "password": pwd
         }),
         statusCode: {
-            200: function () {
+            200: function (data) {
                 //Ok, everything worked as expected
                 alert('Ihr Account wurde erstellt');
-                showView($('#profile'), $('#login'));
+                directLoginAuth(email, pwd);
+                showView($('#profile'), $('#myAds'));
             },
             401: function () {
                 //Our token is either expired, invalid or doesn't exist
@@ -242,6 +244,31 @@ function trySignUp() {
         }
 
     });
+}
+
+function directLoginAuth(email, password){
+    var url = 'http://localhost:8080/webec/wakingUp/api/users/login/'+email +'/' +password;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        statusCode: {
+            200: function (data) {
+                setToken(data['token']);
+                showView($('#profile'), $('#myAds'));
+            },
+            401: function () {
+                alert('Ungültige Logindaten');
+                showView($('#profile'), $('#login'));
+
+            }
+        }
+
+    });
+
+
+
 }
 
 
