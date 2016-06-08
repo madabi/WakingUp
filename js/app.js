@@ -43,7 +43,7 @@ jQuery(document).ready(function () {
 
 
     //profile
-    profile.find('#login').find('#loginButton').on('click', function (event) {
+    $('#loginButton').on('click', function (event) {
         event.preventDefault();
         console.log('loginButton clicked');
         tryLoginAuth();
@@ -51,17 +51,17 @@ jQuery(document).ready(function () {
         //todo: werte im formular zurücksetzen
     });
 
-    profile.find('#login').find('#noAccountYetButton').on('click', function (event) {
+    $('#noAccountYetButton').on('click', function (event) {
         event.preventDefault();
         showView($('#profile'), $('#signUp'));
     });
 
-    profile.find('#login').find('#lostPasswordButton').on('click', function (event) {
+    $('#lostPasswordButton').on('click', function (event) {
         event.preventDefault();
         showView(profile, profile.find('#lostPasswordInformation'));
     });
 
-    profile.find('#signUp').find('button').on('click', function (event) {
+    $('#signUpButton').on('click', function (event) {
         event.preventDefault();
         //todo: input validation
 

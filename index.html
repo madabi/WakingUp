@@ -45,16 +45,10 @@
         <button id="lostPasswordButton">Passwort vergessen?</button>
     </section>
 
-    <table id="myAds">
-        <tr>
-            <td>
-                <button id="abmeldeButton">Abmelden</button>
-            </td>
-        </tr>
-        <tr>
-            <td><h3>Meine Inserate</h3></td>
-        </tr>
-
+    <section id="myAds">
+     <h3>Meine Inserate</h3>
+        <button id="signOutButton">Abmelden</button>
+    <table>
         <!-- Die Tabelle weiter dynamisch erzeugen -->
         <tr>
             <td><p>Lorem Ipsum bla bla</p></td>
@@ -65,25 +59,25 @@
             <td><span class="glyphicon glyphicon-trash"></span></td>
         </tr>
     </table>
+    </section>
 
-    <form id="signUp">
+    <section id="signUp">
         <h3>Account erstellen</h3>
+    <form>
         <label for="email-signUp">Email-Adresse</label>
-        <input type="email" id="email-signUp">
+        <input type="email" class="form-control" id="email-signUp">
         <label for="pwd-signUp">Passwort:</label>
-        <input type="password" id="pwd-signUp">
-        <button type="submit">Account erstellen</button>
+        <input type="password" class="form-control" id="pwd-signUp">
+        <button type="submit" id="signUpButton" class="btn btn-default">Account erstellen</button>
     </form>
+    </section>
+    <section id="lostPasswordInformation">
+        <h3>Passwort vergessen?</h3>
+        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+        <p>Schreiben Sie eine Mail an:</p>
+        <a href="mailto:info@wakingUp.ch"> info@wakingUp.ch</a>
 
-    <table id="lostPasswordInformation">
-        <tr>
-            <td><h3>Passwort vergessen?</h3></td>
-        </tr>
-        <tr>
-            <td><p>Schreiben Sie eine Mail an support@wakingUp.ch</p></td>
-        </tr>
-    </table>
-
+    </section>
 </section>
 
 <nav>
@@ -99,5 +93,6 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
       integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link type="text/css" href="css/style.css" rel="stylesheet">
+<link type="text/css" href="css/profil.css" rel="stylesheet">
 </body>
 </html>

@@ -1,0 +1,85 @@
+
+#profile{
+    height:100%;
+    font-size:1em;
+    background-color: #FFCF95;
+    width:100%;
+}
+
+#profile h3 {
+    margin-top: 0px;
+    padding-top:20px;
+    text-align:center;
+}
+
+#profile label{
+    margin-top:15px;
+}
+
+
+#login{
+    width: 80%;
+    margin-left: auto;
+    margin-right:auto;
+}
+
+#profile form button {
+    margin-top:10px;
+    float:right;
+}
+
+
+#login > button{
+    margin-top:80px;
+    border-style: none;
+    background-color: transparent;
+         }
+
+#login > button:last-child{
+    margin-top:10px;
+}
+
+#signUp {
+    width: 80%;
+    margin-left: auto;
+    margin-right:auto;
+
+}
+
+
+#signUp button {
+    margin-top: 30px;
+    display: block;
+}
+
+#lostPasswordInformation {
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+}
+#lostPasswordInformation span {
+    font-size: 140px;
+    color:#FFC262;
+}
+
+#myAds{
+    width: 80%;
+    margin-left: auto;
+    margin-right:auto;
+}
+
+#myAds table {
+    text-align:left;
+    width:100%;
+}
+
+#myAds button{
+    text-decoration: underline;
+    border-style:none;
+    background-color: transparent;
+    display:block;
+    margin-top:10px;
+    margin-bottom:20px;
+    float:right;
+}
