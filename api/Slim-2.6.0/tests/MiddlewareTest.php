@@ -7,7 +7,6 @@
  * @link        http://www.slimframework.com
  * @license     http://www.slimframework.com/license
  * @version     2.4.2
- * @package     Slim
  *
  * MIT LICENSE
  *
@@ -30,46 +29,51 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace Slim;
 
-/**
- * Log Writer
- *
- * This class is used by Slim_Log to write log messages to a valid, writable
- * resource handle (e.g. a file or STDERR).
- *
- * @package Slim
- * @author  Josh Lockhart
- * @since   1.6.0
- */
-class LogWriter
+class MyMiddleware extends \Slim\Middleware
 {
-    /**
-     * @var resource
-     */
-    protected $resource;
+    public function call() {}
+}
 
-    /**
-     * Constructor
-     * @param  resource                  $resource
-     * @throws \InvalidArgumentException If invalid resource
-     */
-    public function __construct($resource)
+class MiddlewareTest extends PHPUnit_Framework_TestCase
+{
+    public function testSetApplication()
     {
-        if (!is_resource($resource)) {
-            throw new \InvalidArgumentException('Cannot create LogWriter. Invalid resource handle.');
-        }
-        $this->resource = $resource;
+        $app = new stdClass();
+        $mw = new MyMiddleware();
+        $mw->setApplication($app);
+
+        $this->assertAttributeSame($app, 'app', $mw);
     }
 
-    /**
-     * Write message
-     * @param  mixed     $message
-     * @param  int       $level
-     * @return int|bool
-     */
-    public function write($message, $level = null)
+    public function testGetApplication()
     {
-        return fwrite($this->resource, (string) $message . PHP_EOL);
+        $app = new stdClass();
+        $mw = new MyMiddleware();
+        $property = new \ReflectionProperty($mw, 'app');
+        $property->setAccessible(true);
+        $property->setValue($mw, $app);
+
+        $this->assertSame($app, $mw->getApplication());
+    }
+
+    public function testSetNextMiddleware()
+    {
+        $mw1 = new MyMiddleware();
+        $mw2 = new MyMiddleware();
+        $mw1->setNextMiddleware($mw2);
+
+        $this->assertAttributeSame($mw2, 'next', $mw1);
+    }
+
+    public function testGetNextMiddleware()
+    {
+        $mw1 = new MyMiddleware();
+        $mw2 = new MyMiddleware();
+        $property = new \ReflectionProperty($mw1, 'next');
+        $property->setAccessible(true);
+        $property->setValue($mw1, $mw2);
+
+        $this->assertSame($mw2, $mw1->getNextMiddleware());
     }
 }

@@ -6,7 +6,7 @@
  * @copyright   2011 Josh Lockhart
  * @link        http://www.slimframework.com
  * @license     http://www.slimframework.com/license
- * @version     2.6.1
+ * @version     2.4.2
  * @package     Slim
  *
  * MIT LICENSE
@@ -64,10 +64,10 @@ class Environment implements \ArrayAccess, \IteratorAggregate
      * Get environment instance (singleton)
      *
      * This creates and/or returns an environment instance (singleton)
-     * derived from $_SERVER variables. You may override the global api
+     * derived from $_SERVER variables. You may override the global server
      * variables by using `\Slim\Environment::mock()` instead.
      *
-     * @param  bool             $refresh Refresh properties using global api variables?
+     * @param  bool             $refresh Refresh properties using global server variables?
      * @return \Slim\Environment
      */
     public static function getInstance($refresh = false)
@@ -111,7 +111,7 @@ class Environment implements \ArrayAccess, \IteratorAggregate
     /**
      * Constructor (private access)
      *
-     * @param  array|null $settings If present, these are used instead of global api variables
+     * @param  array|null $settings If present, these are used instead of global server variables
      */
     private function __construct($settings = null)
     {
@@ -150,10 +150,10 @@ class Environment implements \ArrayAccess, \IteratorAggregate
             // Query string (without leading "?")
             $env['QUERY_STRING'] = $queryString;
 
-            //Name of api host that is running the script
+            //Name of server host that is running the script
             $env['SERVER_NAME'] = $_SERVER['SERVER_NAME'];
 
-            //Number of api port that is running the script
+            //Number of server port that is running the script
             //Fixes: https://github.com/slimphp/Slim/issues/962
             $env['SERVER_PORT'] = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : 80;
 

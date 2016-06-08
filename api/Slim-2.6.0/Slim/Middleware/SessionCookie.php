@@ -6,7 +6,7 @@
  * @copyright   2011 Josh Lockhart
  * @link        http://www.slimframework.com
  * @license     http://www.slimframework.com/license
- * @version     2.6.1
+ * @version     2.4.2
  * @package     Slim
  *
  * MIT LICENSE
@@ -44,7 +44,7 @@ namespace Slim\Middleware;
  * in any format, encrypted (with cookies.encrypt) or not. If you
  * need to store sensitive user information in a session, you should
  * rely on PHP's native session implementation, or use other middleware
- * to store session data in a database or alternative api-side cache.
+ * to store session data in a database or alternative server-side cache.
  *
  * Because this class stores serialized session data in an HTTP cookie,
  * you are inherently limited to 4 Kb. If you attempt to store
@@ -119,10 +119,15 @@ class SessionCookie extends \Slim\Middleware
         if (session_id() === '') {
             session_start();
         }
+
         $value = $this->app->getCookie($this->settings['name']);
+
         if ($value) {
-            $value = json_decode($value, true);
-            $_SESSION = is_array($value) ? $value : array();
+            try {
+                $_SESSION = json_decode($value, true);
+            } catch (\Exception $e) {
+                $this->app->getLog()->error('Error unserializing session cookie value! ' . $e->getMessage());
+            }
         } else {
             $_SESSION = array();
         }

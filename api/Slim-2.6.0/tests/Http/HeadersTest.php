@@ -7,7 +7,6 @@
  * @link        http://www.slimframework.com
  * @license     http://www.slimframework.com/license
  * @version     2.4.2
- * @package     Slim
  *
  * MIT LICENSE
  *
@@ -30,46 +29,31 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace Slim;
 
-/**
- * Log Writer
- *
- * This class is used by Slim_Log to write log messages to a valid, writable
- * resource handle (e.g. a file or STDERR).
- *
- * @package Slim
- * @author  Josh Lockhart
- * @since   1.6.0
- */
-class LogWriter
+class HeadersTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var resource
-     */
-    protected $resource;
-
-    /**
-     * Constructor
-     * @param  resource                  $resource
-     * @throws \InvalidArgumentException If invalid resource
-     */
-    public function __construct($resource)
+    public function testNormalizesKey()
     {
-        if (!is_resource($resource)) {
-            throw new \InvalidArgumentException('Cannot create LogWriter. Invalid resource handle.');
-        }
-        $this->resource = $resource;
+        $h = new \Slim\Http\Headers();
+        $h->set('Http_Content_Type', 'text/html');
+        $prop = new \ReflectionProperty($h, 'data');
+        $prop->setAccessible(true);
+        $this->assertArrayHasKey('Content-Type', $prop->getValue($h));
     }
 
-    /**
-     * Write message
-     * @param  mixed     $message
-     * @param  int       $level
-     * @return int|bool
-     */
-    public function write($message, $level = null)
+    public function testExtractHeaders()
     {
-        return fwrite($this->resource, (string) $message . PHP_EOL);
+        $test = array(
+            'HTTP_HOST' => 'foo.com',
+            'SERVER_NAME' => 'foo',
+            'CONTENT_TYPE' => 'text/html',
+            'X_FORWARDED_FOR' => '127.0.0.1'
+        );
+        $results = \Slim\Http\Headers::extract($test);
+        $this->assertEquals(array(
+            'HTTP_HOST' => 'foo.com',
+            'CONTENT_TYPE' => 'text/html',
+            'X_FORWARDED_FOR' => '127.0.0.1'
+        ), $results);
     }
 }

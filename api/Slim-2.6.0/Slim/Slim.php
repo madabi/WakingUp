@@ -6,7 +6,7 @@
  * @copyright   2011 Josh Lockhart
  * @link        http://www.slimframework.com
  * @license     http://www.slimframework.com/license
- * @version     2.6.1
+ * @version     2.4.2
  * @package     Slim
  *
  * MIT LICENSE
@@ -54,7 +54,7 @@ class Slim
     /**
      * @const string
      */
-    const VERSION = '2.6.1';
+    const VERSION = '2.4.2';
 
     /**
      * @var \Slim\Helper\Set
@@ -830,7 +830,7 @@ class Slim
      *
      * The `Expires` header tells the HTTP client the time at which
      * the current resource should be considered stale. At that time the HTTP
-     * client will send a conditional GET request to the api; the api
+     * client will send a conditional GET request to the server; the server
      * may return a 200 OK if the resource has changed, else a 304 Not Modified
      * if the resource has not changed. The `Expires` header should be used in
      * conjunction with the `etag()` or `lastModified()` methods above.
@@ -858,7 +858,7 @@ class Slim
      * @param int|string $time      The duration of the cookie;
      *                                  If integer, should be UNIX timestamp;
      *                                  If string, converted to UNIX timestamp with `strtotime`;
-     * @param string     $path      The path on the api in which the cookie will be available on
+     * @param string     $path      The path on the server in which the cookie will be available on
      * @param string     $domain    The domain that the cookie is available to
      * @param bool       $secure    Indicates that the cookie should only be transmitted over a secure
      *                              HTTPS connection to/from the client
@@ -924,7 +924,7 @@ class Slim
      * @param mixed     $expires    The duration of the cookie;
      *                                  If integer, should be UNIX timestamp;
      *                                  If string, converted to UNIX timestamp with `strtotime`;
-     * @param string    $path       The path on the api in which the cookie will be available on
+     * @param string    $path       The path on the server in which the cookie will be available on
      * @param string    $domain     The domain that the cookie is available to
      * @param bool      $secure     Indicates that the cookie should only be transmitted over a secure
      *                              HTTPS connection from the client
@@ -963,7 +963,7 @@ class Slim
      * default Cookie setting values (set during Slim::init) will be used instead.
      *
      * @param string    $name       The cookie name
-     * @param string    $path       The path on the api in which the cookie will be available on
+     * @param string    $path       The path on the server in which the cookie will be available on
      * @param string    $domain     The domain that the cookie is available to
      * @param bool      $secure     Indicates that the cookie should only be transmitted over a secure
      *                              HTTPS connection from the client
@@ -1027,7 +1027,7 @@ class Slim
      *
      * Stop the application and immediately send the response with a
      * specific status and body to the HTTP client. This may send any
-     * type of response: info, success, redirect, client error, or api error.
+     * type of response: info, success, redirect, client error, or server error.
      * If you need to render a template AND customize the response status,
      * use the application's `render()` method instead.
      *
@@ -1104,12 +1104,12 @@ class Slim
         $this->response->redirect($url, $status);
         $this->halt($status);
     }
-
+    
     /**
      * RedirectTo
-     *
+     * 
      * Redirects to a specific named route
-     *
+     * 
      * @param string    $route      The route name
      * @param array     $params     Associative array of URL parameters and replacement values
      */
