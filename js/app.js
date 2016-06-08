@@ -36,7 +36,6 @@ jQuery(document).ready(function () {
     profileButton.on('click', function (event) {
         event.preventDefault();
         setActive(this);
-        showRestrictedView(profile, $('#myAds'));
         getMyAds();
 
 
@@ -124,30 +123,39 @@ function showRestrictedView(section, view) {
 
 function getMyAds(){
     var tokenString = localStorage.getItem('wakingUp_token');
+    if(tokenString!=null) {
+        tokenString = tokenString.substr(0,16);
 
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/ads';
-    $.ajax({
-        url: url,
-        type: 'GET',
-        headers: {
-            Authorization: tokenString
-        },
-        dataType: 'json',
-        contentType: 'application/json',
-        statusCode: {
-            200: function (data) {
-                setToken(data['token']);
-                console.log(data);
-                createAdTable(data);
-            },
-            401: function () {
-                alert('fehler beim empfangen der inserate');
-                showView($('#profile'), $('#login'));
+        var url = 'http://localhost:8080/webec/wakingUp/api/users/ads/' + tokenString;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            contentType: 'application/json',
+            statusCode: {
+                200: function (data) {
+                    console.log(data);
+                    createAdTable(data);
+                    showView($('#profile'), $('#myAds'));
+                },
+                401: function () {
+                    removeToken();
+                    alert('fehler bei authentifizierung');
+                    showView($('#profile'), $('#login'));
+
+                },
+                418: function () {
+                    alert('fehler beim holen der inserate');
+                }
 
             }
-        }
 
-    });
+        });
+    }else{
+        removeToken();
+        alert('fehler bei authentifizierung');
+        showView($('#profile'), $('#login'));
+    }
 
 }
 
@@ -247,19 +255,18 @@ function verifyToken() {
 
 
     var tokenString = localStorage.getItem('wakingUp_token');
-    if (tokenString && tokenString!='undefined') {
+    if (tokenString) {
+        tokenString = tokenString.substr(0,16);
          var verified = $.ajax({
-            url: "http://localhost:8080/webec/wakingUp/api/users/auth",
-            method: "GET",
-            headers: {
-                Authorization: tokenString
-            },
+            url: 'http://localhost:8080/webec/wakingUp/api/users/auth/'+tokenString,
+            method: 'GET',
+
             success: function () {
                 verified=true;
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
-                    window.localStorage.removeItem('wakingUp_token');
+                window.localStorage.removeItem('wakingUp_token');
                 verified=false;
             }
         });

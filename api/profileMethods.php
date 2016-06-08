@@ -71,7 +71,7 @@ function SignUp($app)
 
 
 /**
- * Eine Utility Funktion für die Ausgabe zum aufrufenden Client.
+ * Utility-Funktionen für die Ausgabe zum aufrufenden Client.
  *
  */
 function response($app, $result)
@@ -105,31 +105,36 @@ function getJSONFromBody($app)
 
 
 
-
+/**
+ * Loginfunktion. Überprüft email & Passwort.
+ * Setzt ein Token in der Datenbank und schickt dasselbe Token zurück
+ *
+ *
+ * @param $app
+ * @param $email
+ * @param $password
+ */
 function loginAuth($app, $email, $password) {
 
-    if (validateUser($app, $email, $password)) { //implement your own validation method against your db
-
-        $return['token'] = bin2hex(openssl_random_pseudo_bytes(16)); //generate a random token
-
-        $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));//the expiration date will be in one hour from the current moment
-
-        $tokenSet = updateToken($email, $return['token'], $tokenExpiration); //This function can update the token on the database and set the expiration date-time, implement your own
-
+    if (validateUser($app, $email, $password)) {
+        $return['token'] = bin2hex(openssl_random_pseudo_bytes(16));
+        $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+        $tokenSet = setToken($email, $return['token'], $tokenExpiration);
         if($tokenSet){responseTokenWithStatus($app, $return, 200);
         }else {
             responseWithStatus($app, 401);
         }
-
     }else {
         responseWithStatus($app, 401);
     }
-
 }
 
 
 
 /**
+ *
+ * Hilfsmethode für loginAuth()
+ *
  * @param $app
  * @param $user
  * @return bool
@@ -157,7 +162,36 @@ function validateUser($app, $email, $password){
 }
 
 
-function updateToken($email, $token, $tokenExpiration){
+/**
+ * Erneuert das Verfalldatum des Tokens in der Datenbank oder setzt ein neues Token.
+ *
+ *
+ * @param $email
+ * @param $token
+ * @param $tokenExpiration
+ * @return bool
+ */
+function updateToken($email, $tokenExpiration){
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $update = $db->prepare('UPDATE wakingUp.users SET token_expire=:token_expire WHERE email=:email');
+    $update->bindParam(':token_expire', $tokenExpiration);
+    $update->bindParam(':email', $email, PDO::PARAM_STR);
+
+    if ($update->execute()) {
+        $db = null;
+
+        return true;
+
+    } else {
+        $db = null;
+
+        return false;
+    }
+
+}
+
+
+function setToken($email, $token, $tokenExpiration){
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $update = $db->prepare('UPDATE wakingUp.users SET token=:token, token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token', $token);
@@ -177,8 +211,15 @@ function updateToken($email, $token, $tokenExpiration){
 
 }
 
-function getMyAds($app){
-    $token = $app->request->headers->get('Authorization');
+
+/**
+ * Gibt die Inserate eines bestimmten (zu $token gehörenden) Users zurück
+ *
+ *
+ * @param $app
+ * @param $token
+ */
+function getMyAds($app, $token){
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $getUser = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
     $getUser->bindParam(':token', $token, PDO::PARAM_STR);
@@ -201,22 +242,24 @@ function getMyAds($app){
 
                 response($app, $return_arr);
             }else{
-                responseWithStatus($app, 401);
+                responseWithStatus($app, 418);
             }
     }else {
         $db = null;
 
-        responseWithStatus($app, 401);
+        responseWithStatus($app, 418);
     }
 }
 
 
+/**
+ * Erstellt Test-Inserate. Wird noch entfernt
+ */
 function createRandomAd(){
 
     $title = 'myTitle';
     $message = 'myMessage blablabla';
     $email = 'lea@lea.com';
-
 
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, user_email) VALUES (:title, :message, :user_email)');
@@ -233,11 +276,50 @@ function createRandomAd(){
         //todo: was zurückgeben?
     }
 
+    $db = null;
 
 }
 
 
+/**
+ * Überprüft Gültigkeit des übergebenen Tokens
+ *
+ *
+ * @param $app
+ * @param $tokenToVerify
+ * @return bool
+ */
+function verifyToken($app, $tokenToVerify){
 
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
+    $selection = $db->prepare($selection);
+    $selection->bindParam(':token', $tokenToVerify);
+    if ($selection->execute()) {
+        $selection->fetchAll(PDO::FETCH_ASSOC);
+        if ($selection->rowCount() > 0) {
+            $token_expire = date('Y-m-d H:i:s', strtotime('now'));
+            $myEmail = '';
+            foreach($selection as $user){
+               $token_expire = $user['token_expire'];
+                $myEmail = $user['email'];
+            }
+            $dateNow = date('Y-m-d H:i:s', strtotime('now'));
+            if(strtotime($token_expire) > strtotime($dateNow)){
+                $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+                updateToken($myEmail, $newTokenExpiration);
+                $db = null;
+                return true;
+            }
+
+        }
+    } else {
+        $app->halt(500, "Error in quering database.");
+    }
+    $db = null;
+    return false;
+
+}
 
 
 

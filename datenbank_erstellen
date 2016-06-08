@@ -1,28 +1,30 @@
-CREATE DATABASE wakingup;
+CREATE DATABASE wakingUp;
 
-USE wakingup;
+USE wakingUp;
 
 CREATE TABLE IF NOT EXISTS users (
   id INT NOT NULL AUTO_INCREMENT,
   email VARCHAR(45) NOT NULL,
   password VARCHAR(45) NOT NULL,
+  token VARCHAR(16),
+  token_expire DATETIME,
   PRIMARY KEY (id)
 );
 
-CREATE TABLE sea (
+CREATE TABLE lakes (
     id INT NOT NULL AUTO_INCREMENT,
-    seaname VARCHAR(45) NOT NULL,
+    lake_name VARCHAR(45) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE adds (
+CREATE TABLE ads (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(60),
     message VARCHAR(200),
     date VARCHAR(20),
-    sea_id INT,
+    lake_id INT,
     user_id INT,
-    FOREIGN KEY (sea_id) REFERENCES sea(id),
+    FOREIGN KEY (lake_id) REFERENCES lake(id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     PRIMARY KEY (id)
 );
@@ -35,8 +37,8 @@ VALUES
 ("sandy","1234"),
 ("roxane","1234");
 
-INSERT INTO sea
-(seaname)
+INSERT INTO lakes
+(lake_name)
 VALUES
 ("Vierwaldstättersee"),
 ("Murtensee"),
@@ -44,8 +46,8 @@ VALUES
 ("Bodensee"),
 ("Bielersee");
 
-INSERT INTO adds 
-(title, message, date, sea_id, user_id)
+INSERT INTO ads
+(title, message, date, lake_id, user_id)
 VALUES
 ("Titel 1", "Nachricht Bielersee 1","06/06/2016",5,1),
 ("Titel 2", "Nachricht Bielersee 2","12/04/2016",5,2),

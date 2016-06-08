@@ -6,60 +6,13 @@
  * Time: 10:35
  */
 
-require 'phpMethods.php';
+require 'profileMethods.php';
 
 require 'Slim-2.6.0/Slim/Slim.php';
 
 \Slim\Slim::registerAutoloader();
 
-
-
-function middleware(){
-    $app = \Slim\Slim::getInstance();
-    $tokenToVerify = $app->request->headers->get('Authorization');
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $verifyToken = 'SELECT * FROM wakingUp.users WHERE token=:token';
-    $verifyToken = $db->prepare($verifyToken);
-    $verifyToken->bindParam(':token', $tokenToVerify);
-    if ($verifyToken->execute()) {
-        $verifyToken->fetchAll(PDO::FETCH_ASSOC);
-        if ($verifyToken->rowCount() == 1) {
-            $token_expire = date('Y-m-d H:i:s', strtotime('now'));
-            $myEmail = '';
-            foreach($verifyToken as $user){
-                $token_expire = $user[5];
-                $myEmail = $user[2];
-            }
-            $dateNow = date('Y-m-d H:i:s', strtotime('now'));
-            if(strtotime($token_expire) > strtotime($dateNow)){
-                $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
-                updateToken($myEmail, $tokenToVerify, $newTokenExpiration);
-
-            }else{
-                responseWithStatus($app, 401);
-            }
-        }
-    } else {
-        $app->halt(500, "Error in quering database.");
-    }
-
-
-
-}
-
-
-
-
-
-
 $app = new \Slim\Slim();
-
-
-/*
-createRandomAd();
-createRandomAd();
-createRandomAd();
-createRandomAd();*/
 
 
 
@@ -74,10 +27,6 @@ $app->post('/users/signup', function () use ($app){
 /*
  * User einloggen
  */
-/*$app->get('/users/login/:email/:password', function () use ($app){
-   login($app);
-});*/
-
 $app->get('/users/login/:email/:password', function ($email, $password) use ($app){
     loginAuth($app, $email, $password);
 });
@@ -92,15 +41,29 @@ $app->put('/users/logout', function () use ($app){
 
 
 /*
- * Inserate eines Users
+ * Inserate eines bestimmten Users
  */
-$app->get('/users/ads', 'middleware', function() use ($app){
-    getMyAds($app);
+$app->get('/users/ads/:token', function($token) use ($app){
+
+    if(verifyToken($app, $token)){
+        getMyAds($app, $token);
+    }else{
+        responseWithStatus($app, 401);
+    }
 });
 
 
-$app->get('/users/auth', 'middleware', function() use ($app) {
-    responseWithStatus($app, 200);
+/*
+ * Überprüfen des Tokens/ der Authentifizierung des Users. Wird ev. gar nicht benötigt, je nach Funktionen im
+ * Javascript
+ *
+ */
+$app->get('/users/auth/:token', function($token) use ($app) {
+    if(verifyToken($app, $token)) {
+        responseWithStatus($app, 200);
+    }else{
+        responseWithStatus($app, 401);
+    }
 });
 
 $app->run();
