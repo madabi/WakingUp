@@ -117,7 +117,8 @@ function getJSONFromBody($app)
 function loginAuth($app, $email, $password) {
 
     if (validateUser($app, $email, $password)) {
-        $return['token'] = bin2hex(openssl_random_pseudo_bytes(16));
+        $longToken = bin2hex(openssl_random_pseudo_bytes(16));
+        $return['token'] = substr($longToken, 0, 16);
         $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
         $tokenSet = setToken($email, $return['token'], $tokenExpiration);
         if($tokenSet){responseTokenWithStatus($app, $return, 200);
@@ -290,13 +291,12 @@ function createRandomAd(){
  * @return bool
  */
 function verifyToken($app, $tokenToVerify){
-
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
     $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
     if ($selection->execute()) {
-        $selection->fetchAll(PDO::FETCH_ASSOC);
+        $selection->fetchall(PDO::FETCH_ASSOC);
         if ($selection->rowCount() > 0) {
             $token_expire = date('Y-m-d H:i:s', strtotime('now'));
             $myEmail = '';
@@ -305,7 +305,7 @@ function verifyToken($app, $tokenToVerify){
                 $myEmail = $user['email'];
             }
             $dateNow = date('Y-m-d H:i:s', strtotime('now'));
-            if(strtotime($token_expire) > strtotime($dateNow)){
+            if(strtotime($token_expire) > $dateNow){
                 $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
                 updateToken($myEmail, $newTokenExpiration);
                 $db = null;

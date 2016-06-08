@@ -123,9 +123,7 @@ function showRestrictedView(section, view) {
 
 function getMyAds(){
     var tokenString = localStorage.getItem('wakingUp_token');
-    if(tokenString!=null) {
-        tokenString = tokenString.substr(0,16);
-
+    if(tokenString!=null && tokenString!='undefined' && tokenString!='null') {
         var url = 'http://localhost:8080/webec/wakingUp/api/users/ads/' + tokenString;
         $.ajax({
             url: url,
@@ -142,18 +140,15 @@ function getMyAds(){
                     removeToken();
                     alert('fehler bei authentifizierung');
                     showView($('#profile'), $('#login'));
-
                 },
                 418: function () {
                     alert('fehler beim holen der inserate');
                 }
-
             }
-
         });
     }else{
         removeToken();
-        alert('fehler bei authentifizierung');
+        alert('kein überprüfbares token gefunden');
         showView($('#profile'), $('#login'));
     }
 
