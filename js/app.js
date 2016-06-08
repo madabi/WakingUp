@@ -124,7 +124,7 @@ function showRestrictedView(section, view) {
 function getMyAds(){
     var tokenString = localStorage.getItem('wakingUp_token');
     if(tokenString!=null && tokenString!='undefined' && tokenString!='null') {
-        var url = 'http://localhost:8080/webec/wakingUp/api/users/ads/' + tokenString;
+        var url = 'api/users/ads/' + tokenString;
         $.ajax({
             url: url,
             type: 'GET',
@@ -148,7 +148,6 @@ function getMyAds(){
         });
     }else{
         removeToken();
-        alert('kein überprüfbares token gefunden');
         showView($('#profile'), $('#login'));
     }
 
@@ -180,7 +179,7 @@ function tryLoginAuth() {
     //todo
 
     //wenn ja:
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/login/'+loginEmail +'/' +loginPassword;
+    var url = 'api/users/login/'+loginEmail +'/' +loginPassword;
     $.ajax({
         url: url,
         type: 'GET',
@@ -219,7 +218,7 @@ function trySignUp() {
     // var hashedPassword = Sha1.hash(pwd);
 
 
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/signup';
+    var url = 'api/users/signup';
     $.ajax({
         url: url,
         type: 'POST',
@@ -247,7 +246,7 @@ function trySignUp() {
 }
 
 function directLoginAuth(email, password){
-    var url = 'http://localhost:8080/webec/wakingUp/api/users/login/'+email +'/' +password;
+    var url = 'api/users/login/'+email +'/' +password;
     $.ajax({
         url: url,
         type: 'GET',
@@ -280,7 +279,7 @@ function verifyToken() {
     if (tokenString) {
         tokenString = tokenString.substr(0,16);
          var verified = $.ajax({
-            url: 'http://localhost:8080/webec/wakingUp/api/users/auth/'+tokenString,
+            url: 'api/users/auth/'+tokenString,
             method: 'GET',
 
             success: function () {
