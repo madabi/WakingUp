@@ -1,22 +1,24 @@
 <?php
 
-function getDBConnection($connectionString, $user, $pwd) 
+/*
+ * Anfrage für PDO Database Connection
+ *
+ */
+function getDBConnection($connectionString, $user, $password)
 {
     try {
-        return new PDO($connectionString, $user, $pwd);
-    }
-    catch (PDOException $e) {
-        exit('Keine Verbindung: Grund -' . $e->getMessage());
+        return new PDO($connectionString, $user, $password);
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+        exit('Keine Verbindung. Grund: ' . $e->getMessage());
     }
 }
-
-
 
 
 function insertAd($app)
 {
     $ad = getJSONFromBody($app);
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'vitsch', 'vitsch');  
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');  
         
     $selection = $db->prepare('INSERT INTO wakingUp.ads (title, message) VALUES (:title, :message)');
     //, STR_TO_DATE(:date, \'%d,%m,%Y\')
@@ -36,15 +38,10 @@ function searchAds($app)
 {   
     $db = getDBConnection('mysql:host=localhost;wakingUp', 'vitsch', 'vitsch');
 }
-    
-function getJSONFromBody($app) 
-{
-    $json = $app->request->getBody();
-    return json_decode($json, true);
-}
+
 
 /**
- * Eine Utility Funktion für die Ausgabe zum aufrufenden Client.
+ * Utility-Funktionen für die Ausgabe zum aufrufenden Client.
  *
  */
 function response($app, $result)
@@ -64,7 +61,13 @@ function responseTokenWithStatus($app, $token, $status)
     $app->response->headers->set('Content-Type', 'application/json');
     $app->response->setBody(json_encode($token));
 }
-    
-//var_dump($db->getAvailableDrivers());
 
-$db = null;
+
+/**
+ * Utility um Daten vom Request-Body als JSON zu erhalten.
+ */
+function getJSONFromBody($app)
+{
+    $json = $app->request->getBody();
+    return json_decode($json, true);
+}
