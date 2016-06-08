@@ -98,7 +98,7 @@ jQuery(document).ready(function(){
         console.log('Date: ' + $('#datepicker_insert').val().replace(/\//g,"-"));
         console.log('Title: ' + $('#title_insert').val());
         console.log('Message: ' + $('#addContent').val());
-        insertAdd();
+        insertAd();
     });
     
     searchAddButton.on('click', function(){
@@ -329,15 +329,14 @@ function getOpenWeatherData(searchQueryAPI){
     /*
     * Sends a POST-Request with input to insert an ad
     */
-    function insertAdd(){
-        var url = 'http://localhost:8080/webec/wakingUp/insert';
+    function insertAd(){
+        var url = 'api/ads/insert';
         //var date = $('#datepicker_insert').val().replace(/\//g, "-");
         $.ajax({
             url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            crossDomain: true,
             data: JSON.stringify({
                 "lake": $('#select_insert :selected').text(),
                 "date": $('#datepicker_insert').val(),
@@ -359,7 +358,7 @@ function getOpenWeatherData(searchQueryAPI){
     * Sends a GET-Request with search filter inputs
     */
     function searchAdd(){
-        var url = 'http://localhost:8080/webec/wakingUp/search';
+        var url = 'http://localhost:8080/webec/wakingUp/ads/search';
         $.ajax({
             url: url,
             type: 'GET',
