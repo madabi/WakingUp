@@ -7,8 +7,6 @@
  */
 
 
-
-
 /*
  * Anfrage für PDO Database Connection
  *
@@ -81,8 +79,6 @@ function SignUp($app)
 }
 
 
-
-
 /**
  * Utility-Funktionen für die Ausgabe zum aufrufenden Client.
  *
@@ -94,7 +90,8 @@ function response($app, $result)
 }
 
 
-function responseWithStatus($app, $status){
+function responseWithStatus($app, $status)
+{
     $app->response->setStatus($status);
 }
 
@@ -104,7 +101,6 @@ function responseTokenWithStatus($app, $token, $status)
     $app->response->headers->set('Content-Type', 'application/json');
     $app->response->setBody(json_encode($token));
 }
-
 
 
 /**
@@ -117,7 +113,6 @@ function getJSONFromBody($app)
 }
 
 
-
 /**
  * Loginfunktion. Überprüft email & Passwort.
  * Setzt ein Token in der Datenbank und schickt dasselbe Token zurück
@@ -127,22 +122,23 @@ function getJSONFromBody($app)
  * @param $email
  * @param $password
  */
-function loginAuth($app, $email, $password) {
+function loginAuth($app, $email, $password)
+{
 
     if (validateUser($app, $email, $password)) {
         $longToken = bin2hex(openssl_random_pseudo_bytes(16));
         $return['token'] = substr($longToken, 0, 16);
         $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
         $tokenSet = setToken($email, $return['token'], $tokenExpiration);
-        if($tokenSet){responseTokenWithStatus($app, $return, 200);
-        }else {
+        if ($tokenSet) {
+            responseTokenWithStatus($app, $return, 200);
+        } else {
             responseWithStatus($app, 401);
         }
-    }else {
+    } else {
         responseWithStatus($app, 401);
     }
 }
-
 
 
 /**
@@ -153,7 +149,8 @@ function loginAuth($app, $email, $password) {
  * @param $user
  * @return bool
  */
-function validateUser($app, $email, $password){
+function validateUser($app, $email, $password)
+{
 
     $db = getDBConnection(myDatabase, db_username, db_password);
     $validateUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
@@ -163,14 +160,14 @@ function validateUser($app, $email, $password){
     if ($validateUser->execute()) {
         $validateUser->fetchAll(PDO::FETCH_ASSOC);
         if ($validateUser->rowCount() == 1) {
-            $db =null;
+            $db = null;
             return true;
         } else {
-            $db =null;
+            $db = null;
             return null;
         }
     } else {
-        $db =null;
+        $db = null;
         $app->halt(500, "Error in quering database.");
     }
 }
@@ -185,7 +182,8 @@ function validateUser($app, $email, $password){
  * @param $tokenExpiration
  * @return bool
  */
-function updateToken($email, $tokenExpiration){
+function updateToken($email, $tokenExpiration)
+{
     $db = getDBConnection(myDatabase, db_username, db_password);
     $update = $db->prepare('UPDATE wakingUp.users SET token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token_expire', $tokenExpiration);
@@ -205,7 +203,8 @@ function updateToken($email, $tokenExpiration){
 }
 
 
-function setToken($email, $token, $tokenExpiration){
+function setToken($email, $token, $tokenExpiration)
+{
     $db = getDBConnection(myDatabase, db_username, db_password);
     $update = $db->prepare('UPDATE wakingUp.users SET token=:token, token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token', $token);
@@ -233,42 +232,48 @@ function setToken($email, $token, $tokenExpiration){
  * @param $app
  * @param $token
  */
-function getMyAds($app, $token){
+function getMyAds($app, $token)
+{
     $db = getDBConnection(myDatabase, db_username, db_password);
     $getUser = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
     $getUser->bindParam(':token', $token, PDO::PARAM_STR);
     if ($getUser->execute()) {
         $getUser->fetchAll(PDO::FETCH_ASSOC);
-        foreach($getUser as $user) {
+        foreach ($getUser as $user) {
             $user_email = $user['email'];
         }
-            $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
+        $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
         $findAds->bindParam(':user_email', $user_email);
-            if($findAds->execute()) {
-                $ads = $findAds->fetchAll(PDO::FETCH_OBJ);
+        if ($findAds->execute()) {
+            $findAds->fetchAll(PDO::FETCH_ASSOC);
 
+            if ($findAds->rowCount() > 0) {
 
-
-
-                /*$findAds->fetchAll(PDO::FETCH_ASSOC);
                 $ads = array();
-                foreach($findAds as $ad){
+                foreach ($findAds as $ad) {
                     $ads[] = array(
                         'id' => $ad['id'],
-                        'title'=> $ad['title'],
+                        'title' => $ad['title'],
                         'message' => $ad['message'],
                         'lake_name' => $ad['lake_name'],
                         'user_email' => $ad['user_email']
                     );
 
-                }*/
-               response($app, $ads);
+                }
+                response($app, $ads);
+                $db = null;
+            } else {
                 $db = null;
 
-            }else{
                 responseWithStatus($app, 418);
             }
-    }else {
+        } else {
+            $db = null;
+
+            responseWithStatus($app, 418);
+
+        }
+    } else {
         $db = null;
 
         responseWithStatus($app, 418);
@@ -279,7 +284,8 @@ function getMyAds($app, $token){
 /**
  * Erstellt Test-Inserate. Wird noch entfernt
  */
-function createRandomAd(){
+function createRandomAd()
+{
 
     $title = 'myTitle';
     $message = 'myMessage blablabla';
@@ -313,7 +319,8 @@ function createRandomAd(){
  * @param $tokenToVerify
  * @return bool
  */
-function verifyToken($app, $tokenToVerify){
+function verifyToken($app, $tokenToVerify)
+{
     $db = getDBConnection(myDatabase, db_username, db_password);
     $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
     $selection = $db->prepare($selection);
@@ -323,12 +330,12 @@ function verifyToken($app, $tokenToVerify){
         if ($selection->rowCount() > 0) {
             $token_expire = date('Y-m-d H:i:s', strtotime('now'));
             $myEmail = '';
-            foreach($selection as $user){
-               $token_expire = $user['token_expire'];
+            foreach ($selection as $user) {
+                $token_expire = $user['token_expire'];
                 $myEmail = $user['email'];
             }
             $dateNow = date('Y-m-d H:i:s', strtotime('now'));
-            if(strtotime($token_expire) > $dateNow){
+            if (strtotime($token_expire) > $dateNow) {
                 $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
                 updateToken($myEmail, $newTokenExpiration);
                 $db = null;
@@ -385,18 +392,18 @@ function deleteUserById($id)
  * @return array
 
 function getAllUsers()
-{
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $selection = $db->prepare('SELECT * FROM wakingUp.users');
-    $selection->execute();
-    $result = $selection->fetchAll();
-    foreach ($result as $user) {
-        echo($user[1]);
-        echo(' ');
-    }
-    return $result;
-    // var_dump($result);
-}
-*/
+ * {
+ * $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+ * $selection = $db->prepare('SELECT * FROM wakingUp.users');
+ * $selection->execute();
+ * $result = $selection->fetchAll();
+ * foreach ($result as $user) {
+ * echo($user[1]);
+ * echo(' ');
+ * }
+ * return $result;
+ * // var_dump($result);
+ * }
+ */
 
 
