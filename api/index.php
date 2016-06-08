@@ -11,6 +11,7 @@ require 'Slim-2.6.0/Slim/Slim.php';
 
 define('db_username', 'wakeboarder');
 define('db_password', 'Webec16!');
+define('myDatabase', 'mysql:host=localhost;dbname=wakingUp;charset=utf8');
 
 \Slim\Slim::registerAutoloader();
 

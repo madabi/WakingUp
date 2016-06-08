@@ -142,7 +142,9 @@ function getMyAds(){
                     showView($('#profile'), $('#login'));
                 },
                 418: function () {
-                    alert('fehler beim holen der inserate');
+                    createAdTable();
+                    showView($('#profile'), $('#myAds'));
+                    //alert('fehler beim holen der inserate');
                 }
             }
         });
@@ -153,11 +155,21 @@ function getMyAds(){
 
 }
 
-function createAdTable(data){
 
-    // für alle ads in data eine neue tabellenreihe zum dom hinzufügen.
+function createAdTable(){
 
+    var adTable = "";
+    var data2= [{"title": "Suche 2 Personen", "lake_name": "Bodensee", "message":"Lorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj a"},{"title": "Suche 2 Personen","lake_name": "Walensee", "message":"toll"}];
+
+    for(var i=0; i<data2.length;i++){
+        adTable = adTable.concat('<tr><td><h4>'+data2[i].title+'</h4></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>'+
+            '<tr><td><h5>'+data2[i].lake_name+'</h5></td></tr>'+
+            '<tr><td>'+data2[i].message+'</td></tr>');
+    }
+
+    $('#myAds').find('table').empty().append(adTable);
 }
+
 
 
 

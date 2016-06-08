@@ -22,10 +22,10 @@ CREATE TABLE ads (
     title VARCHAR(60),
     message VARCHAR(200),
     date VARCHAR(20),
-    lake_id INT,
-    user_id INT,
+    lake_name VARCHAR(45),
+    user_email VARCHAR(45),
     FOREIGN KEY (lake_id) REFERENCES lake(id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_email) REFERENCES users(email),
     PRIMARY KEY (id)
 );
 
