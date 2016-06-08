@@ -31,7 +31,7 @@ function SignUp($app)
     $user = getJSONFromBody($app);
     var_dump($user);
 
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
 
     //todo: Schutz vor SQL-Injections?
 
@@ -153,7 +153,7 @@ function loginAuth($app, $email, $password) {
  */
 function validateUser($app, $email, $password){
 
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
     $validateUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
     $validateUser = $db->prepare($validateUser);
     $validateUser->bindParam(':email', $email);
@@ -184,7 +184,7 @@ function validateUser($app, $email, $password){
  * @return bool
  */
 function updateToken($email, $tokenExpiration){
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
     $update = $db->prepare('UPDATE wakingUp.users SET token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token_expire', $tokenExpiration);
     $update->bindParam(':email', $email, PDO::PARAM_STR);
@@ -204,7 +204,7 @@ function updateToken($email, $tokenExpiration){
 
 
 function setToken($email, $token, $tokenExpiration){
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
     $update = $db->prepare('UPDATE wakingUp.users SET token=:token, token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token', $token);
     $update->bindParam(':token_expire', $tokenExpiration);
@@ -232,7 +232,7 @@ function setToken($email, $token, $tokenExpiration){
  * @param $token
  */
 function getMyAds($app, $token){
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
     $getUser = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
     $getUser->bindParam(':token', $token, PDO::PARAM_STR);
     if ($getUser->execute()) {
@@ -273,7 +273,7 @@ function createRandomAd(){
     $message = 'myMessage blablabla';
     $email = 'lea@lea.com';
 
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
     $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, user_email) VALUES (:title, :message, :user_email)');
     $insertion->bindParam(':title', $title, PDO::PARAM_STR);
     $insertion->bindParam(':message', $message, PDO::PARAM_STR);
@@ -302,7 +302,7 @@ function createRandomAd(){
  * @return bool
  */
 function verifyToken($app, $tokenToVerify){
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', db_username, db_password);
     $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
