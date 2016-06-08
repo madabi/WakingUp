@@ -65,7 +65,7 @@ function responseTokenWithStatus($app, $token, $status)
     $app->response->setBody(json_encode($token));
 }
     
-var_dump($db->getAvailableDrivers());
+//var_dump($db->getAvailableDrivers());
 
 $db = null;
 

@@ -15,7 +15,7 @@ $app->post('/ads/insert', function() use ($app)
         
 $app->get('/ads/search', function() use ($app)
 {
-    searchAds();
+    searchAds($app);
 });
 
 $app->run();
