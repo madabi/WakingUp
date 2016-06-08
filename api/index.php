@@ -9,7 +9,8 @@ $app = new \Slim\Slim();
 
 $app->post('/ads/insert', function() use ($app)
 {
-    insertAd();
+    responseWithStatus($app, 418);
+    //insertAd($app);
 })
         
 $app->get('/ads/search', function() use ($app))
