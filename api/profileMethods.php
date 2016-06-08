@@ -58,7 +58,8 @@ function SignUp($app)
         $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
 
-        $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password, token, token_expire) VALUES (:email, :password, :token, :token_expire)');
+        $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password, token, token_expire)
+VALUES (:email, :password, :token, :token_expire)');
         $insertion->bindParam(':email', $user['email'], PDO::PARAM_STR);
         $insertion->bindParam(':password', $user['password'], PDO::PARAM_STR);
         $insertion->bindParam(':token', $token, PDO::PARAM_STR);
@@ -235,48 +236,56 @@ function setToken($email, $token, $tokenExpiration)
 function getMyAds($app, $token)
 {
     $db = getDBConnection(myDatabase, db_username, db_password);
-    $getUser = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
-    $getUser->bindParam(':token', $token, PDO::PARAM_STR);
-    if ($getUser->execute()) {
-        $getUser->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($getUser as $user) {
-            $user_email = $user['email'];
-        }
-        $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
-        $findAds->bindParam(':user_email', $user_email);
-        if ($findAds->execute()) {
-            $findAds->fetchAll(PDO::FETCH_ASSOC);
+    $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
+    $selection = $db->prepare($selection);
+    $selection->bindParam(':token', $token);
+    if ($selection->execute()) {
+        $selection->fetchAll(PDO::FETCH_ASSOC);
+        if ($selection->rowCount() > 0) {
 
-            if ($findAds->rowCount() > 0) {
+            foreach ($selection as $user) {
+                $user_email = $user['email'];
+            }
 
-                $ads = array();
-                foreach ($findAds as $ad) {
-                    $ads[] = array(
-                        'id' => $ad['id'],
-                        'title' => $ad['title'],
-                        'message' => $ad['message'],
-                        'lake_name' => $ad['lake_name'],
-                        'user_email' => $ad['user_email']
-                    );
+            $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
+            $findAds->bindParam(':user_email', $user_email);
+            if ($findAds->execute()) {
+                $findAds->fetchAll(PDO::FETCH_ASSOC);
 
+                if ($findAds->rowCount() > 0) {
+
+                    $ads = array();
+                    foreach ($findAds as $ad) {
+                        $ads[] = array(
+                            'id' => $ad['id'],
+                            'title' => $ad['title'],
+                            'message' => $ad['message'],
+                            'lake_name' => $ad['lake_name'],
+                            'user_email' => $ad['user_email']
+                        );
+
+                    }
+                    response($app, $ads);
+                    $db = null;
+                } else {
+                    $db = null;
+
+                    responseWithStatus($app, 420);
                 }
-                response($app, $ads);
-                $db = null;
             } else {
                 $db = null;
 
-                responseWithStatus($app, 418);
+                responseWithStatus($app, 421);
+
             }
-        } else {
-            $db = null;
-
-            responseWithStatus($app, 418);
-
+        }else{
+            responseWithStatus($app, 419);
         }
+
     } else {
         $db = null;
 
-        responseWithStatus($app, 418);
+        responseWithStatus($app, 422);
     }
 }
 
@@ -290,12 +299,17 @@ function createRandomAd()
     $title = 'myTitle';
     $message = 'myMessage blablabla';
     $email = 'lea@lea.com';
+    $lake_name = 'meinSee';
 
     $db = getDBConnection(myDatabase, db_username, db_password);
-    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, user_email) VALUES (:title, :message, :user_email)');
+    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, user_email, lake_name)
+VALUES (:title, :message, :user_email, :lake_name)');
     $insertion->bindParam(':title', $title, PDO::PARAM_STR);
     $insertion->bindParam(':message', $message, PDO::PARAM_STR);
     $insertion->bindParam(':user_email', $email, PDO::PARAM_STR);
+    $insertion->bindParam(':lake_name', $lake_name, PDO::PARAM_STR);
+
+
 
     if ($insertion->execute()) {
 

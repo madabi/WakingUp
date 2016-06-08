@@ -18,7 +18,6 @@ define('myDatabase', 'mysql:host=localhost;dbname=wakingUp;charset=utf8');
 $app = new \Slim\Slim();
 
 
-
 /*
  * Neuen Account erstellen
  */
