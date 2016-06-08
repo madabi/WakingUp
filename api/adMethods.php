@@ -68,5 +68,3 @@ function responseTokenWithStatus($app, $token, $status)
 //var_dump($db->getAvailableDrivers());
 
 $db = null;
-
-?>
