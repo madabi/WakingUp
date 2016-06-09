@@ -20,13 +20,14 @@ function insertAd($app)
     $ad = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');  
         
-    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, date) VALUES (:title, :message,STR_TO_DATE(:date, \'%m,%d,%Y\'))');
+    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, date, lake) VALUES (:title, :message, STR_TO_DATE(:date, \'%m,%d,%Y\'), :lake)');
     //, STR_TO_DATE(:date, \'%d,%m,%Y\'))');
     //STR_TO_DATE(:date, \'%d,%m,%Y\'))');
     
     $insertion->bindParam(':title', $ad['title'], PDO::PARAM_STR);
     $insertion->bindParam(':message', $ad['message'], PDO::PARAM_STR);
     $insertion->bindParam(':date', $ad['date'], PDO::PARAM_STR);
+    $insertion->bindParam(':lake', $ad['lake'], PDO::PARAM_STR);
 
     if ($insertion->execute()){
         responseWithStatus($app, 200);
@@ -37,13 +38,20 @@ function insertAd($app)
 
 function searchAds($app)
 {   
-    $ad = getJSONFromBody($app);
+    $info = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
     
-    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE(:fromDate, \'%m,%d,%Y\')');
+    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE lake=:lake');
+    
+    $selection->bindParam(':lake', $info['lake'], PDO::PARAM_STR);
+    //$selection->bindParam(':fromDate', $info['fromDate'], PDO::PARAM_STR);
+    //$selection->bindParam(':untilDate', $info['untilDate'], PDO::PARAM_STR);
+    //date=\'2016-04-18\'');
+    //STR_TO_DATE(:fromDate, \'%m,%d,%Y\')');
+    //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE('04,18,2016', '%m,%d,%Y');
+    //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE(\'04,18,2016\', \'%m,%d,%Y\');
     //BETWEEN :fromDate AND :untilDate
-    $selection-> bindParam(':fromDate', $ad['fromDate'], PDO::PARAM_STR);
-    $selection-> bindParam(':untilDate', $ad['untilDate'], PDO::PARAM_STR);
+    
     
     
     if ($selection->execute()){

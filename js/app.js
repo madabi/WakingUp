@@ -365,7 +365,7 @@ function getOpenWeatherData(searchQueryAPI){
     */
     function searchAdd(){
         var url = 'api/ads/search';
-        
+        /*
         var date = $('#datepicker_from').val().split('/');
         var one = date[2];
         date[2] = date[1];
@@ -373,6 +373,7 @@ function getOpenWeatherData(searchQueryAPI){
         date[0] = one; 
         var newDate = date[0] + "-" + date[1] + "-"+ date[2];
         console.log(newDate);
+        */
         $.ajax({
             url: url,
             type: 'GET',
