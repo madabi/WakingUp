@@ -20,14 +20,15 @@ function insertAd($app)
     $ad = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');  
         
-    $selection = $db->prepare('INSERT INTO wakingUp.ads (title, message) VALUES (:title, :message)');
-    //, STR_TO_DATE(:date, \'%d,%m,%Y\')
+    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, date) VALUES (:title, :message,STR_TO_DATE(:date, \'%m,%d,%Y\'))');
+    //, STR_TO_DATE(:date, \'%d,%m,%Y\'))');
+    //STR_TO_DATE(:date, \'%d,%m,%Y\'))');
     
-    $selection->bindParam(':title', $ad['title'], PDO::PARAM_STR);
-    $selection->bindParam(':message', $ad['message'], PDO::PARAM_STR);
-   // $selection->bindParam(':date', $ad['date'], PDO::PARAM_STR);
+    $insertion->bindParam(':title', $ad['title'], PDO::PARAM_STR);
+    $insertion->bindParam(':message', $ad['message'], PDO::PARAM_STR);
+    $insertion->bindParam(':date', $ad['date'], PDO::PARAM_STR);
 
-    if ($selection->execute()){
+    if ($insertion->execute()){
         responseWithStatus($app, 200);
     } else {
         responseWithStatus($app, 401);
@@ -36,7 +37,22 @@ function insertAd($app)
 
 function searchAds($app)
 {   
-    $db = getDBConnection('mysql:host=localhost;wakingUp', 'vitsch', 'vitsch');
+    $ad = getJSONFromBody($app);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
+    
+    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE(:fromDate, \'%m,%d,%Y\')');
+    //BETWEEN :fromDate AND :untilDate
+    $selection-> bindParam(':fromDate', $ad['fromDate'], PDO::PARAM_STR);
+    $selection-> bindParam(':untilDate', $ad['untilDate'], PDO::PARAM_STR);
+    
+    
+    if ($selection->execute()){
+        $result = $selection->fetchAll(PDO::FETCH_ASSOC);
+        //$app->response->setBody(json_encode($result));
+        response($app, $result);
+    } else {
+        responseWithStatus($app, 401);
+    } 
 }
 
 

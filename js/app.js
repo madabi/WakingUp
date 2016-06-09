@@ -95,7 +95,7 @@ jQuery(document).ready(function(){
     
     insertAddButton.on('click', function(){
         console.log('Lake: '+ $('#select_insert :selected').text());
-        console.log('Date: ' + $('#datepicker_insert').val().replace(/\//g,"-"));
+        console.log('Date: ' + $('#datepicker_insert').val().replace(/\//g,","));
         console.log('Title: ' + $('#title_insert').val());
         console.log('Message: ' + $('#addContent').val());
         insertAd();
@@ -331,7 +331,13 @@ function getOpenWeatherData(searchQueryAPI){
     */
     function insertAd(){
         var url = 'api/ads/insert';
-        //var date = $('#datepicker_insert').val().replace(/\//g, "-");
+        //var date = $('#datepicker_insert').val().replace(/\//g, ",");
+        /*var date = $('#datepicker_insert').val().split('/');
+        var one = date[0];
+        date[0] = date[2];
+        date[2] = one;
+        var newDate = date[0] + "-" + date[1] + "-"+ date[2];
+        console.log('newDate' +newDate);*/
         $.ajax({
             url: url,
             type: 'POST',
@@ -339,7 +345,7 @@ function getOpenWeatherData(searchQueryAPI){
             contentType: 'application/json',
             data: JSON.stringify({
                 "lake": $('#select_insert :selected').text(),
-                "date": $('#datepicker_insert').val(),
+                "date": $('#datepicker_insert').val().replace(/\//g, ","),
                 "title": $('#title_insert').val(),
                 "message": $('#addContent').val()
             }),
@@ -358,7 +364,15 @@ function getOpenWeatherData(searchQueryAPI){
     * Sends a GET-Request with search filter inputs
     */
     function searchAdd(){
-        var url = 'http://localhost:8080/webec/wakingUp/ads/search';
+        var url = 'api/ads/search';
+        
+        var date = $('#datepicker_from').val().split('/');
+        var one = date[2];
+        date[2] = date[1];
+        date[1] = date[0];
+        date[0] = one; 
+        var newDate = date[0] + "-" + date[1] + "-"+ date[2];
+        console.log(newDate);
         $.ajax({
             url: url,
             type: 'GET',
@@ -366,10 +380,10 @@ function getOpenWeatherData(searchQueryAPI){
             contentType: 'application/json',
             data: JSON.stringify({
                 "lake": $('#select_search :selected').text(),
-                "fromDate": $('#datepicker_from').val(),
-                "untilDate": $('#datepicker_until').val()
+                "fromDate": $('#datepicker_from').val().replace(/\//g, ","),
+                //$('#datepicker_from').val().replace(/\//g, "-"),
+                "untilDate": $('#datepicker_until').val().replace(/\//g, ",")
             }),
-
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
                 console.log('search add fails')
