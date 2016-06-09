@@ -70,16 +70,24 @@ nav button:last-child{
 /*weatherNow table*/
 
 #nowForecastSection{
+
     box-shadow: 0 16px 32px 0 rgba(0, 0, 0, 0.7), 0 12px 40px 0 rgba(0, 0, 0, 0.7);
     position:fixed;
     top:45px;
-    height:100%;
+    width:100%;
+    height:calc(100% - 185px);
     background-color: #FFC262;
     -webkit-transition:all 400ms ease-in-out 0.4s;
     -moz-transition:all 400ms ease-in-out 0.4s;
     -o-transition:all 400ms ease-in-out 0.4s;
     transition:all 400ms ease-in-out 0.4s;
 }
+#nowForecastSection > section {
+    overflow-y:scroll;
+    overflow-x:hidden;
+    height:calc(100% - 60px);
+}
+
 
 #scoreNowSVG{
 
@@ -151,18 +159,19 @@ h4,h3{
 }
 
 #todayForecastSection{
+
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     background-color: #FFCF95;
     position:fixed;
     top:calc(100% - 140px);
-    height:100%;
-
+    height:calc(100% - 135px);
 
     -webkit-transition:all 400ms ease-in-out 0.4s;
     -moz-transition:all 400ms ease-in-out 0.4s;
     -o-transition:all 400ms ease-in-out 0.4s;
     transition:all 400ms ease-in-out 0.4s;
 }
+
 
 #todayForecastSection svg {
     margin-top:8px;

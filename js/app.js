@@ -72,9 +72,9 @@ jQuery(document).ready(function(){
     var profileButton = nav.last();
 
     var sections = $('body').find('section');
-    var weather = sections.first();
-    var ad = sections.first().next();
-    var profile = sections.last();
+    var weather = $('#weather');
+    var ad = $('#ad');
+    var profile = $('#profile');
 
 
     showSection(weather);
@@ -88,11 +88,26 @@ jQuery(document).ready(function(){
     //hideForecastDetails(dailyForecastSection);
     //
 
-
+/*
     //prevents scrolling on mobile device
     $(document).bind('touchmove', function(e) {
         e.preventDefault();
     });
+    */
+/*
+    var $scroller = currentWeatherSection.find('table');
+    $scroller.bind('touchstart', function (ev) {
+        var $this = $(this);
+        var scroller = $scroller.get(0);
+
+        if ($this.scrollTop() === 0) $this.scrollTop(1);
+        var scrollTop = scroller.scrollTop;
+        var scrollHeight = scroller.scrollHeight;
+        var offsetHeight = scroller.offsetHeight;
+        var contentHeight = scrollHeight - offsetHeight;
+        if (contentHeight == scrollTop) $this.scrollTop(scrollTop-1);
+    });
+    */
 
     weatherButton.on('click', function(){
         showSection(weather);
@@ -207,7 +222,9 @@ jQuery(document).ready(function(){
     }
 
     function showSection(section){
-        sections.hide();
+        weather.hide()
+        ad.hide();
+        profile.hide();
         section.show();
         section.children().show();
 
