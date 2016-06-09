@@ -26,13 +26,13 @@
 </section>
 
 <section id="ad">
-    <h3>Inserate</h3>
+    <h4>Inserate</h4>
 </section>
 
 <section id="profile">
-
+<section id="account">
     <section id="login">
-        <h3>Anmelden</h3>
+        <h4 id="accountTitle">Anmelden</h4>
         <form>
             <span class="hidden badLoginDetails"><p>Ungültige Anmeldedaten</p></span>
             <label for="email-logIn">Email-Adresse</label>
@@ -44,39 +44,34 @@
         <button id="noAccountYetButton">Du hast noch keinen Account?</button>
         <button id="lostPasswordButton">Passwort vergessen?</button>
     </section>
-
-    <section id="myAds">
-     <h3>Meine Inserate</h3>
-        <button id="signOutButton">Abmelden</button>
-    <table>
-        <!-- Die Tabelle weiter dynamisch erzeugen -->
-        <tr>
-            <td><p>Lorem Ipsum bla bla</p></td>
-            <td><span class="glyphicon glyphicon-trash"></span></td>
-        </tr>
-        <tr>
-            <td><p>Lorem Ipsum bla bla</p></td>
-            <td><span class="glyphicon glyphicon-trash"></span></td>
-        </tr>
-    </table>
-    </section>
-
     <section id="signUp">
-        <h3>Account erstellen</h3>
-    <form>
-        <label for="email-signUp">Email-Adresse</label>
-        <input type="email" class="form-control" id="email-signUp">
-        <label for="pwd-signUp">Passwort:</label>
-        <input type="password" class="form-control" id="pwd-signUp">
-        <button type="submit" id="signUpButton" class="btn btn-default">Account erstellen</button>
-    </form>
+        <h4>Account erstellen</h4>
+        <form>
+            <label for="email-signUp">Email-Adresse</label>
+            <input type="email" class="form-control" id="email-signUp">
+            <label for="pwd-signUp">Passwort:</label>
+            <input type="password" class="form-control" id="pwd-signUp">
+            <button type="submit" id="signUpButton" class="btn btn-default">Account erstellen</button>
+        </form>
     </section>
     <section id="lostPasswordInformation">
-        <h3>Passwort vergessen?</h3>
+        <h4>Passwort vergessen?</h4>
         <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
         <p>Schreiben Sie eine Mail an:</p>
         <a href="mailto:info@wakingUp.ch"> info@wakingUp.ch</a>
 
+    </section>
+</section>
+    <section id="myAds">
+     <h4 id="myAdsTitle">Meine Inserate</h4>
+    <table>
+        <tr>
+            <td><span id="noContentIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td>
+        </tr>
+        <tr>
+            <td id="pleaseLogIn">Bitte logge dich ein.</td>
+        </tr>
+    </table>
     </section>
 </section>
 

@@ -16,6 +16,11 @@ jQuery(document).ready(function () {
     var ad = $('#ad');
     var profile = $('#profile');
 
+    var account =  $('#account');
+    var login = $('#login');
+    var signUp = $('#signUp');
+    var lostPasswordInfo = $('#lostPasswordInformation');
+    var myAds = $('#myAds');
 
     showSection(weather);
     setActive(weatherButton);
@@ -34,31 +39,55 @@ jQuery(document).ready(function () {
     });
 
     profileButton.on('click', function (event) {
-        event.preventDefault();
+       // event.preventDefault();
+        showSection(profile);
+
+        account.show();
+        myAds.show();
         setActive(this);
-        getMyAds();
+
+        if(verifyToken()){
+            getMyAds();
+            login.find('h4').first().text('Abmelden');
+            showMyAdsSection();
+        }else{
+            switchAccountView(login);
+        }
+
 
 
     });
 
 
+    $('#accountTitle').on('click', function (event) {
+        event.preventDefault();
+        if($(this).text()=="Abmelden") {
+          logOut();
+        }else{
+            switchAccountView(login);
+        }
+
+
+        //todo: werte im formular zurücksetzen
+    });
     //profile
     $('#loginButton').on('click', function (event) {
         event.preventDefault();
         console.log('loginButton clicked');
         tryLoginAuth();
+        login.find('h4').first().text('Abmelden');
 
         //todo: werte im formular zurücksetzen
     });
 
     $('#noAccountYetButton').on('click', function (event) {
         event.preventDefault();
-        showView($('#profile'), $('#signUp'));
+        switchAccountView(signUp);
     });
 
     $('#lostPasswordButton').on('click', function (event) {
         event.preventDefault();
-        showView(profile, profile.find('#lostPasswordInformation'));
+        switchAccountView(lostPasswordInfo);
     });
 
     $('#signUpButton').on('click', function (event) {
@@ -68,7 +97,21 @@ jQuery(document).ready(function () {
         trySignUp();
 
         //todo: werte im formular zurücksetzen
-
+    });
+    $('#myAdsTitle').on('click', function (event) {
+        event.preventDefault();
+        if(myAds.css("top") == "50px"){
+            logOut();
+        }else{
+            if(verifyToken()){
+                createAdTable();
+                showMyAdsSection();
+            }else{
+                myAds.find('table').empty().append('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td></tr>+' +
+                    '<tr><td id="pleaseLogIn">Bitte logge dich ein.</td></tr>');
+                showMyAdsSection();
+            }
+        }
     });
 
     profile.find('#newAccountConfirmation').find('button').on('click', function (event) {
@@ -78,17 +121,23 @@ jQuery(document).ready(function () {
 
     });
 
-    profile.find('#myAds').find('#signOutButton').on('click', function (event) {
-        event.preventDefault();
-        removeToken();
-        showSection(weather);
-        setActive(weatherButton);
-    });
 
-});
+    function showSection(section){
+        weather.hide();
+        ad.hide();
+        profile.hide();
+        section.show();
+        section.children().show();
+    }
 
+
+    function showMyAdsSection(){
+        myAds.css("top", ("50px"));
+    }
 
 // Hilfsmethoden
+
+
 
 function setActive(button) {
     $('nav').find('button').removeClass("activeButton");
@@ -96,16 +145,18 @@ function setActive(button) {
 
 }
 
-function showSection(section) {
-    $('section').hide();
-    section.show();
+
+function switchAccountView(view) {
+    myAds.css("top", ("85%"));
+    account.find('section').hide();
+    view.show();
 }
 
-function showView(section, view) {
-    showSection(section);
-    var allViews = section.children();
-    allViews.hide();
-    view.show();
+    function logOut(){
+        login.find('h4').first().text('Anmelden');
+        removeToken();
+        switchAccountView(login);
+
 }
 
 function showRestrictedView(section, view) {
@@ -116,7 +167,7 @@ function showRestrictedView(section, view) {
         allViews.hide();
         view.show();
     }else{
-        showView($('#profile'), $('#login'));
+        switchAccountView(login);
     }
 }
 
@@ -133,27 +184,32 @@ function getMyAds(){
             statusCode: {
                 200: function (data) {
                     console.log(data);
-                    createAdTable(data);
-                    showView($('#profile'), $('#myAds'));
+                    createAdTable();
+                    showMyAdsSection();
+
                 },
                 401: function () {
                     removeToken();
                     alert('fehler bei authentifizierung');
-                    showView($('#profile'), $('#login'));
+                    switchAccountView(login);
+
                 },
                 418: function () {
-                    createAdTable();
-                    showView($('#profile'), $('#myAds'));
+
+                    switchAccountView(login);
+                    //showSection($('#profile'));
+                    //switchAccountView($('#profile'), $('#myAds'));
                     //alert('fehler beim holen der inserate');
                 }
             }
         });
     }else{
         removeToken();
-        showView($('#profile'), $('#login'));
+        switchAccountView(login);
     }
 
 }
+
 
 
 function createAdTable(){
@@ -162,7 +218,7 @@ function createAdTable(){
     var data2= [{"title": "Suche 2 Personen", "lake_name": "Bodensee", "message":"Lorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj a"},{"title": "Suche 2 Personen","lake_name": "Walensee", "message":"toll"}];
 
     for(var i=0; i<data2.length;i++){
-        adTable = adTable.concat('<tr><td><h4>'+data2[i].title+'</h4></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>'+
+        adTable = adTable.concat('<tr><td><h5>'+data2[i].title+'</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>'+
             '<tr><td><h5>'+data2[i].lake_name+'</h5></td></tr>'+
             '<tr><td>'+data2[i].message+'</td></tr>');
     }
@@ -200,11 +256,12 @@ function tryLoginAuth() {
         statusCode: {
             200: function (data) {
                 setToken(data['token']);
-                showView($('#profile'), $('#myAds'));
+                createAdTable();
+                showMyAdsSection();
             },
             401: function () {
                 alert('Ungültige Logindaten');
-                showView($('#profile'), $('#login'));
+                switchAccountView(login);
 
             }
         }
@@ -245,12 +302,12 @@ function trySignUp() {
                 //Ok, everything worked as expected
                 alert('Ihr Account wurde erstellt');
                 directLoginAuth(email, pwd);
-                showView($('#profile'), $('#myAds'));
+                showMyAdsSection();
             },
             401: function () {
                 //Our token is either expired, invalid or doesn't exist
                 alert("Es gibt bereits einen Benutzer mit dieser Email-Adresse");
-                showView($('#profile'), $('#login'));
+                switchAccountView(login);
             }
         }
 
@@ -267,11 +324,11 @@ function directLoginAuth(email, password){
         statusCode: {
             200: function (data) {
                 setToken(data['token']);
-                showView($('#profile'), $('#myAds'));
+                showMyAdsSection();
             },
             401: function () {
                 alert('Ungültige Logindaten');
-                showView($('#profile'), $('#login'));
+                switchAccountView(login);
 
             }
         }
@@ -321,4 +378,4 @@ function removeToken(){
     window.localStorage.removeItem('wakingUp_token');
 }
 
-
+});
