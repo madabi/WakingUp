@@ -41,7 +41,7 @@ function searchAds($app, $lake, $from, $until)
     $info = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
     
-    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE lake=:lake AND (date BETWEEN STR_TO_DATE(:from, \'%m,%d,%Y\') AND STR_TO_DATE(:until, \'%m,%d,%Y\'))');
+    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE lake=:lake AND (date BETWEEN STR_TO_DATE(:from, \'%m,%d,%Y\') AND STR_TO_DATE(:until, \'%m,%d,%Y\')) ORDER BY date ASC');
     
     $selection->bindParam(':lake', $lake, PDO::PARAM_STR);
     $selection->bindParam(':from', $from, PDO::PARAM_STR);
@@ -65,6 +65,7 @@ function searchAds($app, $lake, $from, $until)
                             'id' => $ad['id'],
                             'title' => $ad['title'],
                             'message' => $ad['message'],
+                            'date' => $ad['date'],
                             'lake_name' => $ad['lake'],
                             'user_email' => $ad['userEmail']
                         );

@@ -372,12 +372,19 @@ function getOpenWeatherData(searchQueryAPI){
     */
     function showResults(data, lake){      
         deleteResults();
+        
         //Puts the name of the lake in the title
         $('#results').append('<h4 id=\"searchResults\">Resultate für ' + lake +'</h4');
+        var dateAd;
+        
         //Iterates through the data and displays in the dropdownmenue
         for(i = 0; i<data.length; i++){
             var title = data[i].title;
             var message = data[i].message;
+            if (dateAd != data[i].date){
+               dateAd = data[i].date;
+                $('#results').append('<br><h5>' + dateAd+ '</h5>'); 
+            }
             $('#results').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + data[i].user_email+'</div>');
         }
         //Hides content and shows it on click on the title
@@ -386,7 +393,9 @@ function getOpenWeatherData(searchQueryAPI){
         $('.messageStart').on('click', function(){
             $(this).next().toggle();
             if ($(this).next().is(":visible")){
-                //alert("sichtbar");
+                $(this).find('div').removeClass('glyphicon glyphicon-triangle-right').addClass('glyphicon glyphicon-triangle-bottom');
+            } else {
+                $(this).find('div').removeClass('glyphicon glyphicon-triangle-bottom').addClass('glyphicon glyphicon-triangle-right');
             }
         })
     }
