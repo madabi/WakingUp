@@ -49,7 +49,7 @@ jQuery(document).ready(function(){
         "Zugersee":177,
         "Zürichsee":14};
     
-    $(".date").datepicker();
+    $(".date").datepicker({minDate: 0});
     
     hideArticles();
     prepareLakeList()
@@ -109,18 +109,50 @@ jQuery(document).ready(function(){
     });
     
     insertAddButton.on('click', function(){
-        console.log('Lake: '+ $('#select_insert :selected').text());
-        console.log('Date: ' + $('#datepicker_insert').val().replace(/\//g,","));
-        console.log('Title: ' + $('#title_insert').val());
-        console.log('Message: ' + $('#addContent').val());
-        insertAd();
+        var lake = $('#select_insert :selected').text();
+        var title = $('#title_insert').val();
+        var message = $('#addContent').val();
+        var inputDate = $('#datepicker_insert').val().replace(/\//g,",");
+        
+        //Logs
+        console.log(lake);
+        console.log(inputDate);
+        console.log(title);
+        console.log(message);
+        
+        if (inputDate!=""){
+            insertAd(lake, inputDate, title, message);
+        }
+        
     });
+    
+    function isPresentOrFutureDate(inputDate){
+        var fullDate = new Date();
+        var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
+        var dateArray = inputDate.split(',');
+        if (dateArray[2]>= fullDate.getFullYear()){
+            if (dateArray[0]>= twoDigitMonth){
+                if (dateArray[1]>= fullDate.getDate()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     searchAddButton.on('click', function(){
         var lake = $('#select_search :selected').text();
         var fromDate =  $('#datepicker_from').val().replace(/\//g, ",");
         var untilDate = $('#datepicker_until').val().replace(/\//g, ",");
-        searchAd(lake, fromDate, untilDate);
+        
+        //Logs
+        console.log(lake);
+        console.log(fromDate);
+        console.log(untilDate);
+        
+        if ((fromDate!="") && (untilDate!="")){
+            searchAd(lake, fromDate, untilDate);
+        }
     });
 
     $("#hourlyForecastTitle").on('click', function(e) {
@@ -323,7 +355,7 @@ function getOpenWeatherData(searchQueryAPI){
     /*
     * Sends a POST-Request with input to insert an ad
     */
-    function insertAd(){
+    function insertAd(lake, inputDate, title, message){
         var url = 'api/ads/insert';
         $.ajax({
             url: url,
@@ -331,10 +363,10 @@ function getOpenWeatherData(searchQueryAPI){
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                "lake": $('#select_insert :selected').text(),
-                "date": $('#datepicker_insert').val().replace(/\//g, ","),
-                "title": $('#title_insert').val(),
-                "message": $('#addContent').val()
+                "lake": lake,
+                "date": inputDate,
+                "title": title,
+                "message": message
             }),
             statusCode: {
                 200: function () {
@@ -362,7 +394,6 @@ function getOpenWeatherData(searchQueryAPI){
             contentType: 'application/json',
             statusCode: {
             200: function (data) {
-                console.log(data[0]);
                 showResults(data, lake);
             },
             401: function () {
@@ -380,10 +411,11 @@ function getOpenWeatherData(searchQueryAPI){
         deleteResults();
         
         //Puts the name of the lake in the title
-        $('#results').append('<h4 id=\"searchResults\">Resultate für ' + lake +'</h4');
-        var dateAd;
+        var titleResults = '<h4 id=\"searchResults\">Resultate für ' + lake +'</h4';
+        $('#results').append(titleResults);
         
         //Iterates through the data and displays in the dropdownmenue
+        var dateAd;
         for(i = 0; i<data.length; i++){
             var title = data[i].title;
             var message = data[i].message;
