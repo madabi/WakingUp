@@ -37,6 +37,18 @@ jQuery(document).ready(function(){
     var insertAddButton = $('#btn_add_insert_insert');
     var searchAddButton = $('#btn_add_search_search');
     
+    var lakeIDs = {"Bielersee":70,
+        "Bodensee":192,
+        "Brienzersee": 153,
+        "Greifensee":196,
+        "Pfäffikersee":198,
+        "Sempachersee":103,
+        "Thunersee":7,
+        "Vierwaldstättersee":148,
+        "Walensee":121,
+        "Zugersee":177,
+        "Zürichsee":14};
+    
     $(".date").datepicker();
     
     hideArticles();
@@ -137,6 +149,7 @@ jQuery(document).ready(function(){
     function prepareLakeList(){
         //Datenbankabfrage wegen den Seen
         var lakeData = getAllLakes();
+        console.log(lakeIDs.length);
         var length = lakeData.lakes.length;
         for(i=0; i< length;i++){
             $('#select_search').append('<option>'+lakeData.lakes[i].name +'</option>');
