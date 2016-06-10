@@ -36,16 +36,18 @@ function insertAd($app)
     }       
 }
 
-function searchAds($app)
+function searchAds($app, $lake, $from, $until)
 {   
     $info = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
     
-    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE lake=:lake');
+    $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE lake=:lake AND (date BETWEEN STR_TO_DATE(:from, \'%m,%d,%Y\') AND STR_TO_DATE(:until, \'%m,%d,%Y\'))');
     
-    $selection->bindParam(':lake', $info['lake'], PDO::PARAM_STR);
-    //$selection->bindParam(':fromDate', $info['fromDate'], PDO::PARAM_STR);
-    //$selection->bindParam(':untilDate', $info['untilDate'], PDO::PARAM_STR);
+    $selection->bindParam(':lake', $lake, PDO::PARAM_STR);
+    $selection->bindParam(':from', $from, PDO::PARAM_STR);
+    $selection->bindParam(':until', $until, PDO::PARAM_STR);
+    
+    //where lake='Brienzersee' AND (date BETWEEN '2016-01-01' AND '2017-05-05');
     //date=\'2016-04-18\'');
     //STR_TO_DATE(:fromDate, \'%m,%d,%Y\')');
     //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE('04,18,2016', '%m,%d,%Y');
@@ -56,10 +58,18 @@ function searchAds($app)
     
     if ($selection->execute()){
         $result = $selection->fetchAll(PDO::FETCH_ASSOC);
-        //$app->response->setBody(json_encode($result));
-        response($app, $result);
-    } else {
-        responseWithStatus($app, 401);
+        
+        $ads = array();
+                    foreach ($result as $ad) {
+                        $ads[] = array(
+                            'id' => $ad['id'],
+                            'title' => $ad['title'],
+                            'message' => $ad['message'],
+                            'lake_name' => $ad['lake'],
+                            'user_email' => $ad['userEmail']
+                        );
+                    }
+        responseTokenWithStatus($app, $ads, 200);
     } 
 }
 

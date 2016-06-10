@@ -102,11 +102,15 @@ jQuery(document).ready(function(){
     });
     
     searchAddButton.on('click', function(){
-        console.log('Lake: ' + $('#select_search :selected').text());
-        console.log('From: ' + $('#datepicker_from').val());
-        console.log('Until: ' + $('#datepicker_until').val());
-        searchAdd();
-        showResults();
+        var lake = $('#select_search :selected').text();
+        var fromDate =  $('#datepicker_from').val().replace(/\//g, ",");
+        var untilDate = $('#datepicker_until').val().replace(/\//g, ",");
+        
+        console.log('Lake: ' +lake);
+        console.log('From: ' + fromDate);
+        console.log('Until: ' + untilDate);
+        
+        searchAd(lake, fromDate, untilDate);
     });
 
     $("#hourlyForecastTitle").on('click', function(e) {
@@ -363,8 +367,8 @@ function getOpenWeatherData(searchQueryAPI){
     /*
     * Sends a GET-Request with search filter inputs
     */
-    function searchAdd(){
-        var url = 'api/ads/search';
+    function searchAd(lake, from, until){
+        var url = 'api/ads/search/' + lake + '/' + from + '/' + until;
         /*
         var date = $('#datepicker_from').val().split('/');
         var one = date[2];
@@ -379,19 +383,24 @@ function getOpenWeatherData(searchQueryAPI){
             type: 'GET',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({
+            /*data: JSON.stringify({
                 "lake": $('#select_search :selected').text(),
                 "fromDate": $('#datepicker_from').val().replace(/\//g, ","),
                 //$('#datepicker_from').val().replace(/\//g, "-"),
                 "untilDate": $('#datepicker_until').val().replace(/\//g, ",")
-            }),
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus, errorThrown);
-                console.log('search add fails')
+            }),*/
+            statusCode: {
+            200: function (data) {
+                console.log(data[0]);
+                showResults(data, lake);
+                //showMyAdsSection();
             },
-            success: function (data) {
-                //TODO
+            401: function () {
+                alert('Ungültige Logindaten');
+                //switchAccountView(login);
+
             }
+        }
         });
         
     }
@@ -399,9 +408,7 @@ function getOpenWeatherData(searchQueryAPI){
     /*
     * Displays the ads according the search filter
     */
-    function showResults(){
-        //Log
-        console.log('excecuted showresults');
+    function showResults(data, lake){
         //TODO Dies sind nur JSONDummies
         var dummys = {
             "lake":"Zugersee",
@@ -411,15 +418,15 @@ function getOpenWeatherData(searchQueryAPI){
                 {"title":"Titel 3","message":"Infos zu Sommer-Wakeboard-Camp!", "date": "02/04/2016", "contact":"hugo@salt.ch"}
                 ]
         };
-                
+        console.log(data.length);        
         deleteResults();
         //Puts the name of the lake in the title
-        $('#results').append('<h4 id=\"searchResults\">Resultate für ' + dummys.lake +'</h4');
-        //Iterates through the dummy and displays in the dropdownmenut
-        for(i = 0; i<dummys.messages.length; i++){
-            var title = dummys.messages[i].title;
-            var message = dummys.messages[i].message;
-            $('#results').append('<header class=\"messageStart\"><h5> ' + title + '</h5></header><div class=\"content\">'+ dummys.messages[i].message + '<br> ' +dummys.messages[i].contact+'</div>');
+        $('#results').append('<h4 id=\"searchResults\">Resultate für ' + lake +'</h4');
+        //Iterates through the data and displays in the dropdownmenue
+        for(i = 0; i<data.length; i++){
+            var title = data[i].title;
+            var message = data[i].message;
+            $('#results').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + data[i].user_email+'</div>');
         }
         //Hides content and shows it on click on the title
         $('.content').toggle();

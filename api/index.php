@@ -15,9 +15,9 @@ $app->post('/ads/insert', function() use ($app)
     insertAd($app);
 });
 
-$app->get('/ads/search', function() use ($app)
+$app->get('/ads/search/:lake/:from/:until', function($lake, $from, $until) use ($app)
 {
-    searchAds($app);
+    searchAds($app, $lake, $from, $until);
 });
 
 $app->run();
