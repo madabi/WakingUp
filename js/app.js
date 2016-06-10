@@ -117,11 +117,6 @@ jQuery(document).ready(function(){
         var lake = $('#select_search :selected').text();
         var fromDate =  $('#datepicker_from').val().replace(/\//g, ",");
         var untilDate = $('#datepicker_until').val().replace(/\//g, ",");
-        
-        console.log('Lake: ' +lake);
-        console.log('From: ' + fromDate);
-        console.log('Until: ' + untilDate);
-        
         searchAd(lake, fromDate, untilDate);
     });
 
@@ -147,13 +142,10 @@ jQuery(document).ready(function(){
     }
     
     function prepareLakeList(){
-        //Datenbankabfrage wegen den Seen
-        var lakeData = getAllLakes();
-        console.log(lakeIDs.length);
-        var length = lakeData.lakes.length;
-        for(i=0; i< length;i++){
-            $('#select_search').append('<option>'+lakeData.lakes[i].name +'</option>');
-            $('#select_insert').append('<option>'+lakeData.lakes[i].name +'</option>');
+        for(var key in lakeIDs){
+            var val = lakeIDs[key];
+            $('#select_search').append('<option>'+key +'</option>');
+            $('#select_insert').append('<option>'+key +'</option>');
         }
     }
 
@@ -326,35 +318,10 @@ function getOpenWeatherData(searchQueryAPI){
     }
     
     /*
-    * Gets all the lakes from the database
-    */
-    function getAllLakes(){
-        //TODO Dies ist nur ein DummyJSON
-        var lake = '{"lakes" : [' + 
-            '{ "name": "Brienzersee"},' +
-            '{ "name": "Bielersee"},' +
-            '{ "name": "Genfersee"},' +
-            '{ "name": "Langensee"},' +
-            '{ "name": "Murtensee"},' +
-            '{ "name": "Vierwaldstättersee"},' +
-            '{ "name": "Walensee"},' +
-            '{ "name": "Zürichsee" }]}';
-        var dummy = JSON.parse(lake);
-        return dummy;
-    }
-    
-    /*
     * Sends a POST-Request with input to insert an ad
     */
     function insertAd(){
         var url = 'api/ads/insert';
-        //var date = $('#datepicker_insert').val().replace(/\//g, ",");
-        /*var date = $('#datepicker_insert').val().split('/');
-        var one = date[0];
-        date[0] = date[2];
-        date[2] = one;
-        var newDate = date[0] + "-" + date[1] + "-"+ date[2];
-        console.log('newDate' +newDate);*/
         $.ajax({
             url: url,
             type: 'POST',
@@ -368,10 +335,10 @@ function getOpenWeatherData(searchQueryAPI){
             }),
             statusCode: {
                 200: function () {
-                    alert('Ihr Inserat wurde erstellt');
+                    //TODO
                 },
                 401: function () {
-                    alert("Inserat konnte nicht erstellt werden");
+                    //TODO
                 }
             }
         });
@@ -382,36 +349,18 @@ function getOpenWeatherData(searchQueryAPI){
     */
     function searchAd(lake, from, until){
         var url = 'api/ads/search/' + lake + '/' + from + '/' + until;
-        /*
-        var date = $('#datepicker_from').val().split('/');
-        var one = date[2];
-        date[2] = date[1];
-        date[1] = date[0];
-        date[0] = one; 
-        var newDate = date[0] + "-" + date[1] + "-"+ date[2];
-        console.log(newDate);
-        */
         $.ajax({
             url: url,
             type: 'GET',
             dataType: 'json',
             contentType: 'application/json',
-            /*data: JSON.stringify({
-                "lake": $('#select_search :selected').text(),
-                "fromDate": $('#datepicker_from').val().replace(/\//g, ","),
-                //$('#datepicker_from').val().replace(/\//g, "-"),
-                "untilDate": $('#datepicker_until').val().replace(/\//g, ",")
-            }),*/
             statusCode: {
             200: function (data) {
                 console.log(data[0]);
                 showResults(data, lake);
-                //showMyAdsSection();
             },
             401: function () {
-                alert('Ungültige Logindaten');
-                //switchAccountView(login);
-
+                //TODO
             }
         }
         });
@@ -421,17 +370,7 @@ function getOpenWeatherData(searchQueryAPI){
     /*
     * Displays the ads according the search filter
     */
-    function showResults(data, lake){
-        //TODO Dies sind nur JSONDummies
-        var dummys = {
-            "lake":"Zugersee",
-                "messages":[
-                {"title":"Titel 1", "message":"Wer will Wakeboarden?", "date": "09/06/2016", "contact":"clara@gmail.ch"},
-                {"title":"Titel 2","message":"Grossevent auf dem Zugersee", "date": "12/05/2016", "contact":"nicolas@intergga.ch"},
-                {"title":"Titel 3","message":"Infos zu Sommer-Wakeboard-Camp!", "date": "02/04/2016", "contact":"hugo@salt.ch"}
-                ]
-        };
-        console.log(data.length);        
+    function showResults(data, lake){      
         deleteResults();
         //Puts the name of the lake in the title
         $('#results').append('<h4 id=\"searchResults\">Resultate für ' + lake +'</h4');
@@ -443,8 +382,12 @@ function getOpenWeatherData(searchQueryAPI){
         }
         //Hides content and shows it on click on the title
         $('.content').toggle();
+        
         $('.messageStart').on('click', function(){
             $(this).next().toggle();
+            if ($(this).next().is(":visible")){
+                //alert("sichtbar");
+            }
         })
     }
     
