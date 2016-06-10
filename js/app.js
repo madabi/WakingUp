@@ -87,6 +87,9 @@ jQuery(document).ready(function(){
     insertAddMenuButton.on('click', function(){ 
         $('article').first().hide();
         $('article').first().next().show();
+        $('#addContent').val("");
+        $('#title_insert').val("");
+        $('#datepicker_insert').val("");
     });
     
     searchAddMenuButton.on('click', function(){  
@@ -335,7 +338,10 @@ function getOpenWeatherData(searchQueryAPI){
             }),
             statusCode: {
                 200: function () {
-                    //TODO
+                    hideArticles();
+                    showSection(ad);
+                    setActive(this);
+                    $('article').first().show();
                 },
                 401: function () {
                     //TODO
