@@ -242,11 +242,11 @@ function getMyAds($app, $token)
         $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE userEmail=:userEmail');
         $findAds->bindParam(':userEmail', $userEmail, PDO::PARAM_STR);
         if ($findAds->execute()) {
-            $findAds->fetchAll(PDO::FETCH_ASSOC);
+            $result = $findAds->fetchAll(PDO::FETCH_ASSOC);
 
             if ($findAds->rowCount() > 0) {
                 $ads = array();
-                foreach ($findAds as $ad) {
+                foreach ($result as $ad) {
                     $ads[] = array(
                         'id' => $ad['id'],
                         'title' => $ad['title'],
