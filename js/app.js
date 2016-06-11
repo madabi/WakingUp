@@ -39,6 +39,7 @@ jQuery(document).ready(function () {
     });
 
     profileButton.on('click', function (event) {
+        hideOldErrorMessages();
        // event.preventDefault();
         showSection(profile);
 
@@ -78,7 +79,7 @@ jQuery(document).ready(function () {
         console.log('loginButton clicked');
         tryLoginAuth();
         login.find('h4').first().text('Abmelden');
-
+        emptyForm($('#login'));
         //todo: werte im formular zurücksetzen
     });
 
@@ -97,9 +98,9 @@ jQuery(document).ready(function () {
         //todo: input validation
 
         trySignUp();
-
-        //todo: werte im formular zurücksetzen
+        emptyForm($('#signUp'));
     });
+
     $('#myAdsTitle').on('click', function (event) {
         event.preventDefault();
         if(myAds.css("top") == "50px"){
@@ -236,6 +237,7 @@ function createAdTable(){
 
 function tryLoginAuth() {
 
+
     var loginEmail = $('#login').find('#email-logIn').val();
     var loginPassword = $('#login').find('#pwd-logIn').val();
 
@@ -264,7 +266,7 @@ function tryLoginAuth() {
                 showMyAdsSection();
             },
             401: function () {
-                alert('Ungültige Logindaten');
+                $('#badLoginDetails').removeClass('hidden');
                 switchAccountView(login);
 
             }
@@ -383,3 +385,13 @@ function removeToken(){
 }
 
 });
+
+function emptyForm(myForm){
+        myForm.find("input[type=email], textarea").val("");
+        myForm.find("input[type=password], textarea").val("");
+
+}
+
+function hideOldErrorMessages(){
+    $('#badLoginDetails').addClass('hidden');
+}
