@@ -78,7 +78,7 @@ jQuery(document).ready(function () {
         event.preventDefault();
         console.log('loginButton clicked');
         tryLoginAuth();
-        login.find('h4').first().text('Abmelden');
+        showLoggedInAccountView();
         emptyForm($('#login'));
         //todo: werte im formular zurücksetzen
     });
@@ -162,6 +162,9 @@ jQuery(document).ready(function () {
 
     }
 
+    function showLoggedInAccountView(){
+        login.find('h4').first().text('Abmelden');
+    }
 
     function getMyAds() {
         var tokenString = localStorage.getItem('wakingUp_token');
@@ -175,8 +178,8 @@ jQuery(document).ready(function () {
                 statusCode: {
                     200: function (data) {
                         console.log(data);
+                        showLoggedInAccountView();
                         createAdTable(data);
-                        login.find('h4').first().text('Abmelden');
                         showMyAdsSection();
 
                     },
@@ -334,6 +337,8 @@ jQuery(document).ready(function () {
                 statusCode: {
                     200: function (data) {
                         directLoginAuth(email, pwd);
+                        showLoggedInAccountView();
+                        switchAccountView(login);
                         showMyAdsSection();
                     },
                     401: function () {
