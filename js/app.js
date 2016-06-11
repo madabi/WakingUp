@@ -175,7 +175,7 @@ jQuery(document).ready(function () {
                 statusCode: {
                     200: function (data) {
                         console.log(data);
-                        createAdTable();
+                        createAdTable(data);
                         login.find('h4').first().text('Abmelden');
                         showMyAdsSection();
 
@@ -203,22 +203,59 @@ jQuery(document).ready(function () {
     }
 
 
-    function createAdTable() {
+    function createAdTable(data) {
 
-        var adTable = "";
+       /* var adTable = "";
         var data2 = [{
             "title": "Suche 2 Personen",
             "lake_name": "Bodensee",
             "message": "Lorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj a"
         }, {"title": "Suche 2 Personen", "lake_name": "Walensee", "message": "toll"}];
+*/
 
-        for (var i = 0; i < data2.length; i++) {
-            adTable = adTable.concat('<tr><td><h5>' + data2[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
-                '<tr><td><h5>' + data2[i].lake_name + '</h5></td></tr>' +
-                '<tr><td>' + data2[i].message + '</td></tr>');
+        adTable = '<tr></tr>';
+
+        for (var i = 0; i < data.length; i++) {
+
+            var date =  data[i].date;
+            var day = date.substr(8,2);
+            var month = date.substr(5,2);
+            var year = date.substr(0,4);
+
+            var formattedDate = day + ' - ' + month + ' - ' +year;
+
+            adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
+                '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
+                '<tr><td>' + data[i].message + '</td></tr>'
+            );
         }
 
         $('#myAds').find('table').empty().append(adTable);
+
+
+        /*for (var i = 0; i < data.length; i++) {
+            adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
+                '<tr><td><h5>' + data[i].lake + '</h5></td></tr>' +
+                '<tr><td>' + data[i].message + '</td></tr>');
+        }
+
+        $('#myAds').find('table').empty().append(adTable);*/
+
+       /* for(var i = 0; i<data.length; i++){
+            var title = data[i].title;
+            var message = data[i].message;
+            var userEmail = data[i].email;
+            $('#myAds').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + userEmail+'</div>');
+        }
+        //Hides content and shows it on click on the title
+        $('.content').toggle();
+
+        $('.messageStart').on('click', function(){
+            $(this).next().toggle();
+            if ($(this).next().is(":visible")){
+                //alert("sichtbar");
+            }
+        })*/
     }
 
 
