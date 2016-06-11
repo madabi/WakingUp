@@ -16,6 +16,7 @@ define('myDatabase', 'mysql:host=localhost;dbname=wakingUp;charset=utf8');
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
+$app->config('debug', true);
 
 
 /*
@@ -31,14 +32,6 @@ $app->post('/users/signup', function () use ($app){
  */
 $app->get('/users/login/:email/:password', function ($email, $password) use ($app){
     loginAuth($app, $email, $password);
-});
-
-
-/*
- * User ausloggen
- */
-$app->put('/users/logout', function () use ($app){
-    //todo: logout implementieren
 });
 
 

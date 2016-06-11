@@ -235,59 +235,64 @@ function setToken($email, $token, $tokenExpiration)
  */
 function getMyAds($app, $token)
 {
-    $db = getDBConnection(myDatabase, db_username, db_password);
-    $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
-    $selection = $db->prepare($selection);
-    $selection->bindParam(':token', $token);
-    if ($selection->execute()) {
-        $selection->fetchAll(PDO::FETCH_ASSOC);
-        if ($selection->rowCount() > 0) {
 
-            foreach ($selection as $user) {
-                $user_email = $user['email'];
-            }
+    $userEmail = getUserEmail($token);
+    if($userEmail) {
+        $db = getDBConnection(myDatabase, db_username, db_password);
+        $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE userEmail=:userEmail');
+        $findAds->bindParam(':userEmail', $userEmail, PDO::PARAM_STR);
+        if ($findAds->execute()) {
+            $findAds->fetchAll(PDO::FETCH_ASSOC);
 
-            $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE user_email=:user_email');
-            $findAds->bindParam(':user_email', $user_email);
-            if ($findAds->execute()) {
-                $findAds->fetchAll(PDO::FETCH_ASSOC);
-
-                if ($findAds->rowCount() > 0) {
-
-                    $ads = array();
-                    foreach ($findAds as $ad) {
-                        $ads[] = array(
-                            'id' => $ad['id'],
-                            'title' => $ad['title'],
-                            'message' => $ad['message'],
-                            'lake_name' => $ad['lake_name'],
-                            'user_email' => $ad['user_email']
-                        );
-
-                    }
-                    response($app, $ads);
-                    $db = null;
-                } else {
-                    $db = null;
-
-                    responseWithStatus($app, 420);
+            if ($findAds->rowCount() > 0) {
+                $ads = array();
+                foreach ($findAds as $ad) {
+                    $ads[] = array(
+                        'id' => $ad['id'],
+                        'title' => $ad['title'],
+                        'message' => $ad['message'],
+                        'date' => $ad['date'],
+                        'lake' => $ad['lake'],
+                        'userEmail' => $ad['userEmail']
+                    );
                 }
+                $db = null;
+                response($app, $ads);
             } else {
                 $db = null;
-
-                responseWithStatus($app, 421);
-
+                responseWithStatus($app, 420);
             }
-        }else{
-            responseWithStatus($app, 419);
+        } else {
+            $db = null;
+
+            responseWithStatus($app, 421);
+
         }
 
-    } else {
-        $db = null;
-
-        responseWithStatus($app, 422);
-    }
+    }else{responseWithStatus($app, 422);}
 }
+
+function getUserEmail($token){
+
+    $db = getDBConnection(myDatabase, db_username, db_password);
+    $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
+    $selection->bindParam(':token', $token, PDO::PARAM_STR);
+    if ($selection->execute()) {
+        $user = $selection->fetch();
+
+       //      $selection->fetchAll(PDO::FETCH_ASSOC);
+        // if ($selection->rowCount() > 0) {
+            /*
+            foreach ($selection as $user) {
+                $user_email = $user['userEmail'];
+            }}*/
+
+        $user_email = $user['email'];
+        return $user_email;
+    }
+    return false;
+}
+
 
 
 /**

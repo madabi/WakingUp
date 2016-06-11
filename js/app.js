@@ -104,8 +104,9 @@ jQuery(document).ready(function () {
             logOut();
         }else{
             if(verifyToken()){
-                createAdTable();
-                showMyAdsSection();
+                getMyAds();
+                /*createAdTable();
+                showMyAdsSection();*/
             }else{
                 myAds.find('table').empty().append('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td></tr>+' +
                     '<tr><td id="pleaseLogIn">Bitte logge dich ein.</td></tr>');
