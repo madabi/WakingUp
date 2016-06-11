@@ -30,53 +30,57 @@ function getDBConnection($connectionString, $user, $password)
 function SignUp($app)
 {
     $user = getJSONFromBody($app);
-    var_dump($user);
 
     $db = getDBConnection(myDatabase, db_username, db_password);
 
     //todo: Schutz vor SQL-Injections?
 
-    $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE email=:email AND password=:password');
+    $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE email=:email');
 
     $selection->bindParam(':email', $user['email'], PDO::PARAM_STR);
-    $selection->bindParam(':password', $user['password'], PDO::PARAM_STR);
 
 
-    $selection->execute();
-    $selection->fetchAll();
+    if($selection->execute()) {
+        $selection->fetchAll(PDO::FETCH_ASSOC);
 
-    if ($selection->rowCount() > 0) {
-        echo('user already exists');
-        responseWithStatus($app, 401);
-
-    } else {
-        echo("new user can be created");
-
-
-        $longToken = bin2hex(openssl_random_pseudo_bytes(16));
-        $token = substr($longToken, 0, 16);
-        $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
-
-
-        $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password, token, token_expire)
-VALUES (:email, :password, :token, :token_expire)');
-        $insertion->bindParam(':email', $user['email'], PDO::PARAM_STR);
-        $insertion->bindParam(':password', $user['password'], PDO::PARAM_STR);
-        $insertion->bindParam(':token', $token, PDO::PARAM_STR);
-        $insertion->bindParam(':token_expire', $tokenExpiration);
-
-
-        if ($insertion->execute()) {
-
-            echo('new user has been created');
+        if ($selection->rowCount() > 0) {
+            echo('user already exists');
+            responseWithStatus($app, 401);
 
         } else {
-            echo('could not write new user into database');
-            //todo: was zurückgeben?
+            echo("new user can be created");
+
+
+            $longToken = bin2hex(openssl_random_pseudo_bytes(16));
+            $token = substr($longToken, 0, 16);
+            $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+
+            $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password, token, token_expire)
+VALUES (:email, :password, :token, :token_expire)');
+            $insertion->bindParam(':email', $user['email'], PDO::PARAM_STR);
+            $insertion->bindParam(':password', $user['password'], PDO::PARAM_STR);
+            $insertion->bindParam(':token', $token, PDO::PARAM_STR);
+            $insertion->bindParam(':token_expire', $tokenExpiration);
+
+
+            if ($insertion->execute()) {
+
+                echo('new user has been created');
+
+            } else {
+                echo('could not write new user into database');
+            }
+
         }
+    }else{
+        responseWithStatus($app, 401);
 
     }
+
+
     $db = null;
+
 }
 
 
@@ -345,16 +349,17 @@ function verifyToken($app, $tokenToVerify)
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
     if ($selection->execute()) {
-        $selection->fetchall(PDO::FETCH_ASSOC);
+        $users = $selection->fetchall(PDO::FETCH_ASSOC);
         if ($selection->rowCount() > 0) {
             $token_expire = date('Y-m-d H:i:s', strtotime('now'));
             $myEmail = '';
-            foreach ($selection as $user) {
+            foreach ($users as $user) {
                 $token_expire = $user['token_expire'];
                 $myEmail = $user['email'];
             }
-            $dateNow = date('Y-m-d H:i:s', strtotime('now'));
-            if (strtotime($token_expire) > $dateNow) {
+            $date_expire = new DateTime($token_expire);
+            $dateNow = new DateTime('now');
+            if ($date_expire > $dateNow) {
                 $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
                 updateToken($myEmail, $newTokenExpiration);
                 $db = null;

@@ -182,7 +182,6 @@ jQuery(document).ready(function () {
                     },
                     401: function () {
                         removeToken();
-                        alert('fehler bei authentifizierung');
                         switchAccountView(login);
 
                     },
@@ -328,15 +327,13 @@ jQuery(document).ready(function () {
                 }),
                 statusCode: {
                     200: function (data) {
-                        //Ok, everything worked as expected
-                        alert('Ihr Account wurde erstellt');
                         directLoginAuth(email, pwd);
                         showMyAdsSection();
                     },
                     401: function () {
-                        //Our token is either expired, invalid or doesn't exist
-                        alert("Es gibt bereits einen Benutzer mit dieser Email-Adresse");
-                        switchAccountView(login);
+                        $('#invalidDetails-signUp').text('Es gibt bereits einen Benutzer mit dieser Adresse');
+                        $('#invalidDetails-signUp').removeClass('hidden');
+                        emptyForm($('#signUp'));
                     }
                 }
             });
@@ -359,7 +356,6 @@ jQuery(document).ready(function () {
                     showMyAdsSection();
                 },
                 401: function () {
-                    alert('Ungültige Logindaten');
                     switchAccountView(login);
 
                 }
