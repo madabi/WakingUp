@@ -76,14 +76,14 @@
     color:#FFC262;
 }
 
-#noContentIcon{
-    width: 92%;
+#notLoggedInIcon, #noContentIcon{
+    width: 95%;
     text-align: center;
     padding-top: 50px;
     font-size: 140px;
 }
 
-#pleaseLogIn{
+#pleaseLogIn, #noContentText{
     padding-top: 20px;
     text-align: center;
 }

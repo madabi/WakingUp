@@ -111,7 +111,7 @@ jQuery(document).ready(function () {
                 /*createAdTable();
                  showMyAdsSection();*/
             } else {
-                myAds.find('table').empty().append('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td></tr>+' +
+                myAds.find('table').empty().append('<tr><td><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td></tr>+' +
                     '<tr><td id="pleaseLogIn">Bitte logge dich ein.</td></tr>');
                 showMyAdsSection();
             }
@@ -212,21 +212,27 @@ jQuery(document).ready(function () {
         }, {"title": "Suche 2 Personen", "lake_name": "Walensee", "message": "toll"}];
 */
 
-        adTable = '<tr></tr>';
+        var adTable = '<tr></tr>';
 
-        for (var i = 0; i < data.length; i++) {
+        if(data.length==undefined){
+            adTable= adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
+                '<tr><td id="noContentText">Du hast noch keine Inserate erstellt.</td></tr>');
+        }else {
 
-            var date =  data[i].date;
-            var day = date.substr(8,2);
-            var month = date.substr(5,2);
-            var year = date.substr(0,4);
+            for (var i = 0; i < data.length; i++) {
 
-            var formattedDate = day + ' - ' + month + ' - ' +year;
+                var date = data[i].date;
+                var day = date.substr(8, 2);
+                var month = date.substr(5, 2);
+                var year = date.substr(0, 4);
 
-            adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
-                '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
-                '<tr><td>' + data[i].message + '</td></tr>'
-            );
+                var formattedDate = day + ' - ' + month + ' - ' + year;
+
+                adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
+                    '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
+                    '<tr><td>' + data[i].message + '</td></tr>'
+                );
+            }
         }
 
         $('#myAds').find('table').empty().append(adTable);
