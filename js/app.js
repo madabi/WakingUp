@@ -277,8 +277,9 @@ jQuery(document).ready(function () {
             statusCode: {
                 200: function (data) {
                     setToken(data['token']);
-                    createAdTable();
-                    showMyAdsSection();
+                    getMyAds();
+                   /* createAdTable(data);
+                    showMyAdsSection();*/
                 },
                 401: function () {
                     $('#badLoginDetails').removeClass('hidden');
