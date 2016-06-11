@@ -46,14 +46,16 @@ jQuery(document).ready(function () {
         myAds.show();
         setActive(this);
 
-        if(verifyToken()){
+
+        getMyAds();
+        /*if(verifyToken()){
             getMyAds();
             login.find('h4').first().text('Abmelden');
             showMyAdsSection();
         }else{
             switchAccountView(login);
         }
-
+*/
 
 
     });
@@ -186,6 +188,7 @@ function getMyAds(){
                 200: function (data) {
                     console.log(data);
                     createAdTable();
+                    login.find('h4').first().text('Abmelden');
                     showMyAdsSection();
 
                 },
