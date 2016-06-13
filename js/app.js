@@ -90,10 +90,7 @@ jQuery(document).ready(function () {
     $('#myAdsList').on('click', function (event) {
         event.preventDefault();
         var source = $(event.srcElement || event.target);
-        console.log(source);
-       var adIdToDelete = source.closest('li').find('p').text();
-        alert(adIdToDelete);
-
+        var adIdToDelete = source.closest('li').find('p').text();
         deleteAd(adIdToDelete);
     });
 
@@ -236,30 +233,23 @@ jQuery(document).ready(function () {
 
             for (var i = 0; i < data.length; i++) {
 
-
-
-
                 var date = data[i].date;
                 var day = date.substr(8, 2);
                 var month = date.substr(5, 2);
                 var year = date.substr(0, 4);
 
-                console.log(data[i].id.toString());
-
-
                 var adTable = $('<table></table>');
-                var newListElement = $('<li  data-adId="' +data[i].id + '"></li>');
+                var newListElement = $('<li  data-adId="' + data[i].id + '"></li>');
                 var formattedDate = day + ' - ' + month + ' - ' + year;
-           var trash = $('<td><span class="glyphicon glyphicon-trash"></span></td>');
+                var trash = $('<td><span class="glyphicon glyphicon-trash"></span></td>');
 
 
                 adTable = adTable.append($('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td>' +
-                    '<td><p>' +data[i].id +'</p></td></tr>' +
+                    '<td><p>' + data[i].id + '</p></td></tr>' +
                     '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
                     '<tr><td>' + data[i].message + '</td></tr>'
                 ));
-
-
+                
                 newListElement.append(adTable);
 
                 $('#myAdsList').append(newListElement);
@@ -267,7 +257,6 @@ jQuery(document).ready(function () {
 
             }
         }
-
 
 
         /*for (var i = 0; i < data.length; i++) {

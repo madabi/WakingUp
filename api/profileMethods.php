@@ -31,7 +31,6 @@ $id = intval($id);
 
     $deletion->bindParam(':id', $id, PDO::PARAM_INT);
 
-
     if($deletion->execute()) {
 
 
