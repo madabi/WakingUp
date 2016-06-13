@@ -292,8 +292,6 @@ function getUserEmail($token)
 /**
  * Überprüft Gültigkeit des übergebenen Tokens
  *
- *
- * @param $app
  * @param $tokenToVerify
  * @return bool
  */
