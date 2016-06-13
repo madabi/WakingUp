@@ -31,9 +31,9 @@ jQuery(document).ready(function(){
     var profile = sections.last();
     
     var insertAddMenuButton = $('#btn_add_insert');
-    var searchAddMenuButton = $('#btn_add_search');
+    var searchAddMenuButton = $('#btn_add_search'); //Fällt weg
     var backAddButton01 = $('#btn_add_back01');
-    var backAddButton02 = $('#btn_add_back02');
+    var backAddButton02 = $('#btn_add_back02'); //Fällt weg
     var insertAddButton = $('#btn_add_insert_insert');
     var searchAddButton = $('#btn_add_search_search');
     
@@ -70,7 +70,8 @@ jQuery(document).ready(function(){
         hideArticles();
         showSection(ad);
         setActive(this);
-        $('article').first().show();
+        setTodaysDate();
+        $('article').last().show();
     });
 
     profileButton.on('click', function(){
@@ -84,29 +85,33 @@ jQuery(document).ready(function(){
         scoreNowGauge.update(NewValue())
     });
     
+    
     insertAddMenuButton.on('click', function(){ 
-        $('article').first().hide();
-        $('article').first().next().show();
+        $('article').last().hide();
+        $('article').first().show();
         $('#addContent').val("");
         $('#title_insert').val("");
-        $('#datepicker_insert').val("");
     });
     
+    /*
     searchAddMenuButton.on('click', function(){  
         $('article').first().hide();
         $('article').last().show();
     });
+    */
     
     backAddButton01.on('click', function(){
-        $('article').first().next().hide();
-        $('article').first().show();
+        $('article').first().hide();
+        $('article').next().show();
     });
     
+    /*
     backAddButton02.on('click', function(){
         $('article').last().hide();
         $('article').first().show();
         deleteResults();
     });
+    */
     
     insertAddButton.on('click', function(){
         var lake = $('#select_insert :selected').text();
@@ -120,24 +125,22 @@ jQuery(document).ready(function(){
         console.log(title);
         console.log(message);
         
-        if (inputDate!=""){
-            insertAd(lake, inputDate, title, message);
-        }
+        insertAd(lake, inputDate, title, message);
         
     });
     
-    function isPresentOrFutureDate(inputDate){
-        var fullDate = new Date();
-        var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
-        var dateArray = inputDate.split(',');
-        if (dateArray[2]>= fullDate.getFullYear()){
-            if (dateArray[0]>= twoDigitMonth){
-                if (dateArray[1]>= fullDate.getDate()){
-                    return true;
-                }
-            }
-        }
-        return false;
+    function setTodaysDate(){
+        var defaultDate = getCurrentDate();
+        $('#datepicker_insert').val(defaultDate);
+        $('#datepicker_from').val(defaultDate);
+        $('#datepicker_until').val(defaultDate);
+    }
+    
+    function getCurrentDate(){
+        var currentDate = new Date();
+        var twoDigitMonth=((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);  
+        var twoDigitDate=((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate());
+        return createdDateTo = twoDigitMonth + "/" + twoDigitDate +  "/"+currentDate.getFullYear(); 
     }
     
     searchAddButton.on('click', function(){
@@ -150,9 +153,8 @@ jQuery(document).ready(function(){
         console.log(fromDate);
         console.log(untilDate);
         
-        if ((fromDate!="") && (untilDate!="")){
-            searchAd(lake, fromDate, untilDate);
-        }
+        searchAd(lake, fromDate, untilDate);
+    
     });
 
     $("#hourlyForecastTitle").on('click', function(e) {
@@ -373,7 +375,7 @@ function getOpenWeatherData(searchQueryAPI){
                     hideArticles();
                     showSection(ad);
                     setActive(this);
-                    $('article').first().show();
+                    $('article').last().show();
                 },
                 401: function () {
                     //TODO

@@ -132,17 +132,18 @@
         </section>
         
         <section id="ad">
+            
+            <!--Fällt weg
             <article id="ad_choice"> 
                 <header>    
                     <h3>Inserate</h3>
                 </header>
-                <button id="btn_add_insert" class="btn">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Erstellen</span>
-                </button>
                 <button id="btn_add_search" class="btn">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"> Suchen</span>
                 </button>
             </article>
+            ende-->
+            
             <article id="ad_insert">
                 <header>
                     <h3>Inserat erstellen</h3>
@@ -152,13 +153,12 @@
                 </select>
                 <br>Datum <div class="glyphicon glyphicon-calendar"></div>
                 <form>
-                    <input id="datepicker_insert" class="date"/><br>
+                    <input id="datepicker_insert" class="date" readonly="readonly"/><br>
                     Titel<br>
-                    <input id="title_insert" type="text">
+                    <input id="title_insert" placeholder="Titel eingeben" type="text">
                 </form>
                 Textinhalt<br>
-                <textarea id="addContent" rows="15" cols="50"> Hier kommt dein Text
-                </textarea><br> 
+                <textarea id="addContent" rows="15" cols="50" placeholder="Schreib hier dein Inserat"></textarea><br> 
                 <div id="contact_infos">
                 </div>
                 <button id="btn_add_back01" class="btn">
@@ -170,24 +170,29 @@
             </article>
             <article id="ad_search">
                 <header>
-                    <h3>Inserate filtern</h3>
+                    <h3>Inserate suchen</h3>
                 </header>
                 See auswählen
                 <select id="select_search">
                 </select>
                 <br>von <div class="glyphicon glyphicon-calendar"></div>
                 <form>
-                    <input id="datepicker_from" class="date"/>
+                    <input id="datepicker_from" class="date" readonly="readonly" type="date"/>
                 </form>
                 <br> bis <div class="glyphicon glyphicon-calendar"></div>
                 <form>
-                    <input id="datepicker_until" class="date"/>
+                    <input id="datepicker_until" class="date" readonly="readonly"/>
                 </form>
+                <!--Fällt weg
                 <button id="btn_add_back02" class="btn">
                     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"> Zurück</span>
                 </button>
+                ende-->
                 <button id="btn_add_search_search" class="btn">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"> Suchen</span>
+                </button>
+                <button id="btn_add_insert" class="btn">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Erstellen</span>
                 </button>
                 <div id="results">
                 </div>
