@@ -125,7 +125,10 @@ jQuery(document).ready(function(){
         console.log(title);
         console.log(message);
         
-        insertAd(lake, inputDate, title, message);
+        var tokenString = localStorage.getItem('wakingUp_token');
+        if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
+            insertAd(lake, inputDate, title, message, tokenString);
+        }
         
     });
     
@@ -185,7 +188,7 @@ jQuery(document).ready(function(){
             $('#select_insert').append('<option>'+key +'</option>');
         }
     }
-
+    
     function setActive(button){
         $('nav').find('button').removeClass("activeButton");
         $(button).addClass("activeButton");
@@ -357,7 +360,7 @@ function getOpenWeatherData(searchQueryAPI){
     /*
     * Sends a POST-Request with input to insert an ad
     */
-    function insertAd(lake, inputDate, title, message){
+    function insertAd(lake, inputDate, title, message, tokenString){
         var url = 'api/ads/insert';
         $.ajax({
             url: url,
@@ -368,7 +371,8 @@ function getOpenWeatherData(searchQueryAPI){
                 "lake": lake,
                 "date": inputDate,
                 "title": title,
-                "message": message
+                "message": message,
+                "token": tokenString
             }),
             statusCode: {
                 200: function () {
