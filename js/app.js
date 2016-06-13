@@ -222,7 +222,7 @@ jQuery(document).ready(function(){
     }
 
     function showSection(section){
-        weather.hide()
+        weather.hide();
         ad.hide();
         profile.hide();
         section.show();
@@ -231,8 +231,14 @@ jQuery(document).ready(function(){
     }
 
     function initWeather(lakeName, lakeID, numOfHourlyForecasts){
-        var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName);
-        var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName);
+        //openWeatherMap doesn't find these two lakes.. therefore we chose two cities manually.
+        if(lakeName=="Bielersee")lakeName="Biel";
+        else if(lakeName=="Vierwaldstättersee")lakeName="Luzern";
+        
+        var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
+        var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
+        console.log(openWeatherForecastURL);
+        console.log(openWeatherNowURL);
         var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
         $.when(getWeatherData(openWeatherNowURL),getWeatherData(openWeatherForecastURL),getWeatherData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
             var weatherNowTable = $('#weatherNowTable');
