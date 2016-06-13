@@ -1,0 +1,22 @@
+CREATE DATABASE wakingUp;
+
+USE wakingUp;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(45) NOT NULL,
+  password VARCHAR(45) NOT NULL,
+  token VARCHAR(16),
+  token_expire DATETIME,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS ads (
+    id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(60),
+    message VARCHAR(200),
+    date VARCHAR(20),
+    lake DATE,
+    userEmail VARCHAR(45),
+    PRIMARY KEY (id)
+);

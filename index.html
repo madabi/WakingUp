@@ -1,51 +1,250 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>WakingUp</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<head>
 
-        
-        <!-- Apple mobile support -->
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <link rel="apple-touch-icon" href="img/icons/wakeWeather_icon_76.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="img/icons/wakeWeather_icon_76.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="img/icons/wakeWeather_icon_120.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="img/icons/wakeWeather_icon_152.png">
-        <!-- Android mobile support -->
-        <meta name="mobile-web-app-capable" content="yes">
-        <link rel="icon" sizes="152x152" href="img/icons/wakeWeather_icon_152.png">
-        <link rel="icon" sizes="120x120" href="img/icons/wakeWeather_icon_120.png">
-    </head>
-    
-    <body>
+    <title>WakingUp</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 
-        <section id="weather">
-            <h3>Wetter</h3>
+    <!-- Apple mobile support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="img/icons/wakeWeather_icon_76.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/icons/wakeWeather_icon_76.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/icons/wakeWeather_icon_120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/icons/wakeWeather_icon_152.png">
+    <!-- Android mobile support -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="152x152" href="img/icons/wakeWeather_icon_152.png">
+    <link rel="icon" sizes="120x120" href="img/icons/wakeWeather_icon_120.png">
+
+
+    <!-- Import js and css -->
+    <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+    <script src="js/liquidFillGauge.js" language="JavaScript"></script>
+    <script src="lib/jquery-2.2.4.min.js"></script>
+    <script src="js/sha1.js"></script>
+    <script src="js/app.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link type="text/css" href="css/style.css" rel="stylesheet">
+    <link type="text/css" href="css/weather-icons.min.css" rel="stylesheet">
+    <link type="text/css" href="css/icon-works.css" rel="stylesheet">
+    <link type="text/css" href="css/profil.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<section id="weather" >
+    <section id="changeLakeSection" class="text-center">
+        <h4 id="changeLakeTitle">Wähle deinen See</h4>
+        <select id="changeLakeDropdown">
+        </select>
+    </section>
+    <section id="nowForecastSection" class="text-center">
+        <h4 id="nowForecastTitle">Momentane Wake-Bedingungen</h4>
+        <section>
+            <svg id="scoreNowSVG" width="100%"height="150"></svg>
+            <table id="weatherNowIconTable"><tr><td><i class="wi wi-fs wi-yahoo-10"></i></td><td><i class="wi wi-fs wi-yahoo-10"></i></td><td><i class="wi wi-fs wi-yahoo-10"></i></td></tr></table>
+            <table id="weatherNowTable">
+                <tr>
+                    <td><i class="wi wi-fs wi-thermometer"></i></td><td><span></span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span></span></td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-flood"></i></td> <td><span></span> <i class="wi wi-fs wi-celsius"></i></td>
+                    <td><i class="wi wi-fs wi-raindrops"></i></td><td><span></span> </td>
+                </tr>
+                <tr>
+                    <td><i class="wi wi-fs wi-sunrise"></i></td><td><span></span> </td>
+                    <td><i class="wi wi-fs wi-sunset"></i></td><td><span></span></td>
+                </tr>
+            </table>
         </section>
-        
-        <section id="ad">
-            <h3>Inserate</h3>
+    </section>
+    <section id="todayForecastSection">
+        <h4 id="hourlyForecastTitle" class="text-center">Tagesverlauf</h4>
+
+        <table id="hourlyForecastTable" class="center-table">
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-9"></i></td><td><span>9 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score0" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr >
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-12"></i></td><td><span>12 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score12" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-3"></i></td><td><span>15 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score15" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-6"></i></td><td><span>18 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score18" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-9"></i></td><td><span>21 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score21" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+
+        </table>
+    </section>
+    <section id="dailyForecastSection">
+        <h4 id="dailyForecastTitle" class="text-center">Wochenverlauf</h4>
+        <table id="dailyForecastTable" class="center-table">
+            <tr class="dailyForecastOverview">
+                <td><i class="wi wi-fs wi-time-12"></i></td><td><span>12 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score12" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-3"></i></td><td><span>15 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score15" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-6"></i></td><td><span>18 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score18" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+            <tr class="hourlyForecastOverview">
+                <td><i class="wi wi-fs wi-time-9"></i></td><td><span>21 Uhr</span></td>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><svg id="score21" width="40" height="40"></svg></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-yahoo-10"></i></td><td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-strong-wind"></i></td><td><span>4 km/h</span></td>
+            </tr>
+            <tr>
+                <td><i class="wi wi-fs wi-thermometer"></i></td> <td><span>25</span> <i class="wi wi-fs wi-celsius"></i></td>
+                <td><i class="wi wi-fs wi-raindrops"></i></td><td><span>5 mm</span> </td>
+            </tr>
+
+        </table>
+    </section>
+</section>
+
+
+<section id="ad">
+    <h4>Inserate</h4>
+</section>
+
+<section id="profile">
+    <section id="account">
+        <section id="login">
+            <h4 id="accountTitle">Anmelden</h4>
+            <form>
+                <p class="hidden" id="badLoginDetails">Ungültige Anmeldedaten</p>
+                <label for="email-logIn">Email-Adresse</label>
+                <input type="email" class="form-control" id="email-logIn">
+                <label for="pwd-logIn">Passwort:</label>
+                <input type="password" class="form-control" id="pwd-logIn">
+                <button type="submit" class="btn btn-default" id="loginButton">Anmelden</button>
+            </form>
+            <button id="noAccountYetButton">Du hast noch keinen Account?</button>
+            <button id="lostPasswordButton">Passwort vergessen?</button>
         </section>
-        
-        <section id="profile">
-            <h3>Profil</h3>
+        <section id="signUp">
+            <h4 id="createAccountTitle">Account erstellen</h4>
+            <form>
+                <p class="hidden" id="invalidDetails-signUp"></p>
+                <label for="email-signUp">Email-Adresse</label>
+                <input type="email" class="form-control" id="email-signUp">
+                <label for="pwd-signUp">Passwort:</label>
+                <input type="password" class="form-control" id="pwd-signUp">
+                <button type="submit" id="signUpButton" class="btn btn-default">Account erstellen</button>
+            </form>
         </section>
+        <section id="lostPasswordInformation">
+            <h4 id="lostPasswordTitle">Passwort vergessen?</h4>
+            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+            <p>Schreiben Sie eine Mail an:</p>
+            <a href="mailto:info@wakingUp.ch"> info@wakingUp.ch</a>
+        </section>
+    </section>
+    <section id="myAds">
+        <h4 id="myAdsTitle">Meine Inserate</h4>
+        <p id="deleteError" class="hidden">Fehler beim Löschen des Inserats</p>
+        <ul id="myAdsList">
+            <!-- <li><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>
+             <li id="pleaseLogIn">Bitte logge dich ein.</li>-->
+        </ul>
+    </section>
+</section>
 
- <nav>
-     <button id="btn_weather" class="btn"> <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span></button>
-     <button id="btn_ad" class="btn"> <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>
-     <button id="btn_profile" class="btn"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span></button>
- </nav>
+<nav>
+    <button id="btn_weather" class="btn"><span class="glyphicon glyphicon-cloud" aria-hidden="true"></span></button>
+    <button id="btn_ad" class="btn"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></button>
+    <button id="btn_profile" class="btn"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button>
+</nav>
 
 
 
-        
-        <script src="lib/jquery-2.2.4.min.js"></script>
-        <script src="js/app.js"></script>
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-        <link type="text/css" href="css/style.css" rel="stylesheet">
-    </body>
+</body>
 </html>

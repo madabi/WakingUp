@@ -1,0 +1,131 @@
+#profile{
+    height:100%;
+    font-size:1em;
+    background-color: #FFCF95;
+    width:100%;
+}
+
+#profile h4 {
+    margin-top: 0px;
+    padding-top:20px;
+    text-align:center;
+}
+
+#profile label{
+    margin-top:15px;
+}
+
+
+#login{
+    height:100%;
+    width:100%;
+    background-color: deepskyblue;
+    font-size: 1em;
+    position:fixed;
+
+
+    margin-left: auto;
+    margin-right:auto;
+}
+
+#login > form {
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#profile form button {
+    margin-top:10px;
+    float:right;
+}
+
+
+#login > button{
+    margin-top:80px;
+    border-style: none;
+    background-color: transparent;
+    text-align:center;
+    width:100%;
+}
+
+#login > button:last-child{
+    margin-top:20px;
+}
+
+#signUp {
+    width: 80%;
+    margin-left: auto;
+    margin-right:auto;
+
+}
+
+
+#signUp button {
+    margin-top: 30px;
+    display: block;
+}
+
+#lostPasswordInformation {
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+}
+#lostPasswordInformation span {
+    font-size: 140px;
+    color:#FFC262;
+}
+
+#notLoggedInIcon, #noContentIcon{
+    width: 95%;
+    text-align: center;
+    padding-top: 50px;
+    font-size: 140px;
+}
+
+#pleaseLogIn, #noContentText{
+    padding-top: 20px;
+    text-align: center;
+}
+
+#myAds{
+    box-shadow: 0 16px 32px 0 rgba(0, 0, 0, 0.7), 0 12px 40px 0 rgba(0, 0, 0, 0.7);
+    position:fixed;
+    top:50px;
+    height:100%;
+    background-color: #FFC262;
+    -webkit-transition:all 400ms ease-in-out 0.4s;
+    -moz-transition:all 400ms ease-in-out 0.4s;
+    -o-transition:all 400ms ease-in-out 0.4s;
+    transition:all 400ms ease-in-out 0.4s;
+    width: 100%;
+    margin-left: auto;
+    margin-right:auto;
+}
+
+#myAds table {
+    text-align:left;
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#myAds tr:nth-child(3n+4) > td {
+    padding-top: 20px;
+}
+
+
+#myAds button{
+    text-decoration: underline;
+    border-style:none;
+    background-color: transparent;
+    display:block;
+    margin-top:10px;
+    margin-bottom:20px;
+    float:right;
+}
+
+#myAdsList{
+    overflow-y: scroll;
+    height: calc(100% - 134px);
+}
