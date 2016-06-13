@@ -46,19 +46,7 @@ jQuery(document).ready(function () {
         account.show();
         myAds.show();
         setActive(this);
-
-
         getMyAds();
-        /*if(verifyToken()){
-         getMyAds();
-         login.find('h4').first().text('Abmelden');
-         showMyAdsSection();
-         }else{
-         switchAccountView(login);
-         }
-         */
-
-
     });
 
 
@@ -95,10 +83,18 @@ jQuery(document).ready(function () {
 
     $('#signUpButton').on('click', function (event) {
         event.preventDefault();
-        //todo: input validation
-
         trySignUp();
         emptyForm($('#signUp'));
+    });
+
+    $('#myAdsList').on('click', function (event) {
+        event.preventDefault();
+        var source = $(event.srcElement || event.target);
+        console.log(source);
+       var adIdToDelete = source.closest('li').find('p').text();
+        alert(adIdToDelete);
+
+        deleteAd(adIdToDelete);
     });
 
     $('#myAdsTitle').on('click', function (event) {
@@ -108,8 +104,6 @@ jQuery(document).ready(function () {
         } else {
             if (verifyToken()) {
                 getMyAds();
-                /*createAdTable();
-                 showMyAdsSection();*/
             } else {
                 myAds.find('table').empty().append('<tr><td><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td></tr>+' +
                     '<tr><td id="pleaseLogIn">Bitte logge dich ein.</td></tr>');
@@ -162,9 +156,35 @@ jQuery(document).ready(function () {
 
     }
 
-    function showLoggedInAccountView(){
+    function showLoggedInAccountView() {
         login.find('h4').first().text('Abmelden');
     }
+
+
+    function deleteAd(adId) {
+        var tokenString = localStorage.getItem('wakingUp_token');
+        if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
+
+            var url = 'api/ads/' + adId + '/' + tokenString;
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+
+                success: function () {
+                    getMyAds();
+                },
+                error: function () {
+                    alert("konnte nicht gelöscht werden");
+                }
+
+            });
+
+
+        }
+
+
+    }
+
 
     function getMyAds() {
         var tokenString = localStorage.getItem('wakingUp_token');
@@ -207,63 +227,72 @@ jQuery(document).ready(function () {
 
     function createAdTable(data) {
 
-       /* var adTable = "";
-        var data2 = [{
-            "title": "Suche 2 Personen",
-            "lake_name": "Bodensee",
-            "message": "Lorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj aLorem Ipsum bla blaa löksdfj a"
-        }, {"title": "Suche 2 Personen", "lake_name": "Walensee", "message": "toll"}];
-*/
+        $('#myAds').find('li').remove();
 
-        var adTable = '';
-
-        if(data.length==undefined){
-            adTable= adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
+        if (data.length == undefined) {
+            adTable = adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
                 '<tr><td id="noContentText">Du hast noch keine Inserate erstellt.</td></tr>');
-        }else {
+        } else {
 
             for (var i = 0; i < data.length; i++) {
+
+
+
 
                 var date = data[i].date;
                 var day = date.substr(8, 2);
                 var month = date.substr(5, 2);
                 var year = date.substr(0, 4);
 
-                var formattedDate = day + ' - ' + month + ' - ' + year;
+                console.log(data[i].id.toString());
 
-                adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
+
+                var adTable = $('<table></table>');
+                var newListElement = $('<li  data-adId="' +data[i].id + '"></li>');
+                var formattedDate = day + ' - ' + month + ' - ' + year;
+           var trash = $('<td><span class="glyphicon glyphicon-trash"></span></td>');
+
+
+                adTable = adTable.append($('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td>' +
+                    '<td><p>' +data[i].id +'</p></td></tr>' +
                     '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
                     '<tr><td>' + data[i].message + '</td></tr>'
-                );
+                ));
+
+
+                newListElement.append(adTable);
+
+                $('#myAdsList').append(newListElement);
+
+
             }
         }
 
-        $('#myAds').find('table').empty().append(adTable);
 
 
         /*for (var i = 0; i < data.length; i++) {
-            adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
-                '<tr><td><h5>' + data[i].lake + '</h5></td></tr>' +
-                '<tr><td>' + data[i].message + '</td></tr>');
-        }
+         adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
+         '<tr><td><h5>' + data[i].lake + '</h5></td></tr>' +
+         '<tr><td>' + data[i].message + '</td></tr>');
+         }
 
-        $('#myAds').find('table').empty().append(adTable);*/
+         $('#myAds').find('table').empty().append(adTable);*/
 
-       /* for(var i = 0; i<data.length; i++){
-            var title = data[i].title;
-            var message = data[i].message;
-            var userEmail = data[i].email;
-            $('#myAds').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + userEmail+'</div>');
-        }
-        //Hides content and shows it on click on the title
-        $('.content').toggle();
+        /* for(var i = 0; i<data.length; i++){
+         var title = data[i].title;
+         var message = data[i].message;
+         var userEmail = data[i].email;
+         $('#myAds').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + userEmail+'</div>');
+         }
+         //Hides content and shows it on click on the title
+         $('.content').toggle();
 
-        $('.messageStart').on('click', function(){
-            $(this).next().toggle();
-            if ($(this).next().is(":visible")){
-                //alert("sichtbar");
-            }
-        })*/
+         $('.messageStart').on('click', function(){
+         $(this).next().toggle();
+         if ($(this).next().is(":visible")){
+         //alert("sichtbar");
+         }
+         })*/
     }
 
 
@@ -286,8 +315,8 @@ jQuery(document).ready(function () {
                 200: function (data) {
                     setToken(data['token']);
                     getMyAds();
-                   /* createAdTable(data);
-                    showMyAdsSection();*/
+                    /* createAdTable(data);
+                     showMyAdsSection();*/
                 },
                 401: function () {
                     $('#badLoginDetails').removeClass('hidden');
@@ -305,7 +334,7 @@ jQuery(document).ready(function () {
         var pwd = $('#signUp').find('#pwd-signUp').val();
 
         var validLoginDetails = true;
-        if(!validateEmail(email)){
+        if (!validateEmail(email)) {
             $('#invalidDetails-signUp').text('Bitte geben Sie eine gültige Email-Adresse an');
             $('#invalidDetails-signUp').removeClass('hidden');
             $('#email-signUp').text('');
@@ -317,7 +346,7 @@ jQuery(document).ready(function () {
             validLoginDetails = false;
         }
 
-        if(validLoginDetails) {
+        if (validLoginDetails) {
 
             $('#invalidDetails-signUp').addClass('hidden');
 
@@ -429,17 +458,13 @@ jQuery(document).ready(function () {
     }
 
 
-    function validateEmail(email)
-    {
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
-        {
+    function validateEmail(email) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
             return true;
         } else {
             return false;
         }
     }
-
-
 
 
     function sha1(msg) {

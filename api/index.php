@@ -20,6 +20,20 @@ $app->config('debug', true);
 
 
 /*
+ * Inserat löschen
+ */
+$app->delete('/ads/:id/:token', function ($id, $token) use ($app){
+
+    if(verifyToken($app, $token)){
+        deleteAd($app, $id);
+    }else{
+        responseWithStatus($app, 401);
+    }
+
+});
+
+
+/*
  * Neuen Account erstellen
  */
 $app->post('/users/signup', function () use ($app){

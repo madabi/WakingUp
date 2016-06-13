@@ -22,6 +22,31 @@ function getDBConnection($connectionString, $user, $password)
 }
 
 
+function deleteAd($app, $id){
+    $db = getDBConnection(myDatabase, db_username, db_password);
+
+    //todo: Schutz vor SQL-Injections?
+$id = intval($id);
+    $deletion = $db->prepare('DELETE FROM wakingUp.ads WHERE id=:id');
+
+    $deletion->bindParam(':id', $id, PDO::PARAM_INT);
+
+
+    if($deletion->execute()) {
+
+
+            responseWithStatus($app, 200);
+
+        } else {
+        responseWithStatus($app, 400);
+
+    }
+
+}
+
+
+
+
 /*
  * Neuen Account erstellen
  *
@@ -349,7 +374,7 @@ function verifyToken($app, $tokenToVerify)
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
     if ($selection->execute()) {
-        $users = $selection->fetchall(PDO::FETCH_ASSOC);
+        $users = $selection->fetchAll(PDO::FETCH_ASSOC);
         if ($selection->rowCount() > 0) {
             $token_expire = date('Y-m-d H:i:s', strtotime('now'));
             $myEmail = '';
