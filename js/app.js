@@ -26,7 +26,9 @@ jQuery(document).ready(function () {
     setActive(weatherButton);
 
 
-// Eventhandler
+
+
+
 
     weatherButton.on('click', function () {
         showSection(weather);
@@ -39,52 +41,59 @@ jQuery(document).ready(function () {
     });
 
     profileButton.on('click', function (event) {
-        hideOldErrorMessages();
-        // event.preventDefault();
-        showSection(profile);
-
-        account.show();
-        myAds.show();
-        setActive(this);
-        getMyAds();
+        event.preventDefault();
+       switchToProfile();
     });
-
 
     $('#accountTitle').on('click', function (event) {
         event.preventDefault();
         if ($(this).text() == "Abmelden") {
             logOut();
+            setAccountViewTitle('Anmelden');
         } else {
-            switchAccountView(login);
+            switchToAccountView(login);
         }
-
-
-        //todo: werte im formular zurücksetzen
+        hideOldErrorMessages();
     });
-    //profile
+
+
+    $('#lostPasswordTitle').on('click', function (event) {
+        event.preventDefault();
+        switchToAccountView(lostPasswordInfo);
+    });
+
+
+    $('#createAccountTitle').on('click', function (event){
+        event.preventDefault();
+        switchToAccountView(signUp);
+        hideOldErrorMessages();
+    });
+
+
     $('#loginButton').on('click', function (event) {
         event.preventDefault();
-        if (tryLoginAuth()) {
-            showLoggedInAccountView();
-        }
-        emptyForm($('#login'));
+        tryLoginAuth();
     });
+
 
     $('#noAccountYetButton').on('click', function (event) {
         event.preventDefault();
-        switchAccountView(signUp);
+        emptyForm($('#signUp'));
+        switchToAccountView(signUp);
     });
+
 
     $('#lostPasswordButton').on('click', function (event) {
         event.preventDefault();
-        switchAccountView(lostPasswordInfo);
+        switchToAccountView(lostPasswordInfo);
     });
+
 
     $('#signUpButton').on('click', function (event) {
         event.preventDefault();
         trySignUp();
-        emptyForm($('#signUp'));
     });
+
 
     $('#myAdsList').on('click', '.glyphicon-trash', function (event) {
         event.preventDefault();
@@ -93,28 +102,30 @@ jQuery(document).ready(function () {
         deleteAd(adIdToDelete);
     });
 
+
     $('#myAdsTitle').on('click', function (event) {
         event.preventDefault();
+        emptyForm($('#login'));
         if (myAds.css("top") == "50px") {
             logOut();
         } else {
             if (verifyToken()) {
                 getMyAds();
+                moveUpMyAdsView();
             } else {
                 $('#myAds').find('li').remove();
-                    $('#myAdsList').append($('<li><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>' +
-                        '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
-                showMyAdsSection();
+                $('#myAdsList').append($('<li><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>' +
+                    '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
+                moveUpMyAdsView();
             }
         }
     });
 
-    profile.find('#newAccountConfirmation').find('button').on('click', function (event) {
-        event.preventDefault();
-        showSection(profile);
-        setActive(profileButton);
 
-    });
+
+
+  // ------- Methoden -----------------
+
 
 
     function showSection(section) {
@@ -126,7 +137,7 @@ jQuery(document).ready(function () {
     }
 
 
-    function showMyAdsSection() {
+    function moveUpMyAdsView() {
         myAds.css("top", ("50px"));
     }
 
@@ -138,54 +149,62 @@ jQuery(document).ready(function () {
     }
 
 
-    function switchAccountView(view) {
+    function switchToProfile(){
+        hideOldErrorMessages();
+        showSection(profile);
+        if (verifyToken()) {
+            setAccountViewTitle('Abmelden');
+            getMyAds();
+        } else {
+            showPleaseLoginIcon();
+            setAccountViewTitle('Anmelden');
+            switchToAccountView(login);
+        }
+        setActive($('#btn_profile'));
+    }
+
+
+    function switchToAccountView(view) {
         myAds.css("top", ("85%"));
         account.find('section').hide();
         view.show();
     }
 
-    function logOut() {
-        login.find('h4').first().text('Anmelden');
-        removeToken();
-        switchAccountView(login);
-    }
 
-    function showLoggedInAccountView() {
-        login.find('h4').first().text('Abmelden');
+    function setAccountViewTitle(title) {
+        login.find('h4').first().text(title);
     }
 
 
-    /*
-     *  Inserat löschen
-     *
-     *  @param adId: id des Inserats
+    /**
+     * Loggt den Benutzer aus
      */
-    function deleteAd(adId) {
-        var tokenString = localStorage.getItem('wakingUp_token');
-        if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
-
-            var url = 'api/ads/' + adId + '/' + tokenString;
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                success: function () {
-                    getMyAds();
-                },
-                error: function () {
-                    $('#deleteError').toggleClass('hidden', false);
-                    getMyAds();
-                }
-            });
-        }
+    function logOut(){
+        removeToken();
+        login.find('h4').first().text('Anmelden');
+        switchToAccountView(login);
     }
 
+
+    function showPleaseLoginIcon(){
+        $('#myAds').find('li').remove();
+        $('#myAdsList').append($('<li><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>' +
+            '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
+    }
+
+
+    function showNoMessagesIcon(){
+        $('#myAds').find('li').remove();
+         $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
+                '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
+    }
 
     /*
      *  Inserate des eingeloggten Users laden und anzeigen
      */
     function getMyAds() {
         var tokenString = localStorage.getItem('wakingUp_token');
-        if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
+        if (tokenString !== null && tokenString != 'undefined' && tokenString != 'null') {
             var url = 'api/users/ads/' + tokenString;
             $.ajax({
                 url: url,
@@ -194,24 +213,18 @@ jQuery(document).ready(function () {
                 contentType: 'application/json',
                 statusCode: {
                     200: function (data) {
-                        showLoggedInAccountView();
                         createAdTable(data);
-                        showMyAdsSection();
-
                     },
                     401: function () {
                         removeToken();
-                        switchAccountView(login);
-
-                    },
-                    418: function () {
-                        switchAccountView(login);
+                        showPleaseLoginIcon();
+                        switchToAccountView(login);
                     }
                 }
             });
         } else {
             removeToken();
-            switchAccountView(login);
+            switchToAccountView(login);
         }
 
     }
@@ -263,8 +276,7 @@ jQuery(document).ready(function () {
 
         var loginEmail = $('#login').find('#email-logIn').val();
         var loginPassword = $('#login').find('#pwd-logIn').val();
-
-        var loginSuccessful = false;
+        emptyForm($('#login'));
 
         var hashedPassword = sha1(loginPassword);
         hashedPassword.substr(0, 45);
@@ -279,15 +291,14 @@ jQuery(document).ready(function () {
                 200: function (data) {
                     setToken(data['token']);
                     getMyAds();
-                    loginSuccessful = true;
+                    setAccountViewTitle('Abmelden');
+                    moveUpMyAdsView();
                 },
                 401: function () {
                     $('#badLoginDetails').removeClass('hidden');
-                    switchAccountView(login);
                 }
             }
         });
-        return loginSuccessful;
     }
 
 
@@ -298,23 +309,24 @@ jQuery(document).ready(function () {
 
         var email = $('#signUp').find('#email-signUp').val();
         var pwd = $('#signUp').find('#pwd-signUp').val();
+        var invalidDetails = $('#invalidDetails-signUp');
 
         var validLoginDetails = true;
         if (!validateEmail(email)) {
-            $('#invalidDetails-signUp').text('Bitte geben Sie eine gültige Email-Adresse an');
-            $('#invalidDetails-signUp').removeClass('hidden');
+            invalidDetails.text('Bitte geben Sie eine gültige Email-Adresse an');
+            invalidDetails.removeClass('hidden');
             $('#email-signUp').text('');
             validLoginDetails = false;
         } else if (pwd.length < 8 || pwd.length > 20) {
-            $('#invalidDetails-signUp').text('Das Passwort muss eine Länge von 8-20 Zeichen haben');
-            $('#invalidDetails-signUp').removeClass('hidden');
+            invalidDetails.text('Das Passwort muss eine Länge von 8-20 Zeichen haben');
+            invalidDetails.removeClass('hidden');
             $('#pwd-signUp').text('');
             validLoginDetails = false;
         }
 
         if (validLoginDetails) {
 
-            $('#invalidDetails-signUp').addClass('hidden');
+            invalidDetails.addClass('hidden');
 
             var hashedPassword = sha1(pwd);
             hashedPassword.substr(0, 45);
@@ -332,18 +344,18 @@ jQuery(document).ready(function () {
                 statusCode: {
                     200: function (data) {
                         directLoginAuth(email, pwd);
-                        showLoggedInAccountView();
+                        setAccountViewTitle('Abmelden');
                         getMyAds();
-                        switchAccountView(login);
-                        showMyAdsSection();
+                        switchToAccountView(login);
+                        moveUpMyAdsView();
                     },
                     401: function () {
-                        $('#invalidDetails-signUp').text('Es gibt bereits einen Benutzer mit dieser Adresse');
-                        $('#invalidDetails-signUp').removeClass('hidden');
-                        emptyForm($('#signUp'));
+                        invalidDetails.text('Es gibt bereits einen Benutzer mit dieser Adresse');
+                        invalidDetails.removeClass('hidden');
                     }
                 }
             });
+            emptyForm($('#signUp'));
         }
     }
 
@@ -367,10 +379,9 @@ jQuery(document).ready(function () {
             statusCode: {
                 200: function (data) {
                     setToken(data['token']);
-                    showMyAdsSection();
                 },
                 401: function () {
-                    switchAccountView(login);
+                    switchToAccountView(login);
                 }
             }
         });
@@ -390,7 +401,6 @@ jQuery(document).ready(function () {
             var verified = $.ajax({
                 url: 'api/users/auth/' + tokenString,
                 method: 'GET',
-
                 success: function () {
                     verified = true;
                 },
@@ -460,6 +470,32 @@ jQuery(document).ready(function () {
             return true;
         } else {
             return false;
+        }
+    }
+
+
+
+    /*
+     *  Inserat löschen
+     *
+     *  @param adId: id des Inserats
+     */
+    function deleteAd(adId) {
+        var tokenString = localStorage.getItem('wakingUp_token');
+        if (tokenString !== null && tokenString != 'undefined' && tokenString != 'null') {
+
+            var url = 'api/ads/' + adId + '/' + tokenString;
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: function () {
+                    getMyAds();
+                },
+                error: function () {
+                    $('#deleteError').toggleClass('hidden', false);
+                    getMyAds();
+                }
+            });
         }
     }
 
