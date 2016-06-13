@@ -64,11 +64,10 @@ jQuery(document).ready(function () {
     //profile
     $('#loginButton').on('click', function (event) {
         event.preventDefault();
-        console.log('loginButton clicked');
-        tryLoginAuth();
-        showLoggedInAccountView();
+        if(tryLoginAuth()) {
+            showLoggedInAccountView();
+        }
         emptyForm($('#login'));
-        //todo: werte im formular zurücksetzen
     });
 
     $('#noAccountYetButton').on('click', function (event) {
@@ -274,6 +273,8 @@ jQuery(document).ready(function () {
         var loginEmail = $('#login').find('#email-logIn').val();
         var loginPassword = $('#login').find('#pwd-logIn').val();
 
+        var loginSuccessful = false;
+
         var hashedPassword = sha1(loginPassword);
         hashedPassword.substr(0, 45);
 
@@ -287,6 +288,7 @@ jQuery(document).ready(function () {
                 200: function (data) {
                     setToken(data['token']);
                     getMyAds();
+                    loginSuccessful = true;
                 },
                 401: function () {
                     $('#badLoginDetails').removeClass('hidden');
@@ -294,6 +296,7 @@ jQuery(document).ready(function () {
                 }
             }
         });
+        return loginSuccessful;
     }
 
 
@@ -434,7 +437,7 @@ jQuery(document).ready(function () {
     function removeToken() {
 
         window.localStorage.removeItem('wakingUp_token');
-        
+
     }
 
     /*
