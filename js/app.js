@@ -90,7 +90,10 @@ jQuery(document).ready(function () {
     $('#myAdsList').on('click', function (event) {
         event.preventDefault();
         var source = $(event.srcElement || event.target);
-        var adIdToDelete = source.closest('li').find('p').text();
+
+        var adIdToDelete = source.closest('li').attr('id');
+
+        //var adIdToDelete = source.closest('li').find('p').text();
         deleteAd(adIdToDelete);
     });
 
@@ -239,17 +242,16 @@ jQuery(document).ready(function () {
                 var year = date.substr(0, 4);
 
                 var adTable = $('<table></table>');
-                var newListElement = $('<li  data-adId="' + data[i].id + '"></li>');
+                var newListElement = $('<li id="' +data[i].id + '"></li>');
                 var formattedDate = day + ' - ' + month + ' - ' + year;
                 var trash = $('<td><span class="glyphicon glyphicon-trash"></span></td>');
 
 
-                adTable = adTable.append($('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td>' +
-                    '<td><p>' + data[i].id + '</p></td></tr>' +
+                adTable = adTable.append($('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
                     '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
                     '<tr><td>' + data[i].message + '</td></tr>'
                 ));
-                
+
                 newListElement.append(adTable);
 
                 $('#myAdsList').append(newListElement);
