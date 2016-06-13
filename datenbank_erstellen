@@ -11,49 +11,12 @@ CREATE TABLE IF NOT EXISTS users (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE lakes (
-    id INT NOT NULL AUTO_INCREMENT,
-    lake_name VARCHAR(45) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE ads (
+CREATE TABLE IF NOT EXISTS ads (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(60),
     message VARCHAR(200),
     date VARCHAR(20),
-    lake_name VARCHAR(45),
-    user_email VARCHAR(45),
-    FOREIGN KEY (lake_id) REFERENCES lake(id),
-    FOREIGN KEY (user_email) REFERENCES users(email),
+    lake DATE,
+    userEmail VARCHAR(45),
     PRIMARY KEY (id)
 );
-
-INSERT INTO users
-(email, password)
-VALUES 
-("damian","1234"),
-("peter","1234"),
-("sandy","1234"),
-("roxane","1234");
-
-INSERT INTO lakes
-(lake_name)
-VALUES
-("Vierwaldstättersee"),
-("Murtensee"),
-("Genfersee"),
-("Bodensee"),
-("Bielersee");
-
-INSERT INTO ads
-(title, message, date, lake_id, user_id)
-VALUES
-("Titel 1", "Nachricht Bielersee 1","06/06/2016",5,1),
-("Titel 2", "Nachricht Bielersee 2","12/04/2016",5,2),
-("Titel 3", "Nachricht Bodensee 1","09/04/2016",4,1),
-("Titel 4", "WakingUp","10/05/2016",1,4),
-("Titel 5", "WakingUp on Genfersee","29/05/2016",3,3),
-("Titel 6", "Wer hat ein Boot?","01/03/2016",2,4),
-("Titel 7", "Dritte Person gesucht","18/06/2016",5,1),
-("Titel 8", "Wer kann es?","04/04/2016",2,3);
