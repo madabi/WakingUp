@@ -32,7 +32,7 @@ function deleteAd($app, $id)
 {
     $db = getDBConnection(myDatabase, db_username, db_password);
     $id = intval($id);
-    $deletion = $db->prepare('DELETE FROM wakingUp.ads WHERE id=:id');
+    $deletion = $db->prepare('DELETE FROM wakingUp.pinboard WHERE id=:id');
     $deletion->bindParam(':id', $id, PDO::PARAM_INT);
     if ($deletion->execute()) {
         responseWithStatus($app, 200);
@@ -236,7 +236,7 @@ function getMyAds($app, $token)
     $userEmail = getUserEmail($token);
     if ($userEmail) {
         $db = getDBConnection(myDatabase, db_username, db_password);
-        $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE userEmail=:userEmail ORDER BY date ASC');
+        $findAds = $db->prepare('SELECT * FROM wakingUp.pinboard WHERE userEmail=:userEmail ORDER BY date ASC');
         $findAds->bindParam(':userEmail', $userEmail, PDO::PARAM_STR);
         if ($findAds->execute()) {
             $result = $findAds->fetchAll(PDO::FETCH_ASSOC);

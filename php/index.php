@@ -22,7 +22,7 @@ $app->config('debug', true);
 /*
  * Inserat löschen
  */
-$app->delete('/ads/:id/:token', function ($id, $token) use ($app){
+$app->delete('/pinboard/:id/:token', function ($id, $token) use ($app){
 
     if(verifyToken($token)){
         deleteAd($app, $id);
@@ -52,7 +52,7 @@ $app->get('/users/login/:email/:password', function ($email, $password) use ($ap
 /*
  * Inserate eines bestimmten Users
  */
-$app->get('/users/ads/:token', function($token) use ($app){
+$app->get('/users/pinboard/:token', function($token) use ($app){
 
     if(verifyToken($token)){
         getMyAds($app, $token);

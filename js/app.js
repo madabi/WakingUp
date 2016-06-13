@@ -315,11 +315,11 @@ jQuery(document).ready(function () {
         if(lakeName=="Bielersee")lakeName="Biel";
         else if(lakeName=="Vierwaldstättersee")lakeName="Luzern";
 
-        var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
-        var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
+        var openWeatherForecastURL = 'http://php.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
+        var openWeatherNowURL = 'http://php.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
         console.log(openWeatherForecastURL);
         console.log(openWeatherNowURL);
-        var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
+        var wieWarmQuery = 'http://www.wiewarm.ch/php/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
         $.when(getWeatherData(openWeatherNowURL),getWeatherData(openWeatherForecastURL),getWeatherData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
             var weatherNowTable = $('#weatherNowTable');
             var isCurrentWeather = true;
@@ -665,7 +665,7 @@ jQuery(document).ready(function () {
     function getMyAds() {
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString !== null && tokenString != 'undefined' && tokenString != 'null') {
-            var url = 'api/users/ads/' + tokenString;
+            var url = 'php/users/pinboard/' + tokenString;
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -740,7 +740,7 @@ jQuery(document).ready(function () {
         var hashedPassword = sha1(loginPassword);
         hashedPassword.substr(0, 45);
 
-        var url = 'api/users/login/' + loginEmail + '/' + hashedPassword;
+        var url = 'php/users/login/' + loginEmail + '/' + hashedPassword;
         $.ajax({
             url: url,
             type: 'GET',
@@ -789,7 +789,7 @@ jQuery(document).ready(function () {
             var hashedPassword = sha1(pwd);
             hashedPassword.substr(0, 45);
 
-            var url = 'api/users/signup';
+            var url = 'php/users/signup';
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -827,7 +827,7 @@ jQuery(document).ready(function () {
         var hashedPassword = sha1(password);
         hashedPassword.substr(0, 45);
 
-        var url = 'api/users/login/' + email + '/' + hashedPassword;
+        var url = 'php/users/login/' + email + '/' + hashedPassword;
         $.ajax({
             url: url,
             type: 'GET',
@@ -855,7 +855,7 @@ jQuery(document).ready(function () {
         if (tokenString) {
             tokenString = tokenString.substr(0, 16);
             var verified = $.ajax({
-                url: 'api/users/auth/' + tokenString,
+                url: 'php/users/auth/' + tokenString,
                 method: 'GET',
                 success: function () {
                     verified = true;
@@ -934,7 +934,7 @@ jQuery(document).ready(function () {
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString !== null && tokenString != 'undefined' && tokenString != 'null') {
 
-            var url = 'api/ads/' + adId + '/' + tokenString;
+            var url = 'php/pinboard/' + adId + '/' + tokenString;
             $.ajax({
                 url: url,
                 type: 'DELETE',
