@@ -93,25 +93,10 @@ jQuery(document).ready(function(){
         $('#title_insert').val("");
     });
     
-    /*
-    searchAddMenuButton.on('click', function(){  
-        $('article').first().hide();
-        $('article').last().show();
-    });
-    */
-    
     backAddButton01.on('click', function(){
         $('article').first().hide();
         $('article').next().show();
     });
-    
-    /*
-    backAddButton02.on('click', function(){
-        $('article').last().hide();
-        $('article').first().show();
-        deleteResults();
-    });
-    */
     
     insertAddButton.on('click', function(){
         var lake = $('#select_insert :selected').text();
@@ -431,7 +416,7 @@ function getOpenWeatherData(searchQueryAPI){
             var message = data[i].message;
             var email= '';
             //ersetzen durch if (isLoggedIn)
-            if (false){email = data[i].user_email;}
+            if (true){email = data[i].user_email;}
             if (dateAd != data[i].date){
                dateAd = data[i].date;
                 $('#results').append('<br><h5>' + dateAd+ '</h5>'); 
