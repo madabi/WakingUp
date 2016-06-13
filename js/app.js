@@ -125,10 +125,10 @@ jQuery(document).ready(function(){
         console.log(title);
         console.log(message);
         
-        var tokenString = localStorage.getItem('wakingUp_token');
-        if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
-            insertAd(lake, inputDate, title, message, tokenString);
-        }
+        //var tokenString = localStorage.getItem('wakingUp_token');
+        //if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
+            insertAd(lake, inputDate, title, message, '8b69439022efff82');
+        //}
         
     });
     

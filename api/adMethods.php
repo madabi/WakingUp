@@ -19,21 +19,28 @@ function insertAd($app)
 {
     $ad = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');  
-        
-    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, date, lake) VALUES (:title, :message, STR_TO_DATE(:date, \'%m,%d,%Y\'), :lake)');
-    //, STR_TO_DATE(:date, \'%d,%m,%Y\'))');
-    //STR_TO_DATE(:date, \'%d,%m,%Y\'))');
     
-    $insertion->bindParam(':title', $ad['title'], PDO::PARAM_STR);
-    $insertion->bindParam(':message', $ad['message'], PDO::PARAM_STR);
-    $insertion->bindParam(':date', $ad['date'], PDO::PARAM_STR);
-    $insertion->bindParam(':lake', $ad['lake'], PDO::PARAM_STR);
+    //if (verifyToken){
 
-    if ($insertion->execute()){
-        responseWithStatus($app, 200);
-    } else {
-        responseWithStatus($app, 401);
-    }       
+        $userEmail = getUserEmail($ad['token']);
+        
+        $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, date, lake, userEmail) VALUES (:title, :message, STR_TO_DATE(:date, \'%m,%d,%Y\'), :lake, :email)');
+    
+        $insertion->bindParam(':title', $ad['title'], PDO::PARAM_STR);
+        $insertion->bindParam(':message', $ad['message'], PDO::PARAM_STR);
+        $insertion->bindParam(':date', $ad['date'], PDO::PARAM_STR);
+        $insertion->bindParam(':lake', $ad['lake'], PDO::PARAM_STR);
+        $insertion->bindParam(':email', $userEmail, PDO::PARAM_STR);
+
+        if ($insertion->execute()){
+            responseWithStatus($app, 200);
+        } else {
+            responseWithStatus($app, 401);
+        }
+    /*} else {
+        responseWithStatus($app,401);
+    }*/
+       
 }
 
 function searchAds($app, $lake, $from, $until)
@@ -74,6 +81,68 @@ function searchAds($app, $lake, $from, $until)
     } 
 }
 
+
+/**
+ * Überprüft Gültigkeit des übergebenen Tokens
+ *
+ *
+ * @param $app
+ * @param $tokenToVerify
+ * @return bool
+ */
+function verifyToken($app, $tokenToVerify)
+{
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
+    $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
+    $selection = $db->prepare($selection);
+    $selection->bindParam(':token', $tokenToVerify);
+    if ($selection->execute()) {
+        $users = $selection->fetchall(PDO::FETCH_ASSOC);
+        if ($selection->rowCount() > 0) {
+            $token_expire = date('Y-m-d H:i:s', strtotime('now'));
+            $myEmail = '';
+            foreach ($users as $user) {
+                $token_expire = $user['token_expire'];
+                $myEmail = $user['email'];
+            }
+            $date_expire = new DateTime($token_expire);
+            $dateNow = new DateTime('now');
+            if ($date_expire > $dateNow) {
+                $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+                updateToken($myEmail, $newTokenExpiration);
+                $db = null;
+                return true;
+            }
+
+        }
+    } else {
+        $app->halt(500, "Error in quering database.");
+    }
+    $db = null;
+    return false;
+
+}
+
+function getUserEmail($token){
+
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
+    $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
+    $selection->bindParam(':token', $token, PDO::PARAM_STR);
+    if ($selection->execute()) {
+        $user = $selection->fetch();
+
+       //      $selection->fetchAll(PDO::FETCH_ASSOC);
+        // if ($selection->rowCount() > 0) {
+            /*
+            foreach ($selection as $user) {
+                $user_email = $user['userEmail'];
+            }}*/
+
+        $user_email = $user['email'];
+        return $user_email;
+    }
+    return false;
+}
 
 /**
  * Utility-Funktionen für die Ausgabe zum aufrufenden Client.
