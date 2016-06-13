@@ -20,7 +20,7 @@ function insertAd($app)
     $ad = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');  
     
-    //if (verifyToken){
+    if (verifyToken($app, $ad['token'])){
 
         $userEmail = getUserEmail($ad['token']);
         
@@ -37,9 +37,10 @@ function insertAd($app)
         } else {
             responseWithStatus($app, 401);
         }
-    /*} else {
-        responseWithStatus($app,401);
-    }*/
+    }
+     //else {
+       // responseWithStatus($app,401);
+    //}
        
 }
 
@@ -97,23 +98,22 @@ function verifyToken($app, $tokenToVerify)
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
     if ($selection->execute()) {
-        $users = $selection->fetchall(PDO::FETCH_ASSOC);
+        $users = $selection->fetchAll(PDO::FETCH_ASSOC);
         if ($selection->rowCount() > 0) {
             $token_expire = date('Y-m-d H:i:s', strtotime('now'));
             $myEmail = '';
             foreach ($users as $user) {
-                $token_expire = $user['token_expire'];
+            //$token_expire = $user['token_expire'];
                 $myEmail = $user['email'];
             }
-            $date_expire = new DateTime($token_expire);
+            //$date_expire = new DateTime($token_expire);
             $dateNow = new DateTime('now');
-            if ($date_expire > $dateNow) {
-                $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
-                updateToken($myEmail, $newTokenExpiration);
-                $db = null;
+            //if ($date_expire > $dateNow) {
+             //   $newTokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+               // updateToken($myEmail, $newTokenExpiration);
+            //    $db = null;
                 return true;
-            }
-
+            //}
         }
     } else {
         $app->halt(500, "Error in quering database.");
