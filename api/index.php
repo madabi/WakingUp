@@ -24,7 +24,7 @@ $app->config('debug', true);
  */
 $app->delete('/ads/:id/:token', function ($id, $token) use ($app){
 
-    if(verifyToken($app, $token)){
+    if(verifyToken($token)){
         deleteAd($app, $id);
     }else{
         responseWithStatus($app, 401);
@@ -54,7 +54,7 @@ $app->get('/users/login/:email/:password', function ($email, $password) use ($ap
  */
 $app->get('/users/ads/:token', function($token) use ($app){
 
-    if(verifyToken($app, $token)){
+    if(verifyToken($token)){
         getMyAds($app, $token);
     }else{
         responseWithStatus($app, 401);
@@ -68,7 +68,7 @@ $app->get('/users/ads/:token', function($token) use ($app){
  *
  */
 $app->get('/users/auth/:token', function($token) use ($app) {
-    if(verifyToken($app, $token)) {
+    if(verifyToken($token)) {
         responseWithStatus($app, 200);
     }else{
         responseWithStatus($app, 401);

@@ -89,10 +89,7 @@ jQuery(document).ready(function () {
     $('#myAdsList').on('click', function (event) {
         event.preventDefault();
         var source = $(event.srcElement || event.target);
-
         var adIdToDelete = source.closest('li').attr('id');
-
-        //var adIdToDelete = source.closest('li').find('p').text();
         deleteAd(adIdToDelete);
     });
 
@@ -132,8 +129,6 @@ jQuery(document).ready(function () {
         myAds.css("top", ("50px"));
     }
 
-// Hilfsmethoden
-
 
     function setActive(button) {
         $('nav').find('button').removeClass("activeButton");
@@ -152,7 +147,6 @@ jQuery(document).ready(function () {
         login.find('h4').first().text('Anmelden');
         removeToken();
         switchAccountView(login);
-
     }
 
     function showLoggedInAccountView() {
@@ -266,6 +260,8 @@ jQuery(document).ready(function () {
 
     /*
      *  Loginfunktion
+     *
+     *  @return boolean
      */
     function tryLoginAuth() {
 

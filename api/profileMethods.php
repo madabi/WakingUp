@@ -22,28 +22,24 @@ function getDBConnection($connectionString, $user, $password)
 }
 
 
-function deleteAd($app, $id){
+/**
+ * Löscht Inserat mit id $id
+ *
+ * @param $app
+ * @param $id
+ */
+function deleteAd($app, $id)
+{
     $db = getDBConnection(myDatabase, db_username, db_password);
-
-    //todo: Schutz vor SQL-Injections?
-$id = intval($id);
+    $id = intval($id);
     $deletion = $db->prepare('DELETE FROM wakingUp.ads WHERE id=:id');
-
     $deletion->bindParam(':id', $id, PDO::PARAM_INT);
-
-    if($deletion->execute()) {
-
-
-            responseWithStatus($app, 200);
-
-        } else {
+    if ($deletion->execute()) {
+        responseWithStatus($app, 200);
+    } else {
         responseWithStatus($app, 400);
-
     }
-
 }
-
-
 
 
 /*
@@ -54,57 +50,35 @@ $id = intval($id);
 function SignUp($app)
 {
     $user = getJSONFromBody($app);
-
     $db = getDBConnection(myDatabase, db_username, db_password);
-
-    //todo: Schutz vor SQL-Injections?
-
     $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE email=:email');
-
     $selection->bindParam(':email', $user['email'], PDO::PARAM_STR);
-
-
-    if($selection->execute()) {
+    if ($selection->execute()) {
         $selection->fetchAll(PDO::FETCH_ASSOC);
-
         if ($selection->rowCount() > 0) {
             echo('user already exists');
             responseWithStatus($app, 401);
-
         } else {
             echo("new user can be created");
-
-
             $longToken = bin2hex(openssl_random_pseudo_bytes(16));
             $token = substr($longToken, 0, 16);
             $tokenExpiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
-
-
             $insertion = $db->prepare('INSERT INTO wakingUp.users (email, password, token, token_expire)
 VALUES (:email, :password, :token, :token_expire)');
             $insertion->bindParam(':email', $user['email'], PDO::PARAM_STR);
             $insertion->bindParam(':password', $user['password'], PDO::PARAM_STR);
             $insertion->bindParam(':token', $token, PDO::PARAM_STR);
             $insertion->bindParam(':token_expire', $tokenExpiration);
-
-
             if ($insertion->execute()) {
-
-                echo('new user has been created');
-
+                responseWithStatus($app, 200);
             } else {
-                echo('could not write new user into database');
+                responseWithStatus($app, 401);
             }
-
         }
-    }else{
+    } else {
         responseWithStatus($app, 401);
-
     }
-
-
     $db = null;
-
 }
 
 
@@ -117,7 +91,6 @@ function response($app, $result)
     $app->response->headers->set('Content-Type', 'application/json');
     $app->response->setBody(json_encode($result));
 }
-
 
 function responseWithStatus($app, $status)
 {
@@ -133,7 +106,7 @@ function responseTokenWithStatus($app, $token, $status)
 
 
 /**
- * Utility um Daten vom Request-Body als JSON zu erhalten.
+ * Utility, um Daten vom Request-Body als JSON zu erhalten.
  */
 function getJSONFromBody($app)
 {
@@ -153,7 +126,6 @@ function getJSONFromBody($app)
  */
 function loginAuth($app, $email, $password)
 {
-
     if (validateUser($app, $email, $password)) {
         $longToken = bin2hex(openssl_random_pseudo_bytes(16));
         $return['token'] = substr($longToken, 0, 16);
@@ -180,7 +152,6 @@ function loginAuth($app, $email, $password)
  */
 function validateUser($app, $email, $password)
 {
-
     $db = getDBConnection(myDatabase, db_username, db_password);
     $validateUser = 'SELECT * FROM wakingUp.users WHERE email=:email AND password=:password';
     $validateUser = $db->prepare($validateUser);
@@ -217,23 +188,25 @@ function updateToken($email, $tokenExpiration)
     $update = $db->prepare('UPDATE wakingUp.users SET token_expire=:token_expire WHERE email=:email');
     $update->bindParam(':token_expire', $tokenExpiration);
     $update->bindParam(':email', $email, PDO::PARAM_STR);
-
     if ($update->execute()) {
         $db = null;
-
         return true;
-
     } else {
         $db = null;
-
         return false;
     }
-
 }
 
 
-
-
+/**
+ *
+ *  Schreibt ein Token in die Datenbank
+ *
+ * @param $email
+ * @param $token
+ * @param $tokenExpiration
+ * @return bool
+ */
 function setToken($email, $token, $tokenExpiration)
 {
     $db = getDBConnection(myDatabase, db_username, db_password);
@@ -241,18 +214,14 @@ function setToken($email, $token, $tokenExpiration)
     $update->bindParam(':token', $token);
     $update->bindParam(':token_expire', $tokenExpiration);
     $update->bindParam(':email', $email, PDO::PARAM_STR);
-
     if ($update->execute()) {
         $db = null;
-
         return true;
-
     } else {
         $db = null;
 
         return false;
     }
-
 }
 
 
@@ -265,7 +234,7 @@ function setToken($email, $token, $tokenExpiration)
 function getMyAds($app, $token)
 {
     $userEmail = getUserEmail($token);
-    if($userEmail) {
+    if ($userEmail) {
         $db = getDBConnection(myDatabase, db_username, db_password);
         $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE userEmail=:userEmail ORDER BY date ASC');
         $findAds->bindParam(':userEmail', $userEmail, PDO::PARAM_STR);
@@ -292,69 +261,31 @@ function getMyAds($app, $token)
             }
         } else {
             $db = null;
-
             responseWithStatus($app, 421);
-
         }
-
-    }else{responseWithStatus($app, 422);}
+    } else {
+        responseWithStatus($app, 422);
+    }
 }
 
-function getUserEmail($token){
 
+/**
+ * Gibt die email-Adresse des zu $token gehörenden Users zurück
+ *
+ * @param $token
+ * @return bool
+ */
+function getUserEmail($token)
+{
     $db = getDBConnection(myDatabase, db_username, db_password);
     $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
     $selection->bindParam(':token', $token, PDO::PARAM_STR);
     if ($selection->execute()) {
         $user = $selection->fetch();
-
-       //      $selection->fetchAll(PDO::FETCH_ASSOC);
-        // if ($selection->rowCount() > 0) {
-            /*
-            foreach ($selection as $user) {
-                $user_email = $user['userEmail'];
-            }}*/
-
         $user_email = $user['email'];
         return $user_email;
     }
     return false;
-}
-
-
-
-/**
- * Erstellt Test-Inserate. Wird noch entfernt
- */
-function createRandomAd()
-{
-
-    $title = 'myTitle';
-    $message = 'myMessage blablabla';
-    $email = 'lea@lea.com';
-    $lake_name = 'meinSee';
-
-    $db = getDBConnection(myDatabase, db_username, db_password);
-    $insertion = $db->prepare('INSERT INTO wakingUp.ads (title, message, user_email, lake_name)
-VALUES (:title, :message, :user_email, :lake_name)');
-    $insertion->bindParam(':title', $title, PDO::PARAM_STR);
-    $insertion->bindParam(':message', $message, PDO::PARAM_STR);
-    $insertion->bindParam(':user_email', $email, PDO::PARAM_STR);
-    $insertion->bindParam(':lake_name', $lake_name, PDO::PARAM_STR);
-
-
-
-    if ($insertion->execute()) {
-
-        echo('new ad has been created');
-
-    } else {
-        echo('could not write new user into database');
-        //todo: was zurückgeben?
-    }
-
-    $db = null;
-
 }
 
 
@@ -366,7 +297,7 @@ VALUES (:title, :message, :user_email, :lake_name)');
  * @param $tokenToVerify
  * @return bool
  */
-function verifyToken($app, $tokenToVerify)
+function verifyToken($tokenToVerify)
 {
     $db = getDBConnection(myDatabase, db_username, db_password);
     $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
@@ -389,69 +320,8 @@ function verifyToken($app, $tokenToVerify)
                 $db = null;
                 return true;
             }
-
         }
-    } else {
-        $app->halt(500, "Error in quering database.");
     }
     $db = null;
     return false;
-
 }
-
-
-
-
-
-
-
-/*
-function getUserById($id)
-{
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $selection = $db->prepare('SELECT * FROM users where id=:id');
-    $selection->bindParam(':id', $id);
-    $selection->execute();
-    $result = $selection->fetch();
-    return $result;
-}
-
-/*
-/**
- *
- * Nur zum Ausprobieren
- *
- * @param $id
-
-function deleteUserById($id)
-{
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
-    $deletion = $db->prepare('DELETE FROM users where id=:id');
-    $deletion->bindParam(':id', $id);
-    $deletion->execute();
-}
-
-
-*/
-/**
- *
- * Nur zum Ausprobieren
- *
- * @return array
-
-function getAllUsers()
- * {
- * $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', null);
- * $selection = $db->prepare('SELECT * FROM wakingUp.users');
- * $selection->execute();
- * $result = $selection->fetchAll();
- * foreach ($result as $user) {
- * echo($user[1]);
- * echo(' ');
- * }
- * return $result;
- * // var_dump($result);
- * }
- */
-
-
