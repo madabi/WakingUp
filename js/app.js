@@ -105,7 +105,6 @@ jQuery(document).ready(function(){
     });
 
     scoreNowSVG.on('click', function(){
-        scoreNowGauge.v
         scoreNowGauge.update(NewValue())
 
     });
