@@ -18,7 +18,7 @@ function getDBConnection($connectionString, $user, $password)
 function insertAd($app)
 {
     $ad = getJSONFromBody($app);
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');  
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
     
     if (verifyToken($app, $ad['token'])){
 
@@ -47,7 +47,7 @@ function insertAd($app)
 function searchAds($app, $lake, $from, $until)
 {   
     $info = getJSONFromBody($app);
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
     
     $selection = $db->prepare('SELECT * FROM wakingUp.ads WHERE lake=:lake AND (date BETWEEN STR_TO_DATE(:from, \'%m,%d,%Y\') AND STR_TO_DATE(:until, \'%m,%d,%Y\')) ORDER BY date ASC');
     
@@ -93,7 +93,7 @@ function searchAds($app, $lake, $from, $until)
  */
 function verifyToken($app, $tokenToVerify)
 {
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'root');
     $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
@@ -125,7 +125,7 @@ function verifyToken($app, $tokenToVerify)
 
 function getUserEmail($token){
 
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'root', 'root');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
     $selection = $db->prepare('SELECT * FROM wakingUp.users WHERE token=:token');
     $selection->bindParam(':token', $token, PDO::PARAM_STR);
     if ($selection->execute()) {

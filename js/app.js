@@ -52,7 +52,7 @@ jQuery(document).ready(function(){
     $(".date").datepicker({minDate: 0});
     
     hideArticles();
-    prepareLakeList()
+    prepareLakeList();
     showSection(weather);
     setActive(weatherButton);
     initScoreConfig();
