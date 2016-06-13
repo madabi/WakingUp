@@ -232,6 +232,8 @@ function updateToken($email, $tokenExpiration)
 }
 
 
+
+
 function setToken($email, $token, $tokenExpiration)
 {
     $db = getDBConnection(myDatabase, db_username, db_password);
@@ -257,17 +259,15 @@ function setToken($email, $token, $tokenExpiration)
 /**
  * Gibt die Inserate eines bestimmten (zu $token gehörenden) Users zurück
  *
- *
  * @param $app
  * @param $token
  */
 function getMyAds($app, $token)
 {
-
     $userEmail = getUserEmail($token);
     if($userEmail) {
         $db = getDBConnection(myDatabase, db_username, db_password);
-        $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE userEmail=:userEmail');
+        $findAds = $db->prepare('SELECT * FROM wakingUp.ads WHERE userEmail=:userEmail ORDER BY date ASC');
         $findAds->bindParam(':userEmail', $userEmail, PDO::PARAM_STR);
         if ($findAds->execute()) {
             $result = $findAds->fetchAll(PDO::FETCH_ASSOC);

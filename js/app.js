@@ -161,6 +161,12 @@ jQuery(document).ready(function () {
     }
 
 
+
+    /*
+     *  Inserat löschen
+     *
+     *  @param adId: id des Inserats
+     */
     function deleteAd(adId) {
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
@@ -176,16 +182,15 @@ jQuery(document).ready(function () {
                 error: function () {
                     alert("konnte nicht gelöscht werden");
                 }
-
             });
-
-
         }
-
-
     }
 
 
+
+    /*
+     *  Inserate des eingeloggten Users laden und anzeigen
+     */
     function getMyAds() {
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
@@ -209,11 +214,7 @@ jQuery(document).ready(function () {
 
                     },
                     418: function () {
-
                         switchAccountView(login);
-                        //showSection($('#profile'));
-                        //switchAccountView($('#profile'), $('#myAds'));
-                        //alert('fehler beim holen der inserate');
                     }
                 }
             });
@@ -224,14 +225,21 @@ jQuery(document).ready(function () {
 
     }
 
-
+    /*
+     *  Dynamisches Erzeugen und Anzeigen der Liste der Inserate
+     *
+     *  @param data: Json-Daten der Inserate
+     */
     function createAdTable(data) {
 
         $('#myAds').find('li').remove();
 
-        if (data.length == undefined) {
-            adTable = adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
-                '<tr><td id="noContentText">Du hast noch keine Inserate erstellt.</td></tr>');
+        if (data.length == undefined || data.length == 0) {
+            $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
+                '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
+
+           /* adTable = adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
+                '<tr><td id="noContentText">Du hast noch keine Inserate erstellt.</td></tr>');*/
         } else {
 
             for (var i = 0; i < data.length; i++) {
@@ -244,8 +252,6 @@ jQuery(document).ready(function () {
                 var adTable = $('<table></table>');
                 var newListElement = $('<li id="' +data[i].id + '"></li>');
                 var formattedDate = day + ' - ' + month + ' - ' + year;
-                var trash = $('<td><span class="glyphicon glyphicon-trash"></span></td>');
-
 
                 adTable = adTable.append($('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
                     '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
@@ -255,40 +261,15 @@ jQuery(document).ready(function () {
                 newListElement.append(adTable);
 
                 $('#myAdsList').append(newListElement);
-
-
             }
         }
-
-
-        /*for (var i = 0; i < data.length; i++) {
-         adTable = adTable.concat('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
-         '<tr><td><h5>' + data[i].lake + '</h5></td></tr>' +
-         '<tr><td>' + data[i].message + '</td></tr>');
-         }
-
-         $('#myAds').find('table').empty().append(adTable);*/
-
-        /* for(var i = 0; i<data.length; i++){
-         var title = data[i].title;
-         var message = data[i].message;
-         var userEmail = data[i].email;
-         $('#myAds').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + userEmail+'</div>');
-         }
-         //Hides content and shows it on click on the title
-         $('.content').toggle();
-
-         $('.messageStart').on('click', function(){
-         $(this).next().toggle();
-         if ($(this).next().is(":visible")){
-         //alert("sichtbar");
-         }
-         })*/
     }
 
 
+    /*
+     *  Loginfunktion
+     */
     function tryLoginAuth() {
-
 
         var loginEmail = $('#login').find('#email-logIn').val();
         var loginPassword = $('#login').find('#pwd-logIn').val();
@@ -306,19 +287,20 @@ jQuery(document).ready(function () {
                 200: function (data) {
                     setToken(data['token']);
                     getMyAds();
-                    /* createAdTable(data);
-                     showMyAdsSection();*/
                 },
                 401: function () {
                     $('#badLoginDetails').removeClass('hidden');
                     switchAccountView(login);
-
                 }
             }
-
         });
     }
 
+
+
+    /*
+     *  Erstellen eines neuen Accounts
+     */
     function trySignUp() {
 
         var email = $('#signUp').find('#email-signUp').val();
@@ -371,6 +353,14 @@ jQuery(document).ready(function () {
         }
     }
 
+
+
+    /*
+     *  Loggt den Benutzer direkt ein.
+     *
+     *  @param email: Email-Adresse des Benutzers
+     *  @param password: Passwort des Benutzers
+     */
     function directLoginAuth(email, password) {
         var hashedPassword = sha1(password);
         hashedPassword.substr(0, 45);
@@ -388,18 +378,19 @@ jQuery(document).ready(function () {
                 },
                 401: function () {
                     switchAccountView(login);
-
                 }
             }
-
         });
-
-
     }
 
 
-    function verifyToken() {
 
+    /*
+    * Überprüft, ob im Browser-Local Storage ein gültiges Token vorhanden ist.
+    *
+    * @return boolean
+     */
+    function verifyToken() {
 
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString) {
@@ -422,26 +413,44 @@ jQuery(document).ready(function () {
         } else {
             return false;
         }
-
     }
 
 
+    /*
+    *  Schreibt ein Token in den Local Storage des Browsers
+    *
+    *  @param token: Zu setzendes Token
+    */
     function setToken(token) {
 
         localStorage.setItem('wakingUp_token', token);
+
     }
 
+
+    /*
+     *  Löscht das Token aus dem Local Storage des Browsers
+     */
     function removeToken() {
+
         window.localStorage.removeItem('wakingUp_token');
+        
     }
 
-
+    /*
+     *  Leert ein Formular nach dem Submit
+     *  @param myForm: das betreffende Formular
+     */
     function emptyForm(myForm) {
         myForm.find("input[type=email], textarea").val("");
         myForm.find("input[type=password], textarea").val("");
 
     }
 
+
+    /*
+     *  Versteckt vergangene Fehlermeldungen
+     */
     function hideOldErrorMessages() {
         $('#badLoginDetails').addClass('hidden');
         $('#invalidDetails-signUp').addClass('hidden');
@@ -449,8 +458,14 @@ jQuery(document).ready(function () {
     }
 
 
+    /*
+     *  Überprüft eingegebene Email-Adressen auf deren Gültigkeit
+     *
+     *  @param email: zu überprüfende Email-Adresse
+     *  @return boolean
+     */
     function validateEmail(email) {
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) && email.length < 45) {
             return true;
         } else {
             return false;
@@ -458,6 +473,12 @@ jQuery(document).ready(function () {
     }
 
 
+    /*
+     *  Hashfunktion zur Verschleierung des Passworts
+     *
+     *  @param msg: Zu hashender String
+     *  @return: gehashter String
+     */
     function sha1(msg) {
 
 
