@@ -24,6 +24,8 @@ html {
 
 body {
     background: white;
+    color: #4D4F4F;
+    overflow: hidden;
 }
 
 html, body {
@@ -35,8 +37,10 @@ nav {
     position: fixed;
     bottom: 0px;
     width:100%;
+    height:40px;
     background-color: deepskyblue;
     text-align:center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 
@@ -63,42 +67,150 @@ nav button:last-child{
     background-color: lightskyblue;
 }
 
-/* forecast table */
-table {
+/*weatherNow table*/
+
+#nowForecastSection{
+
+    box-shadow: 0 16px 32px 0 rgba(0, 0, 0, 0.7), 0 12px 40px 0 rgba(0, 0, 0, 0.7);
+    position:fixed;
+    top:45px;
+    width:100%;
+    height:calc(100% - 185px);
+    background-color: #FFC262;
+    -webkit-transition:all 400ms ease-in-out 0.4s;
+    -moz-transition:all 400ms ease-in-out 0.4s;
+    -o-transition:all 400ms ease-in-out 0.4s;
+    transition:all 400ms ease-in-out 0.4s;
+}
+#nowForecastSection > section {
+    overflow-y:scroll;
+    overflow-x:hidden;
+    height:calc(100% - 60px);
+}
+
+
+#scoreNowSVG{
+
+    margin-top:0px;
+    margin-bottom:0px;
+}
+#weatherNowIconTable{
+    font-size: 30px;
+    margin-left:auto;
+    margin-right:auto;
+    width:80%;
+    text-align:right;
+    margin-top:0px;
+    margin-bottom:0px;
+}
+#weatherNowIconTable td:nth-child(even){
+    text-align:center;
+    font-size: 60px;
+}
+#weatherNowIconTable td:last-child{
+    text-align:left;
+}
+
+/* forecast tables */
+#weather table {
     table-layout: fixed;
     margin-left: 0;
     width: 100%;
     font-size: 2.5em;
     text-align: center;
+
 }
+
+
 td:nth-child(even) {
     text-align: left;
     font-size:0.6em;
 }
 
-/*Forecasts */
-.nowForecast{
-     background-color: #FFC262;
- }
-.todayForecast{
-    background-color: #FFCF95;
-}
 h4,h3{
     margin-top:0px;
-    padding-top: 20px;
+    padding-top: 15px;
+    padding-bottom:15px;
 }
-.todayForecast svg {
+
+/*Forecasts */
+#weather{
+    background-color: #FFC262;
+    height:100%;
+ }
+
+#changeLakeSection {
+    height:100%;
+    width:100%;
+    background-color: deepskyblue;
+    font-size: 1em;
+    position:fixed;
+}
+#changeLakeSection select {
+    background: lightskyblue;
+    width: 80%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 0;
+    border-radius: 8px;
+    height: 8%;
+    -webkit-appearance: none;
+}
+
+#todayForecastSection{
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: #FFCF95;
+    position:fixed;
+    top:calc(100% - 140px);
+    height:calc(100% - 135px);
+
+    -webkit-transition:all 400ms ease-in-out 0.4s;
+    -moz-transition:all 400ms ease-in-out 0.4s;
+    -o-transition:all 400ms ease-in-out 0.4s;
+    transition:all 400ms ease-in-out 0.4s;
+}
+
+
+#todayForecastSection svg {
     margin-top:8px;
 }
-
-.hourlyForecastOverview{
-    background-image: linear-gradient(0deg, #F8A82F,#FFCF95);
+#hourlyForecastTable tr:nth-child(3n+1) {
+    background-image: linear-gradient(0deg, #FFA94C,#FFCF95);
 }
-.hourlyForecastOverview + tr{
-    background-color: #F8A82F;
+#hourlyForecastTable tr:nth-child(3n+2){
+    background-color: #FFA94C;
+}
+#hourlyForecastTable tr:nth-child(3n+3){
+    background-color: #FFA94C;
 }
 
-.hourlyForecastOverview + tr + tr{
-    background-color: #F8A82F;
+
+
+#dailyForecastSection{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: #ffba91;
+    position:fixed;
+    top:calc(100% - 90px);
+    height:100%;
+
+    -webkit-transition:all 400ms ease-in-out 0.4s;
+    -moz-transition:all 400ms ease-in-out 0.4s;
+    -o-transition:all 400ms ease-in-out 0.4s;
+    transition:all 400ms ease-in-out 0.4s;
+}
+
+#dailyForecastSection svg {
+    margin-top:8px;
+}
+#dailyForecastTable tr:nth-child(3n+1) {
+    background-image: linear-gradient(0deg, #ff905d, #ffba91);
+}
+#dailyForecastTable tr:nth-child(3n+2){
+    background-color: #ff905d;
+}
+#dailyForecastTable tr:nth-child(3n+3){
+    background-color: #ff905d;
 }
 

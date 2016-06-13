@@ -50,7 +50,13 @@ jQuery(document).ready(function(){
         "Zürichsee":14};
     
     $(".date").datepicker({minDate: 0});
-    
+
+    var insertAdSection = $('#ad_insert');
+    var searchAdSection = $('#ad_search');
+    var adFilterSection = $('#adFilter');
+
+    searchAdSection.show();
+
     hideArticles();
     prepareLakeList();
     showSection(weather);
@@ -67,11 +73,10 @@ jQuery(document).ready(function(){
     });
 
     adButton.on('click', function(){
-        hideArticles();
         showSection(ad);
         setActive(this);
         setTodaysDate();
-        $('article').last().show();
+        insertAdSection.show();
         searchAd('Bielersee', getCurrentDate().replace(/\//g, ","), '06,30,2017');
     });
 
@@ -88,8 +93,8 @@ jQuery(document).ready(function(){
     
     
     insertAddMenuButton.on('click', function(){ 
-        $('article').last().hide();
-        $('article').first().show();
+        //$('article').last().hide();
+        //$('article').first().show();
         $('#addContent').val("");
         $('#title_insert').val("");
     });
@@ -170,7 +175,7 @@ jQuery(document).ready(function(){
 
 
     function hideArticles(){
-        $('article').hide();
+       // $('article').hide();
     }
     
     function prepareLakeList(){
@@ -188,7 +193,9 @@ jQuery(document).ready(function(){
     }
     
     function showSection(section){
-        $('section').hide();
+        profile.hide();
+        weather.hide();
+        ad.hide();
         section.show();
     }
 
@@ -339,15 +346,6 @@ function getOpenWeatherData(searchQueryAPI){
        });
     }
 
-    // This is a functions that scrolls to #{blah}link
-    function goToByScroll(id){
-        // Remove "link" from the ID
-        id = id.replace("link", "");
-        // Scroll
-        $('html,body').animate({
-                scrollTop: $("#"+id).offset().top},
-            'slow');
-    }
     
     /*
     * Sends a POST-Request with input to insert an ad
@@ -368,10 +366,9 @@ function getOpenWeatherData(searchQueryAPI){
             }),
             statusCode: {
                 200: function () {
-                    hideArticles();
                     showSection(ad);
                     setActive(this);
-                    $('article').last().show();
+                    //$('#ad_insert').show();
                 },
                 401: function () {
                     //TODO
@@ -413,41 +410,7 @@ function getOpenWeatherData(searchQueryAPI){
     function showResults(data, lake){      
         deleteResults();
         
-        /*
-        //Puts the name of the lake in the title
-        var titleResults = '<h4 id=\"searchResults\">Resultate für ' + lake +'</h4';
-        $('#results').append(titleResults);
-        
-        //Iterates through the data and displays in the dropdownmenue
-        var dateAd;
-        for(i = 0; i<data.length; i++){
-            var title = data[i].title;
-            var message = data[i].message;
-            var email= '';
-            //ersetzen durch if (isLoggedIn)
-            if (true){email = data[i].user_email;}
-            if (dateAd != data[i].date){
-               dateAd = data[i].date;
-                $('#results').append('<br><h5>' + dateAd+ '</h5>'); 
-            }
-            var header = '<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header>';
-            $('#results').append(header + '<div class=\"content\">'+ message + '<br> ' + email+'</div>');
-        }
-        //Hides content and shows it on click on the title
-        $('.content').toggle();
-        
-        $('.messageStart').on('click', function(){
-            $(this).next().toggle();
-            if ($(this).next().is(":visible")){
-                $(this).find('div').removeClass('glyphicon glyphicon-triangle-right').addClass('glyphicon glyphicon-triangle-bottom');
-            } else {
-                $(this).find('div').removeClass('glyphicon glyphicon-triangle-bottom').addClass('glyphicon glyphicon-triangle-right');
-            }
-        })
-        */
-        
-        
-        var resultTitle = '<h4 id=\"searchResults\">Resultate für ' + lake +'</h4';
+        var resultTitle = '<h4 id=\"searchResults\">Resultate für ' + lake +'</h4>';
         var list = '<ul id=\"resultList\">'+resultTitle+'</ul>';
         $('#results').append(list);
         
@@ -458,7 +421,7 @@ function getOpenWeatherData(searchQueryAPI){
             var adMessage = data[i].message;
             var adContact = data[i].user_email;
             
-            var listOfElement = '<li><h5>'+adDate+'</h5></li>';
+            var listOfElement = '<tr><li><h5>'+adDate+'</h5></li></tr>';
             var tableHead = '<tr><th>'+adTitle+'</th></tr>';
             var messageData = '<tr><td>'+adMessage+'</td></tr>';
             var contactData = '<tr><td>'+adContact+'</td></tr>';

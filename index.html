@@ -26,6 +26,7 @@
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <link type="text/css" href="css/style.css" rel="stylesheet">
+        <link type="text/css" href="css/inserate.css" rel="stylesheet">
         <link type="text/css" href="css/weather-icons.min.css" rel="stylesheet">
         
         <!-- Import js and css for datepicker-->
@@ -132,54 +133,35 @@
         </section>
         
         <section id="ad">
-            <article id="ad_insert">
-                <header>
-                    <h3>Inserat erstellen</h3>
-                </header>
-                See auswählen
+            <section id="adFilter">
+                <h4>Filter</h4>
+                <form>
+                <select id="select_search"></select>
+                    Von
+                    <input id="datepicker_from" class="date" readonly="readonly" type="date"/>
+                    Bis
+                    <input id="datepicker_until" class="date" readonly="readonly"/>
+                    <button id="btn_add_search_search" class="btn">Filter anwenden</button>
+                </form>
+            </section>
+
+            <section id="ad_search">
+                    <h4 id="myAdsTitle">Inserate am Quacksee</h4>
+                    <ul id="resultList">
+                        <li></li>
+                    </ul>
+            </section>
+            <section id="ad_insert">
+                    <h4>Inserat erstellen</h4>
+                <form>
                 <select id="select_insert">
                 </select>
-                <br>Datum <div class="glyphicon glyphicon-calendar"></div>
-                <form>
-                    <input id="datepicker_insert" class="date" readonly="readonly"/><br>
-                    Titel<br>
-                    <input id="title_insert" placeholder="Titel eingeben" type="text">
+                    <input id="datepicker_insert" class="date" type="date" readonly="readonly"/>
+                    <input id="title_insert" placeholder="Titel" type="text"/>
+                    <textarea name="addContent" cols="40" rows="5" placeholder="Ihre Nachricht"></textarea>
+                <button id="btn_add_insert_insert" class="btn">Inserat aufgeben</button>
                 </form>
-                Textinhalt<br>
-                <textarea id="addContent" rows="15" cols="50" placeholder="Schreib hier dein Inserat"></textarea><br> 
-                <div id="contact_infos">
-                </div>
-                <button id="btn_add_back01" class="btn">
-                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"> Zurück</span>
-                </button>
-                <button id="btn_add_insert_insert" class="btn"> 
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"> Aufgeben</span>
-                </button>
-            </article>
-            <article id="ad_search">
-                <header>
-                    <h3>Inserate suchen</h3>
-                </header>
-                See auswählen
-                <select id="select_search">
-                </select>
-                <br>von <div class="glyphicon glyphicon-calendar"></div>
-                <form>
-                    <input id="datepicker_from" class="date" readonly="readonly" type="date"/>
-                </form>
-                <br> bis <div class="glyphicon glyphicon-calendar"></div>
-                <form>
-                    <input id="datepicker_until" class="date" readonly="readonly"/>
-                </form>
-                <button id="btn_add_search_search" class="btn">
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"> Suchen</span>
-                </button>
-                <button id="btn_add_insert" class="btn">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Erstellen</span>
-                </button>
-                <div id="results">
-                </div>
-            </article>
+            </section>
         </section>
 
         
