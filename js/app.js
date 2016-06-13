@@ -72,6 +72,7 @@ jQuery(document).ready(function(){
         setActive(this);
         setTodaysDate();
         $('article').last().show();
+        searchAd('Bielersee', getCurrentDate().replace(/\//g, ","), '06,30,2017');
     });
 
     profileButton.on('click', function(){
@@ -129,6 +130,13 @@ jQuery(document).ready(function(){
         var twoDigitDate=((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate());
         return createdDateTo = twoDigitMonth + "/" + twoDigitDate +  "/"+currentDate.getFullYear(); 
     }
+    
+    function getCurrentDatePlus2Month(){
+        var date = new Date();
+        var result = date.addMonths(2);
+        console.log(result);
+    }
+    
     
     searchAddButton.on('click', function(){
         var lake = $('#select_search :selected').text();
@@ -405,6 +413,7 @@ function getOpenWeatherData(searchQueryAPI){
     function showResults(data, lake){      
         deleteResults();
         
+        /*
         //Puts the name of the lake in the title
         var titleResults = '<h4 id=\"searchResults\">Resultate für ' + lake +'</h4';
         $('#results').append(titleResults);
@@ -435,6 +444,30 @@ function getOpenWeatherData(searchQueryAPI){
                 $(this).find('div').removeClass('glyphicon glyphicon-triangle-bottom').addClass('glyphicon glyphicon-triangle-right');
             }
         })
+        */
+        
+        
+        var resultTitle = '<h4 id=\"searchResults\">Resultate für ' + lake +'</h4';
+        var list = '<ul id=\"resultList\">'+resultTitle+'</ul>';
+        $('#results').append(list);
+        
+        for(i= 0; i<data.length; i++){
+            
+            var adDate = data[i].date;
+            var adTitle = data[i].title;
+            var adMessage = data[i].message;
+            var adContact = data[i].user_email;
+            
+            var listOfElement = '<li><h5>'+adDate+'</h5></li>';
+            var tableHead = '<tr><th>'+adTitle+'</th></tr>';
+            var messageData = '<tr><td>'+adMessage+'</td></tr>';
+            var contactData = '<tr><td>'+adContact+'</td></tr>';
+            
+            var table = '<table>' +tableHead + messageData + contactData +'</table>';
+            
+            $('#resultList').append(listOfElement);
+            $('#resultList').children().last().append(table);
+        }
     }
     
     /*
