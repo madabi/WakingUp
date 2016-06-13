@@ -5,11 +5,6 @@
 
 jQuery(document).ready(function(){
 
-    var searchResultOpenWeather = null;
-    var searchResultWieWarm = null;
-
-
-
     var currentWeatherSectionOpened = ("45px");
     var currentWeatherSectionClosed = ("140px");//("calc(100% - 230px)").toString();
     var todayForecastSectionClosed = ("calc(100% - 140px)").toString();
@@ -31,10 +26,10 @@ jQuery(document).ready(function(){
     var NUM_OF_HOURLY_FORECASTS = 4;
     var NUM_OF_DAILY_FORECASTS = 4;
 
-    var config1;
+
     var scoreNowSVG = $('#scoreNowSVG');
     var scoreNowGauge;
-    var forecastScoreGauges = [];
+
 
 
     var weatherNowIconTable = $('#weatherNowIconTable');
@@ -79,7 +74,6 @@ jQuery(document).ready(function(){
 
     showSection(weather);
     setActive(weatherButton);
-    initScoreConfig();
     createLakeSelection(lakeIDs);
     updateCurrentlySelectedLake();
     initWeather(currentLake,currentLakeID, NUM_OF_HOURLY_FORECASTS);
@@ -92,20 +86,6 @@ jQuery(document).ready(function(){
     //prevents scrolling on mobile device
     $(document).bind('touchmove', function(e) {
         e.preventDefault();
-    });
-    */
-/*
-    var $scroller = currentWeatherSection.find('table');
-    $scroller.bind('touchstart', function (ev) {
-        var $this = $(this);
-        var scroller = $scroller.get(0);
-
-        if ($this.scrollTop() === 0) $this.scrollTop(1);
-        var scrollTop = scroller.scrollTop;
-        var scrollHeight = scroller.scrollHeight;
-        var offsetHeight = scroller.offsetHeight;
-        var contentHeight = scrollHeight - offsetHeight;
-        if (contentHeight == scrollTop) $this.scrollTop(scrollTop-1);
     });
     */
 
@@ -125,7 +105,9 @@ jQuery(document).ready(function(){
     });
 
     scoreNowSVG.on('click', function(){
+        scoreNowGauge.v
         scoreNowGauge.update(NewValue())
+
     });
 
 
@@ -234,7 +216,7 @@ jQuery(document).ready(function(){
         //openWeatherMap doesn't find these two lakes.. therefore we chose two cities manually.
         if(lakeName=="Bielersee")lakeName="Biel";
         else if(lakeName=="Vierwaldstättersee")lakeName="Luzern";
-        
+
         var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
         var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
         console.log(openWeatherForecastURL);
@@ -248,30 +230,6 @@ jQuery(document).ready(function(){
             //loadLiquidFillGauge('scoreNowSVG', 5, config1);
         });
     }
-
-    function initScoreConfig(){
-        config1 = liquidFillGaugeDefaultSettings();
-        config1.circleColor= "#4D4F4F";
-        config1.circleFillGap = 0.05;
-        config1.textSize = 3;
-        config1.textColor= "#4D4F4F";
-        config1.textVertPosition = 0.5;
-        config1.maxValue = 12;
-        config1.minValue = 0;
-        config1.displayPercent = false;
-        config1.circleThickness = 0.1;
-        config1.waveAnimateTime = 7000;
-        config1.waveCount = 2;
-        config1.waveHeight = 0.02;
-    }
-
-    function createForecastScoreGauge(forecastGaugeMap){
-
-        forecastGaugeMap.map(function(element){
-            loadLiquidFillGauge(element.id, calculateScore(element.data), config1);
-        });
-    }
-
 
     function NewValue() {
         if (Math.random() > .5) {
@@ -297,6 +255,25 @@ function getWeatherData(searchQueryAPI){
 }
 
 
+    function getGaugeConfig(windScore){
+        var customConfig = liquidFillGaugeDefaultSettings();
+        customConfig.circleColor= "#4D4F4F";
+        customConfig.circleFillGap = 0.05;
+        customConfig.textSize = 3;
+        customConfig.textColor= "#4D4F4F";
+        customConfig.textVertPosition = 0.5;
+        customConfig.maxValue = 12;
+        customConfig.minValue = 0;
+        customConfig.displayPercent = false;
+        customConfig.circleThickness = 0.1;
+
+        //Custom Wave Animation
+        customConfig.waveAnimateTime = 500+(windScore*30);
+        customConfig.waveCount = Math.floor(10/(windScore+1));
+        customConfig.waveHeight = 0.1/(windScore+1);
+
+        return customConfig;
+    }
 
     function updateWeatherTable(weatherTable,openWeatherData,wieWarmData,isCurrentWeather){
         weatherTable.empty();
@@ -305,26 +282,28 @@ function getWeatherData(searchQueryAPI){
     }
 
     function createWeatherDetailTable(openWeatherData, wieWarmData, isCurrentWeather){
-        var amountOfRain = "0";
+        var amountOfRain = 0;
         if(openWeatherData.rain != undefined) {
             console.log(openWeatherData.rain);
             for(el in openWeatherData.rain){
                 amountOfRain = openWeatherData.rain[el];
             }
         }
+        var waterTemperature = wieWarmData[lakePoolIDs[currentLake]].temp;
+        console.log("Wasser: "+waterTemperature);
 
         var table = '<tr>'+
             '<td><i class="wi wi-thermometer"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
-            '<td><i class="wi wi-fs wi-strong-wind"></i></td><td>'+openWeatherData.wind.speed.toFixed(1)+' km/h</td></tr>'+
-            '<tr><td><i class="wi wi-fs wi-flood"></i></td> <td>'+wieWarmData[lakePoolIDs[currentLake]].temp+' <i class="wi wi-fs wi-celsius"></i></td>'+
-            '<td><i class="wi wi-fs wi-raindrops"></i></td><td>'+amountOfRain+' mm</td></tr>';
+            '<td><i class="wi wi-fs wi-strong-wind"></i></td><td>'+Math.floor(openWeatherData.wind.speed*3.6)+' km/h</td></tr>'+
+            '<tr><td><i class="wi wi-fs wi-flood"></i></td> <td>'+waterTemperature+' <i class="wi wi-fs wi-celsius"></i></td>'+
+            '<td><i class="wi wi-fs wi-raindrops"></i></td><td>'+Math.floor(amountOfRain)+' mm</td></tr>';
 
         if(isCurrentWeather){
             $('#nowForecastTitle').text("Momentan am "+currentLake);
             if(scoreNowGauge==null) {
-                scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', calculateScore(openWeatherData), config1);
+                scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', calculateScore(openWeatherData,waterTemperature,false), getGaugeConfig(calculateWindScore(openWeatherData.wind)));
             }else {
-                scoreNowGauge.update(calculateScore(openWeatherData));
+                scoreNowGauge.update(calculateScore(openWeatherData,waterTemperature,false));
             }
             var actualDate = new Date();
             var sunrise = new Date(openWeatherData.sys.sunrise*1000);
@@ -346,29 +325,38 @@ function getWeatherData(searchQueryAPI){
             '<td><i class="wi wi-fs '+weatherIconPrefix+openWeatherDataIconID+'"></i></td></tr>');
     }
 
-    function getHourlyForecastOverview(openWeatherData,wieWarmData,numOfHourlyForecasts){
-        var hourlyForecastTable = "";
+    function updateHourlyForecastOverview(openWeatherData,wieWarmData,numOfHourlyForecasts){
+        var tableHead = "";
         var hoursOfForecast;
 
-
+        hourlyForecastTable.empty();
         for(var i=0;i<numOfHourlyForecasts;i++)
         {
+            tableHead="";
             var ScoreGaugeID = ("hourlyScore"+i);
             hoursOfForecast = (new Date(openWeatherData.list[i].dt*1000)).getHours();
             var weatherIconPrefix = hoursOfForecast<22 && hoursOfForecast> 6 ? "wi-owm-day-" : "wi-owm-night-";
-            hourlyForecastTable = hourlyForecastTable.concat('<tr>' +
+            tableHead = tableHead.concat('<tr>' +
                 '<td><i class="wi wi-fs wi-time-'+(hoursOfForecast>12 ? hoursOfForecast-12 : hoursOfForecast)+'"></i></td><td>' + hoursOfForecast + ' Uhr</td>' +
                 '<td><i class="wi '+weatherIconPrefix+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+ScoreGaugeID+'" width="40" height="40"></svg></td></tr>');
-            console.log(i);
 
-            hourlyForecastTable+=(createWeatherDetailTable(openWeatherData.list[i],wieWarmData,false));
-            forecastScoreGauges.push({id:ScoreGaugeID,data:openWeatherData.list[i]});
+            var tableBody = createWeatherDetailTable(openWeatherData.list[i],wieWarmData,false);
+
+            hourlyForecastTable.append(tableHead+tableBody);
+
+            //Create Score for this hour's forecast
+            loadLiquidFillGauge(ScoreGaugeID, calculateScore(openWeatherData.list[i],wieWarmData[lakePoolIDs[currentLake]].temp, false), getGaugeConfig(calculateWindScore(openWeatherData.list[i].wind)));
         }
-    return hourlyForecastTable;
+
+
+
+
     }
 
-    function getDailyForecastOverview(openWeatherData,wieWarmData,numOfDailyForecasts){
-        var dailyForecastTable = "";
+    function updateDailyForecastOverview(openWeatherData,wieWarmData,numOfDailyForecasts){
+        dailyForecastTable.empty();
+
+        var dailyForecastTableHead = "";
         var foreCastCounter = 0;
         var i = 0;
         var currentDay = new Date().getDay();
@@ -378,7 +366,7 @@ function getWeatherData(searchQueryAPI){
         var daysOfWeek= ["So","Mo","Di","Mi","Do","Fr","Sa","So"];
 
         while(foreCastCounter < numOfDailyForecasts && i != openWeatherData.list.length) {
-
+            dailyForecastTableHead = "";
             dateOfForecast = (new Date(openWeatherData.list[i].dt * 1000));
             dayOfForecast  = dateOfForecast.getDay();
 
@@ -388,32 +376,30 @@ function getWeatherData(searchQueryAPI){
 
                 var formattedDate = daysOfWeek[dayOfForecast]+". "+dateOfForecast.getDate()+"."+(dateOfForecast.getMonth()+1)+".";
 
-                dailyForecastTable = dailyForecastTable.concat('<tr>' +
+                dailyForecastTableHead = dailyForecastTableHead.concat('<tr>' +
                     '<td><i class="wi wi-fs wi-time-2"></i></td><td>' + formattedDate + '</td>' +
                     '<td><i class="wi wi-owm-day-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+scoreGaugeID+'" width="40" height="40"></svg></td></tr>');
 
 
-                dailyForecastTable += (createWeatherDetailTable(openWeatherData.list[i], wieWarmData, false));
+                var dailyForecastTableBody = (createWeatherDetailTable(openWeatherData.list[i], wieWarmData, false));
+                dailyForecastTable.append(dailyForecastTableHead+dailyForecastTableBody);
 
-                forecastScoreGauges.push({id:scoreGaugeID,data:openWeatherData.list[i]});
+                loadLiquidFillGauge(scoreGaugeID, calculateScore(openWeatherData.list[i],wieWarmData[lakePoolIDs[currentLake]].temp, true), getGaugeConfig(calculateWindScore(openWeatherData.list[i].wind)));
 
                 ++foreCastCounter;
                 ++i;
                 currentDay = dayOfForecast;
             }else ++i;
         }
-        return dailyForecastTable;
     }
 
     function updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
-        forecastScoreGauges = [];
-        hourlyForecastTable.empty();
-        hourlyForecastTable.append(getHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts));
+        updateHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts);
         hideForecastDetails(hourlyForecastSection);
-        dailyForecastTable.empty();
-        dailyForecastTable.append(getDailyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], 4));
+
+        updateDailyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], 4);
         hideForecastDetails(dailyForecastSection);
-        createForecastScoreGauge(forecastScoreGauges);
+
     }
 
     function hideForecastDetails(forecastSection){
@@ -422,9 +408,80 @@ function getWeatherData(searchQueryAPI){
         forecastTableRows.closest('table').find('tr:nth-child(3n+1)').show();
     }
 
-    function calculateScore(forecastData){
-        //TODO Calculation of Scores
-          return Math.floor(Math.random()*10);
+
+    function calculateWindScore(openWeatherWindData){
+        var wind = openWeatherWindData.speed.toFixed(1);
+        console.log(wind);
+        var windScore = 0;
+        if(wind<5.5){
+            if(wind<0.3)windScore=10; //Windstille -> glatter See
+            else if(wind<1.5)windScore=9; // Leiser Zug -> Kleine Kräuselwellen ohne Schaumkämme
+            else if(wind<3.3)windScore=8; // Leichte Brise -> Kleine, kurze Wellen, glasige, nicht brechende Kämme.
+            else windScore = 7; // Schwache Brise -> Kämme beginnen sich zu brechen. Schaum glasig, vereinzelt Schaumköpfe.
+        }else{
+            if(wind>10){windScore = 0;}//Starker Wind - Sturm --> Score 0,da zu gefährlich
+            else if(wind<8)windScore=2; //Frische Brise 	Lange, mäßige Wellen. überall Schaumkämme.
+            else windScore = 5; // Mäßige Brise -> Kleine, längere Wellen. Verbreitet Schaumköpfe.
+        }
+        return windScore;
+    }
+
+
+    function calculateScore(openWeatherData, waterTemperature,isDailyForecast){
+        if(!isDailyForecast) {
+            //check if it's nighttime. If yes, don't go wakeboarding..
+            var dateOfForecast = (new Date(openWeatherData.dt * 1000));
+            if(dateOfForecast!=undefined) {
+                if(openWeatherData.sys.sunrise!=undefined){
+                var sunrise = new Date(openWeatherData.sys.sunrise * 1000);
+                var sunset = new Date(openWeatherData.sys.sunset * 1000);
+                console.log("JETZT: " + dateOfForecast + " sunrise " + sunrise + " Sunset " + sunset);
+
+                    if(dateOfForecast < sunrise || dateOfForecast > sunset)return 0;
+                }else{
+                    //if no information provided, take these numbers to check
+                    if(dateOfForecast.getHours()<6 || dateOfForecast.getHours()>22)return 0;
+                }
+            }
+        }
+
+        var windScore = calculateWindScore(openWeatherData.wind);
+        //Check for dangerous stormy weather
+        if (windScore==0) return 0;
+
+
+        var temperatureScore = (openWeatherData.main.temp.toFixed(1)-16); //temp>=30 ->score 10, temp<16 -> 0
+        if(temperatureScore<0)temperatureScore=0;
+        else if(temperatureScore>10)temperatureScore=10;
+
+        //amountOfRain in mm for last hour/3hours..
+        var amountOfRain = 0;
+        if(openWeatherData.rain != undefined) {
+            console.log(openWeatherData.rain);
+            for(el in openWeatherData.rain){
+                amountOfRain = openWeatherData.rain[el];
+            }
+        }
+
+        var rainScore = (10 - amountOfRain*2);
+        rainScore = (rainScore < 0) ? 0 :rainScore;
+
+
+        var waterTemperatureScore = (parseInt(waterTemperature) - 12);//temp>=22 ->score 10, temp<=12 -> 0
+        if(waterTemperatureScore<0)waterTemperatureScore=0;
+        else if(waterTemperatureScore>10)waterTemperatureScore=10;
+
+        //DEBUG
+        console.log("Temperatur "+temperatureScore+" Wasser "+waterTemperatureScore+" Wind: "+windScore +" Regen "+rainScore);
+
+        //Gewichtete Summe der einzelnen Scores
+        var finalScore = (temperatureScore + waterTemperatureScore + (windScore*4) + (rainScore*3)) / 9;
+
+        if(finalScore<0)finalScore=0;else{
+            if(finalScore>10)finalScore=10;
+        }
+
+          return Math.floor(finalScore);
     }
 
 });
