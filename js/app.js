@@ -215,7 +215,7 @@ jQuery(document).ready(function () {
         }, {"title": "Suche 2 Personen", "lake_name": "Walensee", "message": "toll"}];
 */
 
-        var adTable = '<tr></tr>';
+        var adTable = '';
 
         if(data.length==undefined){
             adTable= adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
