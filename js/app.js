@@ -174,12 +174,12 @@ jQuery(document).ready(function () {
             $.ajax({
                 url: url,
                 type: 'DELETE',
-
                 success: function () {
                     getMyAds();
                 },
                 error: function () {
-                    alert("konnte nicht gelöscht werden");
+                    $('#deleteError').toggleClass('hidden', false);
+                    getMyAds();
                 }
             });
         }
@@ -201,7 +201,6 @@ jQuery(document).ready(function () {
                 contentType: 'application/json',
                 statusCode: {
                     200: function (data) {
-                        console.log(data);
                         showLoggedInAccountView();
                         createAdTable(data);
                         showMyAdsSection();
@@ -405,8 +404,7 @@ jQuery(document).ready(function () {
                 success: function () {
                     verified = true;
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
+                error: function () {
                     window.localStorage.removeItem('wakingUp_token');
                     verified = false;
                 }
@@ -457,7 +455,7 @@ jQuery(document).ready(function () {
     function hideOldErrorMessages() {
         $('#badLoginDetails').addClass('hidden');
         $('#invalidDetails-signUp').addClass('hidden');
-
+        $('#deleteError').addClass('hidden');
     }
 
 
@@ -481,6 +479,8 @@ jQuery(document).ready(function () {
      *
      *  @param msg: Zu hashender String
      *  @return: gehashter String
+     *
+     *  Quelle: http://www.webtoolkit.info/
      */
     function sha1(msg) {
 
