@@ -63,9 +63,7 @@ $app->get('/users/ads/:token', function($token) use ($app){
 
 
 /*
- * Überprüfen des Tokens/ der Authentifizierung des Users. Wird ev. gar nicht benötigt, je nach Funktionen im
- * Javascript
- *
+ * Überprüfen des Tokens / der Authentifizierung des Users
  */
 $app->get('/users/auth/:token', function($token) use ($app) {
     if(verifyToken($token)) {
