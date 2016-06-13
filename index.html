@@ -18,21 +18,21 @@
         <link rel="icon" sizes="152x152" href="img/icons/wakeWeather_icon_152.png">
         <link rel="icon" sizes="120x120" href="img/icons/wakeWeather_icon_120.png">
 
-        <!-- Import js and css -->
-        <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+        <!-- Import js and css
+        <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>-->
         <script src="js/liquidFillGauge.js" language="JavaScript"></script>
         <script src="lib/jquery-2.2.4.min.js"></script>
         <script src="js/app.js"></script>
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link type="text/css" rel="stylesheet" href="lib/bootstrap-3.3.6-dist/css/bootstrap.min.css">
         <link type="text/css" href="css/style.css" rel="stylesheet">
         <link type="text/css" href="css/inserate.css" rel="stylesheet">
         <link type="text/css" href="css/weather-icons.min.css" rel="stylesheet">
         
         <!-- Import js and css for datepicker-->
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="lib/jquery-ui-1.11.4/jquery-ui.css">
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script src="lib/jquery-ui-1.11.4/jquery-ui.min.js"></script>
         
     </head>
     
@@ -134,7 +134,7 @@
         
         <section id="ad">
             <section id="adFilter">
-                <h4>Filter</h4>
+                <h4 id="adFilterTitle">Filter</h4>
                 <form>
                 <select id="select_search"></select>
                     Von
@@ -146,19 +146,19 @@
             </section>
 
             <section id="ad_search">
-                    <h4 id="myAdsTitle">Inserate am Quacksee</h4>
+                    <h4 id="adsTitle">Inserate für den Quacksee</h4>
                     <ul id="resultList">
                         <li></li>
                     </ul>
             </section>
             <section id="ad_insert">
-                    <h4>Inserat erstellen</h4>
+                    <h4 id="createAdTitle">Inserat erstellen</h4>
                 <form>
                 <select id="select_insert">
                 </select>
                     <input id="datepicker_insert" class="date" type="date" readonly="readonly"/>
                     <input id="title_insert" placeholder="Titel" type="text"/>
-                    <textarea name="addContent" cols="40" rows="5" placeholder="Ihre Nachricht"></textarea>
+                    <textarea id="addContent" cols="40" rows="5" placeholder="Ihre Nachricht"></textarea>
                 <button id="btn_add_insert_insert" class="btn">Inserat aufgeben</button>
                 </form>
             </section>

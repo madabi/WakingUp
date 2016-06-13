@@ -93,7 +93,7 @@ function searchAds($app, $lake, $from, $until)
  */
 function verifyToken($app, $tokenToVerify)
 {
-    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'root');
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
     $selection = 'SELECT * FROM wakingUp.users WHERE token=:token';
     $selection = $db->prepare($selection);
     $selection->bindParam(':token', $tokenToVerify);
