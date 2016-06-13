@@ -125,3 +125,7 @@
     float:right;
 }
 
+#myAdsList{
+    overflow-y: scroll;
+    height: calc(100% - 134px);
+}

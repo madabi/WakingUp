@@ -86,7 +86,7 @@ jQuery(document).ready(function () {
         emptyForm($('#signUp'));
     });
 
-    $('#myAdsList').on('click', function (event) {
+    $('#myAdsList').on('click', '.glyphicon-trash', function (event) {
         event.preventDefault();
         var source = $(event.srcElement || event.target);
         var adIdToDelete = source.closest('li').attr('id');
@@ -101,8 +101,9 @@ jQuery(document).ready(function () {
             if (verifyToken()) {
                 getMyAds();
             } else {
-                myAds.find('table').empty().append('<tr><td><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></td></tr>+' +
-                    '<tr><td id="pleaseLogIn">Bitte logge dich ein.</td></tr>');
+                $('#myAds').find('li').remove();
+                    $('#myAdsList').append($('<li><span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>' +
+                        '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
                 showMyAdsSection();
             }
         }
@@ -227,9 +228,6 @@ jQuery(document).ready(function () {
         if (data.length == undefined || data.length == 0) {
             $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
                 '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
-
-            /* adTable = adTable.concat('<tr><td><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></td></tr>+' +
-             '<tr><td id="noContentText">Du hast noch keine Inserate erstellt.</td></tr>');*/
         } else {
 
             for (var i = 0; i < data.length; i++) {
@@ -335,6 +333,7 @@ jQuery(document).ready(function () {
                     200: function (data) {
                         directLoginAuth(email, pwd);
                         showLoggedInAccountView();
+                        getMyAds();
                         switchAccountView(login);
                         showMyAdsSection();
                     },
