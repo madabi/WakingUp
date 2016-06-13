@@ -125,8 +125,7 @@ jQuery(document).ready(function(){
         console.log(title);
         console.log(message);
         
-        //var tokenString = localStorage.getItem('wakingUp_token');
-        //if (tokenString != null && tokenString != 'undefined' && tokenString != 'null') {
+        //if (isLoggedIn) {
             insertAd(lake, inputDate, title, message, '8b69439022efff82');
         //}
         
@@ -399,7 +398,7 @@ function getOpenWeatherData(searchQueryAPI){
             dataType: 'json',
             contentType: 'application/json',
             statusCode: {
-            200: function (data) {
+            200: function (data) {  
                 showResults(data, lake);
             },
             401: function () {
@@ -408,6 +407,11 @@ function getOpenWeatherData(searchQueryAPI){
         }
         });
         
+    }
+
+    function isLoggedIn(){
+        var tokenString = localStorage.getItem('wakingUp_token');
+        return (tokenString != null && tokenString != 'undefined' && tokenString != 'null');
     }
     
     /*
@@ -425,11 +429,15 @@ function getOpenWeatherData(searchQueryAPI){
         for(i = 0; i<data.length; i++){
             var title = data[i].title;
             var message = data[i].message;
+            var email= '';
+            //ersetzen durch if (isLoggedIn)
+            if (false){email = data[i].user_email;}
             if (dateAd != data[i].date){
                dateAd = data[i].date;
                 $('#results').append('<br><h5>' + dateAd+ '</h5>'); 
             }
-            $('#results').append('<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header><div class=\"content\">'+ message + '<br> ' + data[i].user_email+'</div>');
+            var header = '<header class=\"messageStart\"><h5><div class="glyphicon glyphicon-triangle-right"></div> ' + title + '</h5></header>';
+            $('#results').append(header + '<div class=\"content\">'+ message + '<br> ' + email+'</div>');
         }
         //Hides content and shows it on click on the title
         $('.content').toggle();
