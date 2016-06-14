@@ -207,17 +207,18 @@ jQuery(document).ready(function () {
         }else{
 
             if(!verifyToken()){
-                $('#ad_insert').find('form').hide();
+                insertAdSection.find('form').hide();
                 if($('#notLoggedInIcon').length==0) {
                     createAdTitle.append('<span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span>' +
                         '<p id="pleaseLogIn">Bitte logge dich ein.</p>');
                 }
             }else{
-                ('#ad_insert').find('#notLoggedInIcon').remove();
-                $('#ad_insert').find('form').show();
-            }
+                insertAdSection.find('#notLoggedInIcon').remove();
+                insertAdSection.find('form').show();
 
+            }
             insertAdSection.css("top", openedCreateAdPosition);
+
         }
     });
 

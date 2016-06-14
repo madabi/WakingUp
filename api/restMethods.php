@@ -323,3 +323,72 @@ function verifyToken($tokenToVerify)
     $db = null;
     return false;
 }
+
+function insertAd($app)
+{
+    $ad = getJSONFromBody($app);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
+
+    if (verifyToken($app, $ad['token'])){
+
+        $userEmail = getUserEmail($ad['token']);
+
+        $insertion = $db->prepare('INSERT INTO wakingUp.pinboard (title, message, date, lake, userEmail) VALUES (:title, :message, STR_TO_DATE(:date, \'%m,%d,%Y\'), :lake, :email)');
+
+        $insertion->bindParam(':title', $ad['title'], PDO::PARAM_STR);
+        $insertion->bindParam(':message', $ad['message'], PDO::PARAM_STR);
+        $insertion->bindParam(':date', $ad['date'], PDO::PARAM_STR);
+        $insertion->bindParam(':lake', $ad['lake'], PDO::PARAM_STR);
+        $insertion->bindParam(':email', $userEmail, PDO::PARAM_STR);
+
+        if ($insertion->execute()){
+            responseWithStatus($app, 200);
+        } else {
+            responseWithStatus($app, 401);
+        }
+    }
+    //else {
+    // responseWithStatus($app,401);
+    //}
+
+}
+
+function searchAds($app, $lake, $from, $until)
+{
+    $info = getJSONFromBody($app);
+    $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
+
+    $selection = $db->prepare('SELECT * FROM wakingUp.pinboard WHERE lake=:lake AND (date BETWEEN STR_TO_DATE(:from, \'%m,%d,%Y\') AND STR_TO_DATE(:until, \'%m,%d,%Y\')) ORDER BY date ASC');
+
+    $selection->bindParam(':lake', $lake, PDO::PARAM_STR);
+    $selection->bindParam(':from', $from, PDO::PARAM_STR);
+    $selection->bindParam(':until', $until, PDO::PARAM_STR);
+
+    //where lake='Brienzersee' AND (date BETWEEN '2016-01-01' AND '2017-05-05');
+    //date=\'2016-04-18\'');
+    //STR_TO_DATE(:fromDate, \'%m,%d,%Y\')');
+    //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE('04,18,2016', '%m,%d,%Y');
+    //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE(\'04,18,2016\', \'%m,%d,%Y\');
+    //BETWEEN :fromDate AND :untilDate
+
+
+
+    if ($selection->execute()){
+        $result = $selection->fetchAll(PDO::FETCH_ASSOC);
+
+        $ads = array();
+        foreach ($result as $ad) {
+            $ads[] = array(
+                'id' => $ad['id'],
+                'title' => $ad['title'],
+                'message' => $ad['message'],
+                'date' => $ad['date'],
+                'lake_name' => $ad['lake'],
+                'user_email' => $ad['userEmail']
+            );
+        }
+        responseTokenWithStatus($app, $ads, 200);
+    }
+}
+
+

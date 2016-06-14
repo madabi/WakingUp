@@ -6,8 +6,7 @@
  * Time: 10:35
  */
 
-require 'pinboardMethods.php';
-require 'profileMethods.php';
+require 'restMethods.php';
 require 'Slim-2.6.0/Slim/Slim.php';
 
 define('db_username', 'wakeboarder');
@@ -57,7 +56,7 @@ $app->delete('/pinboard/:id/:token', function ($id, $token) use ($app){
  * Neuen Account erstellen
  */
 $app->post('/users/signup', function () use ($app){
-    signUp($app);
+    SignUp($app);
 });
 
 
