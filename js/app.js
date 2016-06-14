@@ -236,14 +236,11 @@ jQuery(document).ready(function () {
         console.log(title);
         console.log(message);
 
-        /*
-        if (isLoggedIn) {
-        */
+
 
         var tokenString = localStorage.getItem('wakingUp_token');
         insertAd(lake, inputDate, title, message, tokenString);
-
-        //}
+        
 
     });
 
@@ -774,10 +771,6 @@ jQuery(document).ready(function () {
 
     }
 
-    function isLoggedIn(){
-        var tokenString = localStorage.getItem('wakingUp_token');
-        return (tokenString != null && tokenString != 'undefined' && tokenString != 'null');
-    }
 
     /*
      * Displays the ads according the search filter
@@ -1045,8 +1038,8 @@ jQuery(document).ready(function () {
                     "password": hashedPassword
                 }),
                 statusCode: {
-                    200: function (data) {
-                        setToken(data['token']);
+                    200: function () {
+                       // setToken(data['token']);
                         directLogin(email, pwd);
                         setAccountViewTitle('Abmelden');
                         getMyAds();
