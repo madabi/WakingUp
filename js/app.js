@@ -678,7 +678,6 @@ jQuery(document).ready(function () {
     function initAdSection(){
         prepareLakeList();
         insertAdSection.css("top", closedCreateAdPosition);
-        ad.find('form').show();
 
         setTodaysDate();
         searchAd('Bielersee', getCurrentDate().replace(/\//g, ","), '06,30,2017');
