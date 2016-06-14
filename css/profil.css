@@ -83,6 +83,10 @@
     font-size: 140px;
 }
 
+.glyphicon-trash{
+    font-size:2em;
+}
+
 #pleaseLogIn, #noContentText{
     padding-top: 20px;
     text-align: center;
