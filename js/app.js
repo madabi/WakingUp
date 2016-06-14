@@ -919,8 +919,7 @@ jQuery(document).ready(function () {
          $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
                 '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
     }
-
-
+    
     /**
      *  Zeigt Inserate des eingeloggten Users an
      */
@@ -951,7 +950,6 @@ jQuery(document).ready(function () {
             removeToken();
             switchToAccountView(login);
         }
-
     }
 
     /**
