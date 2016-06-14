@@ -223,7 +223,8 @@ jQuery(document).ready(function () {
     });
 
 
-    insertAdButton.on('click', function(){
+    insertAdButton.on('click', function(e){
+        e.preventDefault();
         var lake = $('#select_insert :selected').text();
         var title = $('#title_insert').val();
         var message = $('#addContent').val();
@@ -740,8 +741,7 @@ jQuery(document).ready(function () {
             }),
             statusCode: {
                 200: function () {
-                    console.log("inserting ok");
-                    //$('#ad_insert').show();
+                    insertAdSection.css("top", closedCreateAdPosition);
                 },
                 401: function () {
                     //todo
