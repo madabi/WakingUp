@@ -240,7 +240,7 @@ jQuery(document).ready(function () {
 
         var tokenString = localStorage.getItem('wakingUp_token');
         insertAd(lake, inputDate, title, message, tokenString);
-        
+
 
     });
 
@@ -792,8 +792,10 @@ jQuery(document).ready(function () {
             var tableHead = '<tr><th>'+adTitle+'</th></tr>';
             var listOfElement = '<tr><td>'+adDate+'</td></tr>';
             var messageData = '<tr><td>'+adMessage+'</td></tr>';
-            var contactData = '<tr><td>'+adContact+'</td></tr>';
-
+            var contactData = '';
+            if(verifyToken()) {
+                contactData = '<tr><td>' + adContact + '</td></tr>';
+            }
             var table = '<li><table>'+tableHead +listOfElement+messageData + contactData +'</table></li>';
 
             $('#resultList').append(table);
