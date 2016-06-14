@@ -329,7 +329,7 @@ function insertAd($app)
     $ad = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
 
-    if (verifyToken($app, $ad['token'])){
+    if (verifyToken($ad['token'])){
 
         $userEmail = getUserEmail($ad['token']);
 
