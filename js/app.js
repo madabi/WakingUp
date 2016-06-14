@@ -19,9 +19,7 @@ jQuery(document).ready(function () {
     var currentWeatherSection = $('#nowForecastSection');
     var hourlyForecastSection = $('#todayForecastSection');
     var dailyForecastSection = $('#dailyForecastSection');
-
     var changeLakeDropdownList = $('#changeLakeDropdown');
-
 
     //note for later coding: openweathermap access via string, but wiewarm.ch works better with IDS, eg. '192' for bodensee..
     var currentLake = "Bielersee";
@@ -29,11 +27,8 @@ jQuery(document).ready(function () {
     var NUM_OF_HOURLY_FORECASTS = 4;
     var NUM_OF_DAILY_FORECASTS = 4;
 
-
     var scoreNowSVG = $('#scoreNowSVG');
     var scoreNowGauge;
-
-
 
     var weatherNowIconTable = $('#weatherNowIconTable');
     var hourlyForecastTable = $('#hourlyForecastTable');
@@ -88,15 +83,11 @@ jQuery(document).ready(function () {
 
 
 
-
-
-
 //--------------Common-------------------------------------------------------------
     var nav = $('nav').children();
     var weatherButton = nav.first();
     var adButton = nav.first().next();
     var profileButton = nav.last();
-
 
     var weather = $('#weather');
     var ad = $('#ad');
@@ -117,12 +108,10 @@ jQuery(document).ready(function () {
 
 
 
-
 //--------------Common ---------------------------------------------------------------
     showSection(weather);
     setActive(weatherButton);
 //-------------------------------------------------------------------------------------
-
 
 
 
@@ -149,7 +138,6 @@ jQuery(document).ready(function () {
         setActive(this);
     });
 
-    //verändert durch Lea
     profileButton.on('click', function (event) {
         event.preventDefault();
        switchToProfile();
@@ -165,7 +153,6 @@ jQuery(document).ready(function () {
 
     });
 
-
     changeLakeDropdownList.on("change", function() {
         updateCurrentlySelectedLake();
         initWeather(currentLake, currentLakeID.toString(), NUM_OF_HOURLY_FORECASTS);
@@ -177,7 +164,6 @@ jQuery(document).ready(function () {
     $("#hourlyForecastTitle").on("click", handleHourlyForecastPositions);
     $("#dailyForecastTitle").on("click", handleDailyForecastPositions);
 
-    //TODO: Check for better more directly solution..
     hourlyForecastTable.on('click', 'tr:nth-child(3n+1)',function(){
         hideForecastDetails(hourlyForecastSection);
         $(this).nextAll(':lt(2)').toggle();
@@ -223,26 +209,14 @@ jQuery(document).ready(function () {
         }
     });
 
-
     insertAdButton.on('click', function(e){
         e.preventDefault();
         var lake = $('#select_insert :selected').text();
         var title = $('#title_insert').val();
         var message = $('#addContent').val();
         var inputDate = $('#datepicker_insert').val().replace(/\//g,",");
-
-        //Logs
-        console.log(lake);
-        console.log(inputDate);
-        console.log(title);
-        console.log(message);
-
-
-
         var tokenString = localStorage.getItem('wakingUp_token');
         insertAd(lake, inputDate, title, message, tokenString);
-
-
     });
 
 
@@ -268,12 +242,10 @@ jQuery(document).ready(function () {
         hideOldErrorMessages();
     });
 
-
     $('#lostPasswordTitle').on('click', function (event) {
         event.preventDefault();
         switchToAccountView(lostPasswordInfo);
     });
-
 
     $('#createAccountTitle').on('click', function (event){
         event.preventDefault();
@@ -281,12 +253,10 @@ jQuery(document).ready(function () {
         hideOldErrorMessages();
     });
 
-
     $('#loginButton').on('click', function (event) {
         event.preventDefault();
         tryLogin();
     });
-
 
     $('#noAccountYetButton').on('click', function (event) {
         event.preventDefault();
@@ -294,18 +264,15 @@ jQuery(document).ready(function () {
         switchToAccountView(signUp);
     });
 
-
     $('#lostPasswordButton').on('click', function (event) {
         event.preventDefault();
         switchToAccountView(lostPasswordInfo);
     });
 
-
     $('#signUpButton').on('click', function (event) {
         event.preventDefault();
         trySignUp();
     });
-
 
     $('#myAdsList').on('click', '.glyphicon-trash', function (event) {
         event.preventDefault();
@@ -313,7 +280,6 @@ jQuery(document).ready(function () {
         var adIdToDelete = source.closest('li').attr('id');
         deleteAd(adIdToDelete);
     });
-
 
     $('#myAdsTitle').on('click', function (event) {
         event.preventDefault();
@@ -337,9 +303,13 @@ jQuery(document).ready(function () {
 
 
 
-
 //------------------Wetter - Methoden --------------------------------
 
+    /**
+     * Fügt der Dropdownmenü die Liste der Seen hinzu
+     *
+     * @param lakeIDs: Seen als key, value
+     */
     function createLakeSelection(lakeIDs){
         var dropDownSelection= "";
         $.each(lakeIDs, function(key,value){
@@ -348,6 +318,9 @@ jQuery(document).ready(function () {
         changeLakeSection.find('select').empty().append(dropDownSelection);
     }
 
+    /**
+     * Setzt CSS Attribute bei Seenwechsel
+     */
     function handleChangeLake(){
         if(currentWeatherSection.css("top") == currentWeatherSectionOpened){
             currentWeatherSection.css("top", currentWeatherSectionClosed);
@@ -360,6 +333,9 @@ jQuery(document).ready(function () {
         }
     }
 
+    /**
+     * Setzt CSS Attribute der aktuellen Wetter sections
+     */
     function handleCurrentWeatherPositions(){
         if(currentWeatherSection.css("top") != currentWeatherSectionOpened){
             currentWeatherSection.css("top", currentWeatherSectionOpened);
@@ -377,6 +353,9 @@ jQuery(document).ready(function () {
         }
     }
 
+    /**
+     * Setzt CSS Attribute der stündlichen Progrosen
+     */
     function handleHourlyForecastPositions(){
         if(hourlyForecastSection.css("top") != todayForecastSectionOpened){
             hourlyForecastSection.css("top", todayForecastSectionOpened);
@@ -390,6 +369,9 @@ jQuery(document).ready(function () {
         }
     }
 
+    /**
+     * Setzt CSS Attribute der Tagesprognosen
+     */
     function handleDailyForecastPositions(){
         if(dailyForecastSection.css("top") != dailyForecastSectionOpened){
             currentWeatherSection.css("top", currentWeatherSectionOpened);
@@ -401,11 +383,21 @@ jQuery(document).ready(function () {
         }
     }
 
+    /**
+     * Update der ID und des Sees bei Wechsel
+     */
     function updateCurrentlySelectedLake(){
         currentLakeID = changeLakeDropdownList.find(':selected').val();
         currentLake = changeLakeDropdownList.find(':selected').text();
     }
 
+    /**
+     * Initialwetter
+     *
+     * @param lakeName: Name des Sees
+     * @param lakeID: ID des Sees
+     * @param numOfHourlyForecasts: Anzahl der stündlichen Prognosen
+     */
     function initWeather(lakeName, lakeID, numOfHourlyForecasts){
         //openWeatherMap doesn't find these two lakes.. therefore we chose two cities manually.
         if(lakeName=="Bielersee")lakeName="Biel";
@@ -413,18 +405,20 @@ jQuery(document).ready(function () {
 
         var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
         var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
-        console.log(openWeatherForecastURL);
-        console.log(openWeatherNowURL);
         var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
         $.when(getWeatherData(openWeatherNowURL),getWeatherData(openWeatherForecastURL),getWeatherData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
             var weatherNowTable = $('#weatherNowTable');
             var isCurrentWeather = true;
             updateWeatherTable(weatherNowTable,openWeatherNowData[0], wieWarmData[0], isCurrentWeather);
             updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts);
-            //loadLiquidFillGauge('scoreNowSVG', 5, config1);
         });
     }
 
+    /**
+     * Generiert einen neuen Zufallswert
+     *
+     * @return int: Gibt die Zufallszahl aus
+     */
     function NewValue() {
         if (Math.random() > .5) {
             return Math.round(Math.random() * 10)+1;
@@ -433,13 +427,18 @@ jQuery(document).ready(function () {
         }
     }
 
+    /**
+     * Holt die Wettdaten
+     *
+     * @param searchQueryAPI: URL der WetterAPI
+     * @return JSON: Sämliche Daten zur Anfrage bezüglich Wetter
+     */
     function getWeatherData(searchQueryAPI){
         return $.ajax({
             url: searchQueryAPI,
             dataType: 'json',
             type: 'GET',
             error: function(jqXHR, textStatus, errorThrown){
-                console.log(errorThrown, textStatus);
             },
             success: function(data){
                 return data;
@@ -447,6 +446,12 @@ jQuery(document).ready(function () {
         });
     }
 
+    /**
+     * Holt die Konfigurationen von GaugeConfig
+     *
+     * @param windScore: setzt den WindScore, damit Wellenanimation gelingt
+     * @return liquidFillGaugeDefaultSettings(): gibt jenes erstellte Objekt zurück
+     */
     function getGaugeConfig(windScore){
         var customConfig = liquidFillGaugeDefaultSettings();
         customConfig.circleColor= "#4D4F4F";
@@ -458,31 +463,41 @@ jQuery(document).ready(function () {
         customConfig.minValue = 0;
         customConfig.displayPercent = false;
         customConfig.circleThickness = 0.1;
-
         //Custom Wave Animation
         customConfig.waveAnimateTime = 500+(windScore*30);
         customConfig.waveCount = Math.floor(10/(windScore+1));
         customConfig.waveHeight = 0.1/(windScore+1);
-
         return customConfig;
     }
 
+    /**
+     * Stundenprognosentabelele werden upgedatet
+     *
+     * @param openWeatherData: Wetterdaten
+     * @param wieWarmData Data von API wieWarm.ch
+     * @papam numOfDailyForecast: Anzahl der Tagesprognose
+     */
     function updateWeatherTable(weatherTable,openWeatherData,wieWarmData,isCurrentWeather){
         weatherTable.empty();
         weatherTable.append(createWeatherDetailTable(openWeatherData,wieWarmData,isCurrentWeather));
         return true;
     }
 
+    /**
+     * Stundenprognosentabelele werden upgedatet
+     *
+     * @param openWeatherData: Wetterdaten
+     * @param wieWarmData Data von API wieWarm.ch
+     * @papam isCurrentWather: Anzahl der Tagesprognose
+     */
     function createWeatherDetailTable(openWeatherData, wieWarmData, isCurrentWeather){
         var amountOfRain = 0;
         if(openWeatherData.rain != undefined) {
-            console.log(openWeatherData.rain);
             for(el in openWeatherData.rain){
                 amountOfRain = openWeatherData.rain[el];
             }
         }
         var waterTemperature = wieWarmData[lakePoolIDs[currentLake]].temp;
-        console.log("Wasser: "+waterTemperature);
 
         var table = '<tr>'+
             '<td><i class="wi wi-thermometer"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
@@ -509,6 +524,12 @@ jQuery(document).ready(function () {
         return table;
     }
 
+    /**
+     * Update der 3 aktuellsten Wetterdaten
+     *
+     * @param openWeatherDataIconID: Wetterdaten
+     * @param isDaytime: ist entweder Tag oder Macht
+     */
     function updateThreeCurrentWeatherIcons(openWeatherDataIconID, isDaytime){
         weatherNowIconTable.empty();
         var weatherIconPrefix = isDaytime ? "wi-owm-day-" : "wi-owm-night-";
@@ -517,10 +538,16 @@ jQuery(document).ready(function () {
             '<td><i class="wi wi-fs '+weatherIconPrefix+openWeatherDataIconID+'"></i></td></tr>');
     }
 
+    /**
+     * Stundenprognosentabelele werden upgedatet
+     *
+     * @param openWeatherData: Wetterdaten
+     * @param wieWarmData Data von API wieWarm.ch
+     * @papam numOfDailyForecast: Anzahl der Stundenprognose
+     */
     function updateHourlyForecastOverview(openWeatherData,wieWarmData,numOfHourlyForecasts){
         var tableHead = "";
         var hoursOfForecast;
-
         hourlyForecastTable.empty();
         for(var i=0;i<numOfHourlyForecasts;i++)
         {
@@ -531,20 +558,21 @@ jQuery(document).ready(function () {
             tableHead = tableHead.concat('<tr>' +
                 '<td><i class="wi wi-fs wi-time-'+(hoursOfForecast>12 ? hoursOfForecast-12 : hoursOfForecast)+'"></i></td><td>' + hoursOfForecast + ' Uhr</td>' +
                 '<td><i class="wi '+weatherIconPrefix+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+ScoreGaugeID+'" width="40" height="40"></svg></td></tr>');
-
             var tableBody = createWeatherDetailTable(openWeatherData.list[i],wieWarmData,false);
-
             hourlyForecastTable.append(tableHead+tableBody);
-
             //Create Score for this hour's forecast
             loadLiquidFillGauge(ScoreGaugeID, calculateScore(openWeatherData.list[i],wieWarmData[lakePoolIDs[currentLake]].temp, false), getGaugeConfig(calculateWindScore(openWeatherData.list[i].wind)));
         }
-
-
-
-
     }
 
+
+    /**
+     * Tagesprognosentabelele werden upgedatet
+     *
+     * @param openWeatherData: Wetterdaten
+     * @param wieWarmData Data von API wieWarm.ch
+     * @papam numOfDailyForecast: Anzahl der Tagesprognose
+     */
     function updateDailyForecastOverview(openWeatherData,wieWarmData,numOfDailyForecasts){
         dailyForecastTable.empty();
 
@@ -563,16 +591,11 @@ jQuery(document).ready(function () {
             dayOfForecast  = dateOfForecast.getDay();
 
             if(currentDay!=dayOfForecast && dateOfForecast.getHours()==14) {
-                //TODO: Data is being stored to array for later calculations.. ok?
                 var scoreGaugeID = ("dailyScore"+foreCastCounter);
-
                 var formattedDate = daysOfWeek[dayOfForecast]+". "+dateOfForecast.getDate()+"."+(dateOfForecast.getMonth()+1)+".";
-
                 dailyForecastTableHead = dailyForecastTableHead.concat('<tr>' +
                     '<td><i class="wi wi-fs wi-time-2"></i></td><td>' + formattedDate + '</td>' +
                     '<td><i class="wi wi-owm-day-'+openWeatherData.list[i].weather[0].id +'"></i></td><td><svg id="'+scoreGaugeID+'" width="40" height="40"></svg></td></tr>');
-
-
                 var dailyForecastTableBody = (createWeatherDetailTable(openWeatherData.list[i], wieWarmData, false));
                 dailyForecastTable.append(dailyForecastTableHead+dailyForecastTableBody);
 
@@ -586,7 +609,11 @@ jQuery(document).ready(function () {
     }
 
     /**
-     * Updaten der 
+     * Prognosentabelele werden upgedatet
+     *
+     * @param openWeatherHourlyForcastData: Daten der Stündlichen Informationen
+     * @param wieWarmData: Data von API wiewarm.ch
+     * @param numOfHourlyForecast: Anzahl der Stundenprogmose
      */
     function updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
         updateHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts);
@@ -613,7 +640,6 @@ jQuery(document).ready(function () {
      */
     function calculateWindScore(openWeatherWindData){
         var wind = openWeatherWindData.speed.toFixed(1);
-        console.log(wind);
         var windScore = 0;
         if(wind<5.5){
             if(wind<0.3)windScore=10; //Windstille -> glatter See
@@ -845,11 +871,7 @@ jQuery(document).ready(function () {
     }
 //--------------------------------------------------------------------
 
-
-
-
-
-
+    
 
 
 // ------- Gemeinsame Methoden -------------------------------------
