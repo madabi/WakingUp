@@ -863,6 +863,7 @@ jQuery(document).ready(function () {
         if (verifyToken()) {
             setAccountViewTitle('Abmelden');
             getMyAds();
+           // moveUpMyAdsView();
         } else {
             showPleaseLoginIcon();
             setAccountViewTitle('Anmelden');
@@ -899,6 +900,13 @@ jQuery(document).ready(function () {
             '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
     }
 
+    function showNoAdsYet(){
+        $('#myAds').find('li').remove();
+         $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
+                '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
+
+    }
+
 
     /*
      *  Inserate des eingeloggten Users laden und anzeigen
@@ -915,6 +923,9 @@ jQuery(document).ready(function () {
                 statusCode: {
                     200: function (data) {
                         createAdTable(data);
+                    },
+                    420: function(){
+                        showNoAdsYet();
                     },
                     401: function () {
                         removeToken();
@@ -1045,7 +1056,8 @@ jQuery(document).ready(function () {
                        // setToken(data['token']);
                         directLogin(email, pwd);
                         setAccountViewTitle('Abmelden');
-                        getMyAds();
+                       // getMyAds();
+                        showNoAdsYet();
                         switchToAccountView(login);
                         moveUpMyAdsView();
                     },

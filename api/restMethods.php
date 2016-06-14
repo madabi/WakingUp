@@ -264,7 +264,7 @@ function getMyAds($app, $token)
             responseWithStatus($app, 421);
         }
     } else {
-        responseWithStatus($app, 422);
+        responseWithStatus($app, 401);
     }
 }
 
