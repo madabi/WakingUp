@@ -1045,6 +1045,7 @@ jQuery(document).ready(function () {
                 }),
                 statusCode: {
                     200: function (data) {
+                        setToken(data['token']);
                         directLogin(email, pwd);
                         setAccountViewTitle('Abmelden');
                         getMyAds();
