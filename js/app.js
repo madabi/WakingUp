@@ -585,21 +585,32 @@ jQuery(document).ready(function () {
         }
     }
 
+    /**
+     * Updaten der 
+     */
     function updateForecastTables(openWeatherHourlyForecastData, wieWarmData, numOfHourlyForecasts){
         updateHourlyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], numOfHourlyForecasts);
         hideForecastDetails(hourlyForecastSection);
-
         updateDailyForecastOverview(openWeatherHourlyForecastData[0],wieWarmData[0], 4);
         hideForecastDetails(dailyForecastSection);
-
     }
 
+    /**
+     * Versteckt die Details zu den Prognosen
+     *
+     * @param forecastSection: HTML Section zu dessen Informationen versteckt werden
+     */
     function hideForecastDetails(forecastSection){
         var forecastTableRows = forecastSection.find('table').find('tr');
         forecastTableRows.hide();
         forecastTableRows.closest('table').find('tr:nth-child(3n+1)').show();
     }
 
+    /**
+     * Berechnet den Wind Score
+     *
+     * @param openWeatherData: die WindDaten
+     */
     function calculateWindScore(openWeatherWindData){
         var wind = openWeatherWindData.speed.toFixed(1);
         console.log(wind);
@@ -617,6 +628,13 @@ jQuery(document).ready(function () {
         return windScore;
     }
 
+    /**
+     * Berechnet den Score für die WakingUp
+     *
+     * @param openWeaterhDate:
+     * @param waterTemperature:
+     * @param isDaillyForcd:
+     */
     function calculateScore(openWeatherData, waterTemperature,isDailyForecast){
         if(!isDailyForecast) {
             //check if it's nighttime. If yes, don't go wakeboarding..
@@ -625,8 +643,6 @@ jQuery(document).ready(function () {
                 if(openWeatherData.sys.sunrise!=undefined){
                     var sunrise = new Date(openWeatherData.sys.sunrise * 1000);
                     var sunset = new Date(openWeatherData.sys.sunset * 1000);
-                    console.log("JETZT: " + dateOfForecast + " sunrise " + sunrise + " Sunset " + sunset);
-
                     if(dateOfForecast < sunrise || dateOfForecast > sunset)return 0;
                 }else{
                     //if no information provided, take these numbers to check
@@ -639,7 +655,6 @@ jQuery(document).ready(function () {
         //Check for dangerous stormy weather
         if (windScore==0) return 0;
 
-
         var temperatureScore = (openWeatherData.main.temp.toFixed(1)-16); //temp>=30 ->score 10, temp<16 -> 0
         if(temperatureScore<0)temperatureScore=0;
         else if(temperatureScore>10)temperatureScore=10;
@@ -647,7 +662,6 @@ jQuery(document).ready(function () {
         //amountOfRain in mm for last hour/3hours..
         var amountOfRain = 0;
         if(openWeatherData.rain != undefined) {
-            console.log(openWeatherData.rain);
             for(el in openWeatherData.rain){
                 amountOfRain = openWeatherData.rain[el];
             }
@@ -656,13 +670,9 @@ jQuery(document).ready(function () {
         var rainScore = (10 - amountOfRain*2);
         rainScore = (rainScore < 0) ? 0 :rainScore;
 
-
         var waterTemperatureScore = (parseInt(waterTemperature) - 12);//temp>=22 ->score 10, temp<=12 -> 0
         if(waterTemperatureScore<0)waterTemperatureScore=0;
         else if(waterTemperatureScore>10)waterTemperatureScore=10;
-
-        //DEBUG
-        console.log("Temperatur "+temperatureScore+" Wasser "+waterTemperatureScore+" Wind: "+windScore +" Regen "+rainScore);
 
         //Gewichtete Summe der einzelnen Scores
         var finalScore = (temperatureScore + waterTemperatureScore + (windScore*4) + (rainScore*3)) / 9;
@@ -670,7 +680,6 @@ jQuery(document).ready(function () {
         if(finalScore<0)finalScore=0;else{
             if(finalScore>10)finalScore=10;
         }
-
         return Math.floor(finalScore);
     }
 //------------------------------------------------------------------------
@@ -680,15 +689,20 @@ jQuery(document).ready(function () {
 
 //------------Pinboard-Methoden---------------------------------------------------------
 
+    /**
+     * Setzt das heutige Datum in den datepicker und sucht nach allen Inseraten
+     */
     function initAdSection(){
         prepareLakeList();
         insertAdSection.css("top", closedCreateAdPosition);
-
         setTodaysDate();
         searchAd('Bielersee', getCurrentDate().replace(/\//g, ","), '06,30,2017');
 
     }
 
+    /**
+     * Setzt den Wert auf das aktuelle Datum
+     */
     function setTodaysDate(){
         var defaultDate = getCurrentDate();
         $('#datepicker_insert').val(defaultDate);
@@ -696,6 +710,11 @@ jQuery(document).ready(function () {
         $('#datepicker_until').val(defaultDate);
     }
 
+    /**
+     * Gibt das aktuelle Datum aus
+     *
+     * @return string: Aktuelle Datum in der Form '06/27/2016'
+     */
     function getCurrentDate(){
         var currentDate = new Date();
         var twoDigitMonth=((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);
@@ -703,16 +722,9 @@ jQuery(document).ready(function () {
         return twoDigitMonth + "/" + twoDigitDate +  "/"+currentDate.getFullYear();
     }
 
-    function getCurrentDatePlus2Month(){
-        var date = new Date();
-        var result = date.addMonths(2);
-        console.log(result);
-    }
-
-    function hideArticles(){
-        // $('article').hide();
-    }
-
+    /**
+     * Fügt der Dropdownmenü die Liste der Seen
+     */
     function prepareLakeList(){
         for(var key in lakeIDs){
             $('#select_search').append('<option>'+key +'</option>');
@@ -720,8 +732,14 @@ jQuery(document).ready(function () {
         }
     }
 
-    /*
-     * Sends a POST-Request with input to insert an ad
+    /**
+     * Fügt ein Inserat ein
+     *
+     * @param lake: Seename
+     * @param inputData: Datum
+     * @param title: Titel des Inserat
+     * @param message: Nachricht
+     * @param tokenString: tokenString, um sich validieren zu lassen
      */
     function insertAd(lake, inputDate, title, message, tokenString){
         var url = 'api/pinboard/insert';
@@ -742,15 +760,17 @@ jQuery(document).ready(function () {
                     insertAdSection.css("top", closedCreateAdPosition);
                 },
                 401: function () {
-                    //todo
-                    console.log("Error inserting");
                 }
             }
         });
     }
 
-    /*
-     * Sends a GET-Request with search filter inputs
+    /**
+     * Sucht die Inserate
+     *
+     * @param lake: Name des gesuchten Sees
+     * @param from: Anfangsdatum
+     * @param until: Enddatum
      */
     function searchAd(lake, from, until){
         var url = 'api/pinboard/search/' + lake + '/' + from + '/' + until;
@@ -761,20 +781,20 @@ jQuery(document).ready(function () {
             contentType: 'application/json',
             statusCode: {
                 200: function (data) {
-                    console.log(data);
                     showResults(data, lake);
                 },
                 401: function () {
-                    //TODO
                 }
             }
         });
-
     }
 
 
-    /*
-     * Displays the ads according the search filter
+    /**
+     * Zeigt die Inserate gemäss des Suchfilters
+     *
+     * @param data: JSON Daten der Suchresultate
+     * @param lake: Name des See zu dem Inserate zeigt werden soll
      */
     function showResults(data, lake){
         hideFilter();
@@ -783,12 +803,10 @@ jQuery(document).ready(function () {
         adsTitle.text("Inserate für den "+lake);
 
         for(var i= 0; i<data.length; i++){
-
             var adDate = data[i].date;
             var adTitle = data[i].title;
             var adMessage = data[i].message;
             var adContact = data[i].user_email;
-
 
             var tableHead = '<tr><th>'+adTitle+'</th></tr>';
             var listOfElement = '<tr><td>'+adDate+'</td></tr>';
@@ -798,28 +816,31 @@ jQuery(document).ready(function () {
                 contactData = '<tr><td>' + adContact + '</td></tr>';
             }
             var table = '<li><table>'+tableHead +listOfElement+messageData + contactData +'</table></li>';
-
             $('#resultList').append(table);
         }
     }
 
-    /*
-     * Removes the results of the search
+    /**
+     * Löscht die Resultate der Suche
      */
     function deleteResults(){
         $('#resultList').empty();
     }
+
+    /**
+     * Versteckt den Filter
+     */
     function hideFilter(){
         searchAdSection.css("top", closedAdFilterPosition);
     }
+
+    /**
+     * Überträgt die Werte des Filters der searchAd-Funktion
+     */
     function searchWithNewFilter(){
         var lake = $('#select_search :selected').text();
         var fromDate =  $('#datepicker_from').val().replace(/\//g, ",");
         var untilDate = $('#datepicker_until').val().replace(/\//g, ",");
-        //Logs
-        console.log(lake);
-        console.log(fromDate);
-        console.log(untilDate);
         searchAd(lake, fromDate, untilDate);
     }
 //--------------------------------------------------------------------
@@ -833,12 +854,22 @@ jQuery(document).ready(function () {
 
 // ------- Gemeinsame Methoden -------------------------------------
 
+    /**
+     * Setzt den entsprechenen Button der Navigation auf aktiv
+     *
+     * @param: HTML element Button soll aktiv gemacht werden
+     */
     function setActive(button) {
         $('nav').find('button').removeClass("activeButton");
         $(button).addClass("activeButton");
 
     }
 
+    /**
+     * Zeigt die entsprechende section und versteckt die anderen sections
+     *
+     * @param: ist ein HTML element, das angezeigt werden soll
+     */
     function showSection(section) {
         weather.hide();
         ad.hide();
@@ -853,17 +884,22 @@ jQuery(document).ready(function () {
 
 // ------- Profil - Methoden -------------------------------------
 
+    /**
+     * Bewegt die Inserate nach oben
+     */
     function moveUpMyAdsView() {
         myAds.css("top", ("50px"));
     }
 
+    /**
+     * Setzt die entsprechene View für Profil in anhängigkeit, ob man eingeloggt ist
+     */
     function switchToProfile(){
         hideOldErrorMessages();
         showSection(profile);
         if (verifyToken()) {
             setAccountViewTitle('Abmelden');
             getMyAds();
-           // moveUpMyAdsView();
         } else {
             showPleaseLoginIcon();
             setAccountViewTitle('Anmelden');
@@ -872,12 +908,18 @@ jQuery(document).ready(function () {
         setActive($('#btn_profile'));
     }
 
+    /**
+     * Wechselt zur Account Ansicht
+     */
     function switchToAccountView(view) {
         myAds.css("top", ("85%"));
         account.find('section').hide();
         view.show();
     }
 
+    /**
+     * Setz Account Titel
+     */
     function setAccountViewTitle(title) {
         login.find('h4').first().text(title);
     }
@@ -900,16 +942,18 @@ jQuery(document).ready(function () {
             '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
     }
 
+    /**
+     *  Zeigt entsprechende Meldung, wenn keine eigene Inserate erstellt vorhanden sind
+     */
     function showNoAdsYet(){
         $('#myAds').find('li').remove();
          $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
                 '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
-
     }
 
 
-    /*
-     *  Inserate des eingeloggten Users laden und anzeigen
+    /**
+     *  Zeigt Inserate des eingeloggten Users an
      */
     function getMyAds() {
         var tokenString = localStorage.getItem('wakingUp_token');
@@ -941,7 +985,7 @@ jQuery(document).ready(function () {
 
     }
 
-    /*
+    /**
      *  Dynamisches Erzeugen und Anzeigen der Liste der Inserate
      *
      *  @param data: Json-Daten der Inserate
@@ -978,13 +1022,10 @@ jQuery(document).ready(function () {
         }
     }
 
-    /*
-     *  Loginfunktion
-     *
-     *  @return boolean
+    /**
+     *  Versucht sich einzuloggen, indem E-mail und Passwort gelesen und per GET gesendet wird
      */
     function tryLogin() {
-
         var loginEmail = $('#login').find('#email-logIn').val();
         var loginPassword = $('#login').find('#pwd-logIn').val();
         emptyForm($('#login'));
@@ -1012,8 +1053,10 @@ jQuery(document).ready(function () {
         });
     }
 
-    /*
-     *  Erstellen eines neuen Accounts
+    /**
+     *  Erstellen eines neuen Accounts, validiert dabei den Input
+     *  Beim Erhalt des Statuscode 200 wird direkt eingeloggt und die eigenen
+     *  Inserate gezeigt
      */
     function trySignUp() {
 
@@ -1035,12 +1078,9 @@ jQuery(document).ready(function () {
         }
 
         if (validLoginDetails) {
-
             invalidDetails.addClass('hidden');
-
             var hashedPassword = sha1(pwd);
             hashedPassword.substr(0, 45);
-
             var url = 'api/users/signup';
             $.ajax({
                 url: url,
@@ -1053,10 +1093,8 @@ jQuery(document).ready(function () {
                 }),
                 statusCode: {
                     200: function () {
-                       // setToken(data['token']);
                         directLogin(email, pwd);
                         setAccountViewTitle('Abmelden');
-                       // getMyAds();
                         showNoAdsYet();
                         switchToAccountView(login);
                         moveUpMyAdsView();
@@ -1071,8 +1109,8 @@ jQuery(document).ready(function () {
         }
     }
 
-    /*
-     *  Loggt den Benutzer direkt ein.
+    /**
+     *  Loggt den Benutzer direkt ein
      *
      *  @param email: Email-Adresse des Benutzers
      *  @param password: Passwort des Benutzers
@@ -1080,7 +1118,6 @@ jQuery(document).ready(function () {
     function directLogin(email, password) {
         var hashedPassword = sha1(password);
         hashedPassword.substr(0, 45);
-
         var url = 'api/users/login/' + email + '/' + hashedPassword;
         $.ajax({
             url: url,
@@ -1098,13 +1135,12 @@ jQuery(document).ready(function () {
         });
     }
 
-    /*
-     * Überprüft, ob im Browser-Local Storage ein gültiges Token vorhanden ist.
+    /**
+     * Überprüft, ob im Browser-Local Storage ein gültiges Token vorhanden ist
      *
-     * @return boolean
+     * @return boolean: gibt true zurück, wenn Token gültig ist
      */
     function verifyToken() {
-
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString) {
             tokenString = tokenString.substr(0, 16);
@@ -1120,34 +1156,30 @@ jQuery(document).ready(function () {
                 }
             });
             return verified;
-
         } else {
             return false;
         }
     }
 
-    /*
+    /**
      *  Schreibt ein Token in den Local Storage des Browsers
      *
      *  @param token: Zu setzendes Token
      */
     function setToken(token) {
-
         localStorage.setItem('wakingUp_token', token);
-
     }
 
-    /*
+    /**
      *  Löscht das Token aus dem Local Storage des Browsers
      */
     function removeToken() {
-
         window.localStorage.removeItem('wakingUp_token');
-
     }
 
-    /*
+    /**
      *  Leert ein Formular nach dem Submit
+     *
      *  @param myForm: das betreffende Formular
      */
     function emptyForm(myForm) {
@@ -1156,7 +1188,7 @@ jQuery(document).ready(function () {
 
     }
 
-    /*
+    /**
      *  Versteckt vergangene Fehlermeldungen
      */
     function hideOldErrorMessages() {
@@ -1165,11 +1197,11 @@ jQuery(document).ready(function () {
         $('#deleteError').addClass('hidden');
     }
 
-    /*
+    /**
      *  Überprüft eingegebene Email-Adressen auf deren Gültigkeit
      *
      *  @param email: zu überprüfende Email-Adresse
-     *  @return boolean
+     *  @return boolean: gibt true zurück, wenn Email-Adresse gültig ist
      */
     function validateEmail(email) {
         if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) && email.length < 45) {
@@ -1179,7 +1211,7 @@ jQuery(document).ready(function () {
         }
     }
 
-    /*
+    /**
      *  Inserat löschen
      *
      *  @param adId: id des Inserats
