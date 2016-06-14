@@ -208,10 +208,12 @@ jQuery(document).ready(function () {
 
             if(!verifyToken()){
                 $('#ad_insert').find('form').hide();
-                $('#ad-insert').append($('<span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span>' +
-                    '<p id="pleaseLogIn">Bitte logge dich ein.</p>'));
+                if($('#notLoggedInIcon').length==0) {
+                    createAdTitle.append('<span id="notLoggedInIcon" class="glyphicon glyphicon-log-in" aria-hidden="true"></span>' +
+                        '<p id="pleaseLogIn">Bitte logge dich ein.</p>');
+                }
             }else{
-                $('#ad_insert').find('#notLoggedInIcon').remove();
+                ('#ad_insert').find('#notLoggedInIcon').remove();
                 $('#ad_insert').find('form').show();
             }
 
@@ -232,9 +234,9 @@ jQuery(document).ready(function () {
         console.log(title);
         console.log(message);
 
-        //if (isLoggedIn) {
-       // insertAd(lake, inputDate, title, message, 'c4e517ee14cd98f5');
-        //}
+        if (isLoggedIn) {
+        insertAd(lake, inputDate, title, message, isLoggedIn);
+        }
 
     });
 
@@ -676,8 +678,8 @@ jQuery(document).ready(function () {
     function initAdSection(){
         prepareLakeList();
         insertAdSection.css("top", closedCreateAdPosition);
-        showSection(ad);
-        setActive(adButton);
+        ad.find('form').show();
+
         setTodaysDate();
         searchAd('Bielersee', getCurrentDate().replace(/\//g, ","), '06,30,2017');
 
@@ -756,6 +758,7 @@ jQuery(document).ready(function () {
             contentType: 'application/json',
             statusCode: {
                 200: function (data) {
+                    console.log(data);
                     showResults(data, lake);
                 },
                 401: function () {

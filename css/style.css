@@ -109,10 +109,14 @@ nav button:last-child{
     margin-left:auto;
     margin-right:auto;
     width:80%;
-    text-align:right;
     margin-top:0px;
     margin-bottom:0px;
 }
+
+#weatherNowIconTable td:first-child{
+    text-align:right;
+}
+
 #weatherNowIconTable td:nth-child(even){
     text-align:center;
     font-size: 60px;
@@ -131,8 +135,7 @@ nav button:last-child{
 
 }
 
-
-#weather td:nth-child(even) {
+td:nth-child(even) {
     text-align: left;
     font-size:0.6em;
 }
