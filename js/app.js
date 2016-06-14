@@ -9,7 +9,7 @@ jQuery(document).ready(function () {
 // ---------- wetter --------
 
     var currentWeatherSectionOpened = ("45px");
-    var currentWeatherSectionClosed = ("140px");//("calc(100% - 230px)").toString();
+    var currentWeatherSectionClosed = ("140px");
     var todayForecastSectionClosed = ("calc(100% - 140px)").toString();
     var dailyForecastSectionClosed = ("calc(100% - 90px)").toString();
     var todayForecastSectionOpened = ("95px");
@@ -21,7 +21,6 @@ jQuery(document).ready(function () {
     var dailyForecastSection = $('#dailyForecastSection');
     var changeLakeDropdownList = $('#changeLakeDropdown');
 
-    //note for later coding: openweathermap access via string, but wiewarm.ch works better with IDS, eg. '192' for bodensee..
     var currentLake = "Bielersee";
     var currentLakeID = 70;
     var NUM_OF_HOURLY_FORECASTS = 4;
@@ -57,9 +56,7 @@ jQuery(document).ready(function () {
         "Walensee":280,
         "Zugersee":369,
         "Zürichsee":44};
-// -----------------------------
-
-
+// ----------------------------------------------------------------------------------
 
 //--------------Pinboard-------------------------------------------------------------
 
@@ -80,10 +77,7 @@ jQuery(document).ready(function () {
     var adsTitle= $('#adsTitle');
 //-----------------------------------------------------------------------------------
 
-
-
-
-//--------------Common-------------------------------------------------------------
+//--------------Common---------------------------------------------------------------
     var nav = $('nav').children();
     var weatherButton = nav.first();
     var adButton = nav.first().next();
@@ -92,40 +86,32 @@ jQuery(document).ready(function () {
     var weather = $('#weather');
     var ad = $('#ad');
     var profile = $('#profile');
-//---------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 
-
-
-
-// ----------Profile --------------------------------------------------------------
+// ----------Profile ---------------------------------------------------------------
     var account = $('#account');
     var login = $('#login');
     var signUp = $('#signUp');
     var lostPasswordInfo = $('#lostPasswordInformation');
     var myAds = $('#myAds');
-//---------------------------------------------------------------------------
-
-
-
-
-//--------------Common ---------------------------------------------------------------
-    showSection(weather);
-    setActive(weatherButton);
 //-------------------------------------------------------------------------------------
 
 
 
+//--------------Common ----------------------------------------------------------------
+    showSection(weather);
+    setActive(weatherButton);
+//-------------------------------------------------------------------------------------
 
 //------------WETTER--------------------------
     createLakeSelection(lakeIDs);
     updateCurrentlySelectedLake();
     initWeather(currentLake,currentLakeID, NUM_OF_HOURLY_FORECASTS);
-//----------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
 
 
 
-
-//----------Navigations-Klickhandler ----------------------------------------------------
+//----------Navigations-Klickhandler --------------------------------------------------
 
     weatherButton.on('click', function () {
         showSection(weather);
@@ -142,14 +128,12 @@ jQuery(document).ready(function () {
         event.preventDefault();
        switchToProfile();
     });
-//----------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
 
-
-
-//---------------Wetter - Klickhandler ------------------------------------
+//---------------Wetter - Klickhandler ------------------------------------------------
 
     scoreNowSVG.on('click', function(){
-        scoreNowGauge.update(NewValue())
+        scoreNowGauge.update(NewValue());
 
     });
 
@@ -174,8 +158,6 @@ jQuery(document).ready(function () {
     });
 //---------------------------------------------------------------------------
 
-
-
 //------------Pinboard-Klickhandler----------------------------------------------------
 
     adFilterTitle.on('click', function(){
@@ -194,7 +176,7 @@ jQuery(document).ready(function () {
 
             if(!verifyToken()){
                 insertAdSection.find('form').hide();
-                if($('#notLoggedInIconAd').length==0) {
+                if($('#notLoggedInIconAd').length===0) {
                     createAdTitle.closest('section').append('<span id="notLoggedInIconAd" class="glyphicon glyphicon-log-in" aria-hidden="true"></span>' +
                         '<p id="pleaseLogIn">Bitte logge dich ein.</p>');
                 }
@@ -226,8 +208,6 @@ jQuery(document).ready(function () {
     });
 
 //-----------------------------------------------------------------------------------
-
-
 
 //-----------------Profil-Klickhandler------------------------------------------
 
@@ -302,7 +282,6 @@ jQuery(document).ready(function () {
 
 
 
-
 //------------------Wetter - Methoden --------------------------------
 
     /**
@@ -342,8 +321,7 @@ jQuery(document).ready(function () {
             hourlyForecastSection.css("top", todayForecastSectionClosed);
             dailyForecastSection.css("top", dailyForecastSectionClosed);
         }else{
-            if(hourlyForecastSection.css("top") != todayForecastSectionOpened
-                && dailyForecastSection.css("top") != dailyForecastSectionOpened){
+            if(hourlyForecastSection.css("top") != todayForecastSectionOpened && dailyForecastSection.css("top") != dailyForecastSectionOpened){
                 currentWeatherSection.css("top", currentWeatherSectionClosed);
             }else{
                 currentWeatherSection.css("top", currentWeatherSectionOpened);
@@ -420,7 +398,7 @@ jQuery(document).ready(function () {
      * @return int: Gibt die Zufallszahl aus
      */
     function NewValue() {
-        if (Math.random() > .5) {
+        if (Math.random() > 0.5) {
             return Math.round(Math.random() * 10)+1;
         } else {
             return Math.round((Math.random() * 10).toFixed(1))+1;
@@ -493,8 +471,8 @@ jQuery(document).ready(function () {
      */
     function createWeatherDetailTable(openWeatherData, wieWarmData, isCurrentWeather){
         var amountOfRain = 0;
-        if(openWeatherData.rain != undefined) {
-            for(el in openWeatherData.rain){
+        if(openWeatherData.rain !== undefined) {
+            for(var el in openWeatherData.rain){
                 amountOfRain = openWeatherData.rain[el];
             }
         }
@@ -508,7 +486,7 @@ jQuery(document).ready(function () {
 
         if(isCurrentWeather){
             $('#nowForecastTitle').text("Momentan am "+currentLake);
-            if(scoreNowGauge==null) {
+            if(scoreNowGauge===null) {
                 scoreNowGauge = loadLiquidFillGauge('scoreNowSVG', calculateScore(openWeatherData,waterTemperature,false), getGaugeConfig(calculateWindScore(openWeatherData.wind)));
             }else {
                 scoreNowGauge.update(calculateScore(openWeatherData,waterTemperature,false));
@@ -668,8 +646,8 @@ jQuery(document).ready(function () {
         if(!isDailyForecast) {
             //check if it's nighttime. If yes, don't go wakeboarding..
             var dateOfForecast = (new Date(openWeatherData.dt * 1000));
-            if(dateOfForecast!=undefined) {
-                if(openWeatherData.sys.sunrise!=undefined){
+            if(dateOfForecast!==undefined) {
+                if(openWeatherData.sys.sunrise!==undefined){
                     var sunrise = new Date(openWeatherData.sys.sunrise * 1000);
                     var sunset = new Date(openWeatherData.sys.sunset * 1000);
                     if(dateOfForecast < sunrise || dateOfForecast > sunset)return 0;
@@ -682,7 +660,7 @@ jQuery(document).ready(function () {
 
         var windScore = calculateWindScore(openWeatherData.wind);
         //Check for dangerous stormy weather
-        if (windScore==0) return 0;
+        if (windScore===0) return 0;
 
         var temperatureScore = (openWeatherData.main.temp.toFixed(1)-16); //temp>=30 ->score 10, temp<16 -> 0
         if(temperatureScore<0)temperatureScore=0;
@@ -690,8 +668,8 @@ jQuery(document).ready(function () {
 
         //amountOfRain in mm for last hour/3hours..
         var amountOfRain = 0;
-        if(openWeatherData.rain != undefined) {
-            for(el in openWeatherData.rain){
+        if(openWeatherData.rain !== undefined) {
+            for(var el in openWeatherData.rain){
                 amountOfRain = openWeatherData.rain[el];
             }
         }
@@ -712,9 +690,6 @@ jQuery(document).ready(function () {
         return Math.floor(finalScore);
     }
 //------------------------------------------------------------------------
-
-
-
 
 //------------Pinboard-Methoden---------------------------------------------------------
 
@@ -874,9 +849,6 @@ jQuery(document).ready(function () {
     }
 //--------------------------------------------------------------------
 
-
-
-
 // ------- Gemeinsame Methoden -------------------------------------
 
     /**
@@ -903,9 +875,6 @@ jQuery(document).ready(function () {
         section.children().show();
     }
 // ------------------------------------------------------------------
-
-
-
 
 // ------- Profil - Methoden -------------------------------------
 
@@ -1019,7 +988,7 @@ jQuery(document).ready(function () {
 
         $('#myAds').find('li').remove();
 
-        if (data.length == undefined || data.length == 0) {
+        if (data.length === undefined || data.length === 0) {
             $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
                 '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
         } else {
@@ -1066,7 +1035,7 @@ jQuery(document).ready(function () {
             contentType: 'application/json',
             statusCode: {
                 200: function (data) {
-                    setToken(data['token']);
+                    setToken(data.token);
                     getMyAds();
                     setAccountViewTitle('Abmelden');
                     moveUpMyAdsView();
@@ -1151,7 +1120,7 @@ jQuery(document).ready(function () {
             contentType: 'application/json',
             statusCode: {
                 200: function (data) {
-                    setToken(data['token']);
+                    setToken(data.token);
                 },
                 401: function () {
                     switchToAccountView(login);
