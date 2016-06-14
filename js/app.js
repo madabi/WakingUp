@@ -235,9 +235,12 @@ jQuery(document).ready(function () {
         console.log(title);
         console.log(message);
 
+        /*
         if (isLoggedIn) {
+        */
         insertAd(lake, inputDate, title, message, isLoggedIn);
-        }
+
+        //}
 
     });
 
