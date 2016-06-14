@@ -953,7 +953,7 @@ jQuery(document).ready(function () {
 
                 var adTable = $('<table></table>');
                 var newListElement = $('<li id="' + data[i].id + '"></li>');
-                var formattedDate = day + ' - ' + month + ' - ' + year;
+                var formattedDate = year + ' - ' + month + ' - ' + day;
 
                 adTable = adTable.append($('<tr><td><h5>' + data[i].title + '</h5></td><td><span class="glyphicon glyphicon-trash"></span></td></tr>' +
                     '<tr><td><h5>' + data[i].lake + ' / ' + formattedDate + '</h5></td></tr>' +
