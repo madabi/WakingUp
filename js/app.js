@@ -489,6 +489,7 @@ jQuery(document).ready(function () {
      * @param openWeatherData: Wetterdaten
      * @param wieWarmData Data von API wieWarm.ch
      * @papam isCurrentWather: Anzahl der Tagesprognose
+     * @return string: inhalt des HTML table
      */
     function createWeatherDetailTable(openWeatherData, wieWarmData, isCurrentWeather){
         var amountOfRain = 0;
@@ -637,6 +638,7 @@ jQuery(document).ready(function () {
      * Berechnet den Wind Score
      *
      * @param openWeatherData: die WindDaten
+     * @return int: Endwert nach Eruierung des Windes
      */
     function calculateWindScore(openWeatherWindData){
         var wind = openWeatherWindData.speed.toFixed(1);
@@ -660,6 +662,7 @@ jQuery(document).ready(function () {
      * @param openWeaterhDate:
      * @param waterTemperature:
      * @param isDaillyForcd:
+     * @return int: Finaler Score
      */
     function calculateScore(openWeatherData, waterTemperature,isDailyForecast){
         if(!isDailyForecast) {
@@ -871,7 +874,7 @@ jQuery(document).ready(function () {
     }
 //--------------------------------------------------------------------
 
-    
+
 
 
 // ------- Gemeinsame Methoden -------------------------------------
