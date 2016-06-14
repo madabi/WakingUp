@@ -315,11 +315,11 @@ jQuery(document).ready(function () {
         if(lakeName=="Bielersee")lakeName="Biel";
         else if(lakeName=="Vierwaldstättersee")lakeName="Luzern";
 
-        var openWeatherForecastURL = 'http://php.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
-        var openWeatherNowURL = 'http://php.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
+        var openWeatherForecastURL = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
+        var openWeatherNowURL = 'http://api.openweathermap.org/data/2.5/weather?units=metric&APPID=f775032d25536c0a7f515e7dc480a702&q='.concat(lakeName.toString());
         console.log(openWeatherForecastURL);
         console.log(openWeatherNowURL);
-        var wieWarmQuery = 'http://www.wiewarm.ch/php/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
+        var wieWarmQuery = 'http://www.wiewarm.ch/api/v1/temperature.json/'.concat(lakeID).concat('?api_key=9cdfa96c-d851-4b99-aff4-c778cd6da679');
         $.when(getWeatherData(openWeatherNowURL),getWeatherData(openWeatherForecastURL),getWeatherData(wieWarmQuery)).then(function(openWeatherNowData, openWeatherHourlyForecastData, wieWarmData) {
             var weatherNowTable = $('#weatherNowTable');
             var isCurrentWeather = true;
