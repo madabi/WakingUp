@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS pinboard (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(60),
     message VARCHAR(200),
-    date VARCHAR(20),
-    lake DATE,
+    date DATE,
+    lake VARCHAR(20),
     userEmail VARCHAR(45),
     PRIMARY KEY (id)
 );

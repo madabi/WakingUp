@@ -903,6 +903,7 @@ jQuery(document).ready(function () {
             '<li id="pleaseLogIn">Bitte logge dich ein.</li>'));
     }
 
+
     /*
      *  Inserate des eingeloggten Users laden und anzeigen
      */
