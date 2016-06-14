@@ -1,10 +1,13 @@
 /**
- * Created by leaboesch on 24.05.16.
+ * WakingUp Single Page App
+ *
+ * webeC FS16 FHNW
+ *
+ * Marco Bibrich, Lea Boesch, Vijeinath Tissaveerasingham
  */
 
 
 jQuery(document).ready(function () {
-
 
 // ---------- wetter --------
 
@@ -134,7 +137,6 @@ jQuery(document).ready(function () {
 
     scoreNowSVG.on('click', function(){
         scoreNowGauge.update(NewValue());
-
     });
 
     changeLakeDropdownList.on("change", function() {
@@ -173,7 +175,6 @@ jQuery(document).ready(function () {
         if(insertAdSection.css("top")==openedCreateAdPosition) {
             insertAdSection.css("top", closedCreateAdPosition);
         }else{
-
             if(!verifyToken()){
                 insertAdSection.find('form').hide();
                 if($('#notLoggedInIconAd').length===0) {
@@ -184,10 +185,8 @@ jQuery(document).ready(function () {
                 insertAdSection.find('#notLoggedInIconAd').remove();
                 insertAdSection.find('#pleaseLogIn').remove();
                 insertAdSection.find('form').show();
-
             }
             insertAdSection.css("top", openedCreateAdPosition);
-
         }
     });
 
@@ -200,7 +199,6 @@ jQuery(document).ready(function () {
         var tokenString = localStorage.getItem('wakingUp_token');
         insertAd(lake, inputDate, title, message, tokenString);
     });
-
 
     searchAdButton.on('click', function(e){
         e.preventDefault();
@@ -406,7 +404,7 @@ jQuery(document).ready(function () {
     }
 
     /**
-     * Holt die Wettdaten
+     * Holt die Wettdaten von der API
      *
      * @param searchQueryAPI: URL der WetterAPI
      * @return JSON: Sämliche Daten zur Anfrage bezüglich Wetter
@@ -441,7 +439,6 @@ jQuery(document).ready(function () {
         customConfig.minValue = 0;
         customConfig.displayPercent = false;
         customConfig.circleThickness = 0.1;
-        //Custom Wave Animation
         customConfig.waveAnimateTime = 500+(windScore*30);
         customConfig.waveCount = Math.floor(10/(windScore+1));
         customConfig.waveHeight = 0.1/(windScore+1);
@@ -477,7 +474,6 @@ jQuery(document).ready(function () {
             }
         }
         var waterTemperature = wieWarmData[lakePoolIDs[currentLake]].temp;
-
         var table = '<tr>'+
             '<td><i class="wi wi-thermometer"></i></td><td>'+openWeatherData.main.temp.toFixed(1)+' <i class="wi wi-fs wi-celsius"></i></td>'+
             '<td><i class="wi wi-fs wi-strong-wind"></i></td><td>'+Math.floor(openWeatherData.wind.speed*3.6)+' km/h</td></tr>'+
@@ -544,7 +540,6 @@ jQuery(document).ready(function () {
         }
     }
 
-
     /**
      * Tagesprognosentabelele werden upgedatet
      *
@@ -554,14 +549,12 @@ jQuery(document).ready(function () {
      */
     function updateDailyForecastOverview(openWeatherData,wieWarmData,numOfDailyForecasts){
         dailyForecastTable.empty();
-
         var dailyForecastTableHead = "";
         var foreCastCounter = 0;
         var i = 0;
         var currentDay = new Date().getDay();
         var dateOfForecast;
         var dayOfForecast;
-
         var daysOfWeek= ["So","Mo","Di","Mi","Do","Fr","Sa","So"];
 
         while(foreCastCounter < numOfDailyForecasts && i != openWeatherData.list.length) {
@@ -662,7 +655,7 @@ jQuery(document).ready(function () {
         //Check for dangerous stormy weather
         if (windScore===0) return 0;
 
-        var temperatureScore = (openWeatherData.main.temp.toFixed(1)-16); //temp>=30 ->score 10, temp<16 -> 0
+        var temperatureScore = (openWeatherData.main.temp.toFixed(1)-16);
         if(temperatureScore<0)temperatureScore=0;
         else if(temperatureScore>10)temperatureScore=10;
 
@@ -676,12 +669,10 @@ jQuery(document).ready(function () {
 
         var rainScore = (10 - amountOfRain*2);
         rainScore = (rainScore < 0) ? 0 :rainScore;
-
-        var waterTemperatureScore = (parseInt(waterTemperature) - 12);//temp>=22 ->score 10, temp<=12 -> 0
+        var waterTemperatureScore = (parseInt(waterTemperature) - 12);
         if(waterTemperatureScore<0)waterTemperatureScore=0;
         else if(waterTemperatureScore>10)waterTemperatureScore=10;
 
-        //Gewichtete Summe der einzelnen Scores
         var finalScore = (temperatureScore + waterTemperatureScore + (windScore*4) + (rainScore*3)) / 9;
 
         if(finalScore<0)finalScore=0;else{
@@ -694,14 +685,16 @@ jQuery(document).ready(function () {
 //------------Pinboard-Methoden---------------------------------------------------------
 
     /**
-     * Setzt das heutige Datum in den datepicker und sucht nach allen Inseraten
+     * Fügt die Seeliste zum Dropdownmenu, setzt das heutige Datum in den datepicker und sucht nach allen Inseraten
      */
     function initAdSection(){
-        prepareLakeList();
+        for(var key in lakeIDs){
+            $('#select_search').append('<option>'+key +'</option>');
+            $('#select_insert').append('<option>'+key +'</option>');
+        }
         insertAdSection.css("top", closedCreateAdPosition);
         setTodaysDate();
         searchAd('Bielersee', getCurrentDate().replace(/\//g, ","), '06,30,2017');
-
     }
 
     /**
@@ -717,23 +710,13 @@ jQuery(document).ready(function () {
     /**
      * Gibt das aktuelle Datum aus
      *
-     * @return string: Aktuelle Datum in der Form '06/27/2016'
+     * @return string: Aktuelles Datum in der Form '06/27/2016'
      */
     function getCurrentDate(){
         var currentDate = new Date();
         var twoDigitMonth=((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);
         var twoDigitDate=((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate());
         return twoDigitMonth + "/" + twoDigitDate +  "/"+currentDate.getFullYear();
-    }
-
-    /**
-     * Fügt der Dropdownmenü die Liste der Seen
-     */
-    function prepareLakeList(){
-        for(var key in lakeIDs){
-            $('#select_search').append('<option>'+key +'</option>');
-            $('#select_insert').append('<option>'+key +'</option>');
-        }
     }
 
     /**
@@ -763,8 +746,6 @@ jQuery(document).ready(function () {
                 200: function () {
                     insertAdSection.css("top", closedCreateAdPosition);
                 },
-                401: function () {
-                }
             }
         });
     }
@@ -787,12 +768,9 @@ jQuery(document).ready(function () {
                 200: function (data) {
                     showResults(data, lake);
                 },
-                401: function () {
-                }
             }
         });
     }
-
 
     /**
      * Zeigt die Inserate gemäss des Suchfilters
@@ -803,7 +781,6 @@ jQuery(document).ready(function () {
     function showResults(data, lake){
         hideFilter();
         deleteResults();
-
         adsTitle.text("Inserate für den "+lake);
 
         for(var i= 0; i<data.length; i++){
@@ -811,7 +788,6 @@ jQuery(document).ready(function () {
             var adTitle = data[i].title;
             var adMessage = data[i].message;
             var adContact = data[i].user_email;
-
             var tableHead = '<tr><th>'+adTitle+'</th></tr>';
             var listOfElement = '<tr><td>'+adDate+'</td></tr>';
             var messageData = '<tr><td>'+adMessage+'</td></tr>';
@@ -859,7 +835,6 @@ jQuery(document).ready(function () {
     function setActive(button) {
         $('nav').find('button').removeClass("activeButton");
         $(button).addClass("activeButton");
-
     }
 
     /**
@@ -985,21 +960,16 @@ jQuery(document).ready(function () {
      *  @param data: Json-Daten der Inserate
      */
     function createAdTable(data) {
-
         $('#myAds').find('li').remove();
-
         if (data.length === undefined || data.length === 0) {
             $('#myAdsList').append($('<li><span id="noContentIcon" class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></li>' +
                 '<li id="noContentText">Du hast noch keine Inserate erstellt.</li>'));
         } else {
-
             for (var i = 0; i < data.length; i++) {
-
                 var date = data[i].date;
                 var day = date.substr(8, 2);
                 var month = date.substr(5, 2);
                 var year = date.substr(0, 4);
-
                 var adTable = $('<table></table>');
                 var newListElement = $('<li id="' + data[i].id + '"></li>');
                 var formattedDate = year + ' - ' + month + ' - ' + day;
@@ -1010,7 +980,6 @@ jQuery(document).ready(function () {
                 ));
 
                 newListElement.append(adTable);
-
                 $('#myAdsList').append(newListElement);
             }
         }
@@ -1053,7 +1022,6 @@ jQuery(document).ready(function () {
      *  Inserate gezeigt
      */
     function trySignUp() {
-
         var email = $('#signUp').find('#email-signUp').val();
         var pwd = $('#signUp').find('#pwd-signUp').val();
         var invalidDetails = $('#invalidDetails-signUp');
@@ -1213,7 +1181,6 @@ jQuery(document).ready(function () {
     function deleteAd(adId) {
         var tokenString = localStorage.getItem('wakingUp_token');
         if (tokenString !== null && tokenString != 'undefined' && tokenString != 'null') {
-
             var url = 'api/pinboard/' + adId + '/' + tokenString;
             $.ajax({
                 url: url,
