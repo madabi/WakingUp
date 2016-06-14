@@ -238,7 +238,9 @@ jQuery(document).ready(function () {
         /*
         if (isLoggedIn) {
         */
-        insertAd(lake, inputDate, title, message, isLoggedIn);
+
+        var tokenString = localStorage.getItem('wakingUp_token');
+        insertAd(lake, inputDate, title, message, tokenString);
 
         //}
 
