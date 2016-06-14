@@ -9,6 +9,9 @@
 require 'restMethods.php';
 require 'Slim-2.6.0/Slim/Slim.php';
 
+/**
+ * Parameter für die Datenbank
+ */
 define('db_username', 'wakeboarder');
 define('db_password', 'Webec16!');
 define('myDatabase', 'mysql:host=localhost;dbname=wakingUp;charset=utf8');
@@ -19,13 +22,19 @@ $app = new \Slim\Slim();
 $app->config('debug', true);
 
 
-
 //---------Pinboard API---------------------------------------------
+
+/**
+ * Inserat einfügen
+ */
 $app->post('/pinboard/insert', function() use ($app)
 {
     insertAd($app);
 });
 
+/**
+ * Inserato suchen
+ */
 $app->get('/pinboard/search/:lake/:from/:until', function($lake, $from, $until) use ($app)
 {
     searchAds($app, $lake, $from, $until);
@@ -38,7 +47,7 @@ $app->get('/pinboard/search/:lake/:from/:until', function($lake, $from, $until) 
 
 //---------------Profil API-------------------------------------------
 
-/*
+/**
  * Inserat löschen
  */
 $app->delete('/pinboard/:id/:token', function ($id, $token) use ($app){
@@ -51,24 +60,21 @@ $app->delete('/pinboard/:id/:token', function ($id, $token) use ($app){
 
 });
 
-
-/*
+/**
  * Neuen Account erstellen
  */
 $app->post('/users/signup', function () use ($app){
     SignUp($app);
 });
 
-
-/*
+/**
  * User einloggen
  */
 $app->get('/users/login/:email/:password', function ($email, $password) use ($app){
     loginAuth($app, $email, $password);
 });
 
-
-/*
+/**
  * Inserate eines bestimmten Users
  */
 $app->get('/users/pinboard/:token', function($token) use ($app){
@@ -80,8 +86,7 @@ $app->get('/users/pinboard/:token', function($token) use ($app){
     }
 });
 
-
-/*
+/**
  * Überprüfen des Tokens / der Authentifizierung des Users
  */
 $app->get('/users/auth/:token', function($token) use ($app) {

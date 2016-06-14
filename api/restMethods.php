@@ -6,10 +6,13 @@
  * Time: 21:49
  */
 
-
-/*
- * Anfrage für PDO Database Connection
+/**
+ * Stellt eine Anfrage für die PDO Datenbank her
  *
+ * @param $connectionString     Beinhaltet Informationen zur Datenbank (z.B. ob localhost, Datenbankname, charset)
+ * @param $user                 Username für die Datenbank
+ * @param $password             Passwort für die Datenbank
+ * @return PDO                  Retouniert ein PDO auf dem SQL Befehle aufgerufen werden können
  */
 function getDBConnection($connectionString, $user, $password)
 {
@@ -21,12 +24,11 @@ function getDBConnection($connectionString, $user, $password)
     }
 }
 
-
 /**
  * Löscht Inserat mit id $id
  *
- * @param $app
- * @param $id
+ * @param $app                  Slimobjekt
+ * @param $id                   ID von usern aus der Datenbank
  */
 function deleteAd($app, $id)
 {
@@ -41,11 +43,10 @@ function deleteAd($app, $id)
     }
 }
 
-
-/*
- * Neuen Account erstellen
+/**
+ * Stellt ein neues Konto für den user, indem ein neuer Datensatz in der Datenbank gespeichert wird
  *
- * @param $app
+ * @param $app                  Slimobjekt
  */
 function SignUp($app)
 {
@@ -81,10 +82,11 @@ VALUES (:email, :password, :token, :token_expire)');
     $db = null;
 }
 
-
 /**
- * Utility-Funktionen für die Ausgabe zum aufrufenden Client.
+ * Utility-Funktion für die Ausgabe zum aufrufenden Client
  *
+ * @param $app                  Slimobjekt
+ * @param $result               Daten, dass in ein JSON verpackt wird
  */
 function response($app, $result)
 {
@@ -92,11 +94,24 @@ function response($app, $result)
     $app->response->setBody(json_encode($result));
 }
 
+/**
+ * Utility-Funktion für die Ausgabe zum aufrufenden Client
+ *
+ * @param $app                  Slimobjekt
+ * @param $status               HTTP Statuscode
+ */
 function responseWithStatus($app, $status)
 {
     $app->response->setStatus($status);
 }
 
+/**
+ * Utility-Funktion für die Ausgabe zum aufrufenden Client
+ *
+ * @param $app                  Slimobjekt
+ * @param $token                Token oder andere Daten, die in ein JSON umgewandelt werden
+ * @param $status               HTTP Statuscode
+ */
 function responseTokenWithStatus($app, $token, $status)
 {
     $app->response->setStatus($status);
@@ -104,9 +119,11 @@ function responseTokenWithStatus($app, $token, $status)
     $app->response->setBody(json_encode($token));
 }
 
-
 /**
  * Utility, um Daten vom Request-Body als JSON zu erhalten.
+ *
+ * @param $app                  Slimobjekt
+ * @return mixed                Rückgabe von JSON vom Request-Body
  */
 function getJSONFromBody($app)
 {
@@ -114,15 +131,13 @@ function getJSONFromBody($app)
     return json_decode($json, true);
 }
 
-
 /**
  * Loginfunktion. Überprüft email & Passwort.
  * Setzt ein Token in der Datenbank und schickt dasselbe Token zurück
  *
- *
- * @param $app
- * @param $email
- * @param $password
+ * @param $app                  Slimobjekt
+ * @param $email                Email-adresse vom User
+ * @param $password             Passwort vom User
  */
 function loginAuth($app, $email, $password)
 {
@@ -141,14 +156,13 @@ function loginAuth($app, $email, $password)
     }
 }
 
-
 /**
+ * Überprüft, ob Email und Passwort zugehörig sind
  *
- * Hilfsmethode für loginAuth()
- *
- * @param $app
- * @param $user
- * @return bool
+ * @param $app                  Slimobjekt
+ * @param $email                Email-adresse des Users
+ * @param $password             eingebene Passwort
+ * @return bool|null            Gibt true zurück, wenn in der Datenbank eine Email-adresse mit jenem Passwort vorhanden ist
  */
 function validateUser($app, $email, $password)
 {
@@ -172,15 +186,12 @@ function validateUser($app, $email, $password)
     }
 }
 
-
 /**
- * Erneuert das Verfalldatum des Tokens in der Datenbank oder setzt ein neues Token.
+ * Erneuert das Verfallsdatum des Tokens in der Datenbank oder setzt ein neues Token.
  *
- *
- * @param $email
- * @param $token
- * @param $tokenExpiration
- * @return bool
+ * @param $email                Emailadresse des Users
+ * @param $tokenExpiration      Datum, wann der Token abläuft
+ * @return bool                 Gibt true zurück, wenn das Verfallsdatum erfolgreich erneurt wurde
  */
 function updateToken($email, $tokenExpiration)
 {
@@ -197,15 +208,13 @@ function updateToken($email, $tokenExpiration)
     }
 }
 
-
 /**
- *
- *  Schreibt ein Token in die Datenbank
+ * Schreibt ein Token in die Datenbank
  *
  * @param $email
- * @param $token
- * @param $tokenExpiration
- * @return bool
+ * @param $token                Token der in der Datenbank zum User geeschrieben wird
+ * @param $tokenExpiration      Datum, wann der Token abläuft
+ * @return bool                 Gibt true zurück, wenn ein erfolgreich ein Token in die Datenbank geschrieben wurde
  */
 function setToken($email, $token, $tokenExpiration)
 {
@@ -224,12 +233,11 @@ function setToken($email, $token, $tokenExpiration)
     }
 }
 
-
 /**
  * Gibt die Inserate eines bestimmten (zu $token gehörenden) Users zurück
  *
- * @param $app
- * @param $token
+ * @param $app                  Slimobjekt
+ * @param $token                Token nach dessen zugehörigen email-adresse gesucht wird
  */
 function getMyAds($app, $token)
 {
@@ -240,7 +248,6 @@ function getMyAds($app, $token)
         $findAds->bindParam(':userEmail', $userEmail, PDO::PARAM_STR);
         if ($findAds->execute()) {
             $result = $findAds->fetchAll(PDO::FETCH_ASSOC);
-
             if ($findAds->rowCount() > 0) {
                 $ads = array();
                 foreach ($result as $ad) {
@@ -268,12 +275,11 @@ function getMyAds($app, $token)
     }
 }
 
-
 /**
  * Gibt die email-Adresse des zu $token gehörenden Users zurück
  *
- * @param $token
- * @return bool
+ * @param $token             Token nach dessen zugehörigen Users gesucht wird
+ * @return bool              Gibt true zurück, falls es einen zugehörigen User gibt
  */
 function getUserEmail($token)
 {
@@ -288,12 +294,11 @@ function getUserEmail($token)
     return false;
 }
 
-
 /**
  * Überprüft Gültigkeit des übergebenen Tokens
  *
- * @param $tokenToVerify
- * @return bool
+ * @param $tokenToVerify      Token wird überprüft ob er gültig ist, indem das Datum geprüft wird
+ * @return bool               Gibt true zurück, wenn der übergebene Token verifiziert worden ist
  */
 function verifyToken($tokenToVerify)
 {
@@ -324,58 +329,49 @@ function verifyToken($tokenToVerify)
     return false;
 }
 
+/**
+ * @param $app                  Slimobjekt
+ */
 function insertAd($app)
 {
     $ad = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
 
     if (verifyToken($ad['token'])){
-
         $userEmail = getUserEmail($ad['token']);
-
         $insertion = $db->prepare('INSERT INTO wakingUp.pinboard (title, message, date, lake, userEmail) VALUES (:title, :message, STR_TO_DATE(:date, \'%m,%d,%Y\'), :lake, :email)');
-
         $insertion->bindParam(':title', $ad['title'], PDO::PARAM_STR);
         $insertion->bindParam(':message', $ad['message'], PDO::PARAM_STR);
         $insertion->bindParam(':date', $ad['date'], PDO::PARAM_STR);
         $insertion->bindParam(':lake', $ad['lake'], PDO::PARAM_STR);
         $insertion->bindParam(':email', $userEmail, PDO::PARAM_STR);
-
         if ($insertion->execute()){
             responseWithStatus($app, 200);
         } else {
             responseWithStatus($app, 401);
         }
+    } else {
+     responseWithStatus($app,401);
     }
-    //else {
-    // responseWithStatus($app,401);
-    //}
 
 }
 
+/**
+ * @param $app                  Slimobjekt
+ * @param $lake                 Seename, nach der gesucht wird
+ * @param $from                 Anfangsdatum
+ * @param $until                Enddatum
+ */
 function searchAds($app, $lake, $from, $until)
 {
     $info = getJSONFromBody($app);
     $db = getDBConnection('mysql:host=localhost;dbname=wakingUp', 'wakeboarder', 'Webec16!');
-
     $selection = $db->prepare('SELECT * FROM wakingUp.pinboard WHERE lake=:lake AND (date BETWEEN STR_TO_DATE(:from, \'%m,%d,%Y\') AND STR_TO_DATE(:until, \'%m,%d,%Y\')) ORDER BY date ASC');
-
     $selection->bindParam(':lake', $lake, PDO::PARAM_STR);
     $selection->bindParam(':from', $from, PDO::PARAM_STR);
     $selection->bindParam(':until', $until, PDO::PARAM_STR);
-
-    //where lake='Brienzersee' AND (date BETWEEN '2016-01-01' AND '2017-05-05');
-    //date=\'2016-04-18\'');
-    //STR_TO_DATE(:fromDate, \'%m,%d,%Y\')');
-    //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE('04,18,2016', '%m,%d,%Y');
-    //SELECT * FROM wakingUp.ads WHERE date=STR_TO_DATE(\'04,18,2016\', \'%m,%d,%Y\');
-    //BETWEEN :fromDate AND :untilDate
-
-
-
     if ($selection->execute()){
         $result = $selection->fetchAll(PDO::FETCH_ASSOC);
-
         $ads = array();
         foreach ($result as $ad) {
             $ads[] = array(
